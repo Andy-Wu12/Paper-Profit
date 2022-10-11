@@ -38,21 +38,37 @@ router.get('/stock-info/:ticker', async (ctx) => {
 		},
 		body: encodedParams
 	}
-	const queryData = await fetch('https://yahoo-finance97.p.rapidapi.com/stock-info', options)
-		.then(function(response) {
-			if(response.status >= 400) {
-				throw new Error("Bad response from server");
-			}
-			return response.json();
-		})
-		.then(function(data) {
-			// console.log(data);
-			return data;
-		})
-		.catch(error => {throw new Error(error)});
-	
-	ctx.body = queryData;
 
+	let queryData = {};
+
+	try {
+		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/stock-info', options)
+
+		if(!response.ok) {
+			throw new Error("Bad response from server");
+		}
+		queryData = await response.json();
+
+	} catch (e) {
+		throw new Error("Error fetching response from server!");
+	}
+
+	/* Invalid tickers still return OK 200 response in format of,
+	{
+		data: {
+			logo_url: "",
+			preMarketPrice: null,
+			regularMarketPrice: null
+		},
+		message: "Success",
+		status: 200
+	} 
+	so create error message if this data is received before passing to body */
+	if(!queryData.data.regularMarketPrice) {
+		throw new Error("Invalid ticker symbol");
+	}
+
+	ctx.body = queryData;
 });
 
 app.use(async (ctx, next) => {

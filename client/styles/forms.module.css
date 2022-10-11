@@ -1,0 +1,13 @@
+.formInput {
+  width: 100%;
+  height: 25%;
+}
+
+.label {
+  font-size: 18px;
+}
+
+.button {
+  display: inline-flex;
+  text-align: center;
+}

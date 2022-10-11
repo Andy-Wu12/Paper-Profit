@@ -6,3 +6,8 @@
 .label {
   font-size: 18px;
 }
+
+.button {
+  display: inline-flex;
+  text-align: center;
+}

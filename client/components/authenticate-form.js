@@ -10,6 +10,7 @@ export function LoginForm() {
         <input name="username" className={formStyles.formInput} /><br/><br/>
         <label className={formStyles.label} htmlFor="password"> Password </label>
         <input name="password" className={formStyles.formInput} /><br/><br/>
+        <button className={formStyles.button} type='submit'> Login </button>
       </form>
     </>
   )

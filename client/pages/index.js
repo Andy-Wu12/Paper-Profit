@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-import LoginForm from '../components/authenticate-form'
+import forms from '../components/authenticate-form'
 
 export default function Home() {
   return (
@@ -23,7 +23,7 @@ export default function Home() {
           without wasting a single cent.
         </p>
 
-      <LoginForm />
+      { <forms.SignupForm /> }
       </main>
 
       <footer className={styles.footer}>

@@ -1,10 +1,18 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import { useState } from 'react'
+
 import styles from '../styles/Home.module.css'
+import formStyles from '../styles/forms.module.css'
 
 import forms from '../components/authenticate-form'
 
 export default function Home() {
+  const [isLogin, setIsLogin] = useState(false);
+
+  function handleClick(e) {
+    setIsLogin(e.target.checked);
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -23,12 +31,22 @@ export default function Home() {
           without wasting a single cent.
         </p>
 
-      { <forms.SignupForm /> }
+      <ToggleableForm isLogin={isLogin} handleClick={handleClick}/>
       </main>
 
       <footer className={styles.footer}>
-        
+        Created by {' '} <a href='https://iamandywu.com'> Andy Wu </a> <br/>
+        The repo is available to view on {' '} <a href='https://github.com/Andy-Wu12/Stock-Trading-Sim'> Github </a>
       </footer>
+    </div>
+  )
+}
+
+function ToggleableForm({isLogin, handleClick}) {
+  return (
+    <div className='toggleSwitch'>
+      <label for="toggleForm"> Need to sign up? </label>
+      <input id="toggleForm" type="checkbox" checked={isLogin} onClick={handleClick} />
     </div>
   )
 }

@@ -1,9 +1,10 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 import cors from '@koa/cors';
-
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+
+import User from './models/user.js';
 
 const app = new Koa();
 const router = new Router();
@@ -14,15 +15,18 @@ dotenv.config();
 
 // const user = process.env.MONGODB_ATLAS_USER;
 // const pass = process.env.MONGODB_ATLAS_KEY;
-const uri = "mongodb://localhost:27017";
+const db_name = "stock-sim";
+const uri = `mongodb://localhost:27017/${db_name}`;
 
-const client = new MongoClient(uri);
-client.connect();
+// Vanilla Mongodb
+// const db = client.db('stock-sim')
+// const collection = db.collection('users');
+// collection.insertOne({username: "awu", password: "test"});
 
-const db = client.db('stock-sim')
-const collection = db.collection('users');
+mongoose.connect(uri);
 
-collection.insertOne({username: "awu", password: "test"});
+const testUser = new User({username: "user1", email: "mail@123.com", password: "testPass"});
+testUser.save();
 
 app.use(router.routes());
 

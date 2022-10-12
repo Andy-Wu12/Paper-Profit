@@ -1,10 +1,12 @@
 import Koa from 'koa';
+import koaBody from 'koa-body';
+
 import Router from '@koa/router';
 import cors from '@koa/cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-import User from './models/user.js';
+import userRouter from './routes/users.js';
 
 const app = new Koa();
 const router = new Router();
@@ -25,6 +27,7 @@ mongoose.connect(uri);
 // const collection = db.collection('users');
 // collection.insertOne({username: "awu", password: "test"});
 
+app.use(koaBody());
 app.use(cors({origin: '*'}));
 dotenv.config();
 
@@ -42,17 +45,13 @@ router.get('/', (ctx) => {
 	}};
 });
 
-router.get('/users', async (ctx) => {
-	ctx.body = await User.find();
-});
-
-router.get('/users/:username', async (ctx) => {
-	ctx.body = await User.find({username: ctx.params['username']});
-});
 
 app.use(router.routes());
+app.use(userRouter.routes());
+// app.use(userRouter.allowedMethods());
 
 app.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`);
 });
 
+export default app;

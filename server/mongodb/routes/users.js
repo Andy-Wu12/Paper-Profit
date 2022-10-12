@@ -33,10 +33,17 @@ router.post('/signup', async (ctx) => {
     throw new Error("Invalid form data!");
   }
 
-  const newUser = new User({username, email, password});
-  newUser.save();
+  try {
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(password, salt);
 
-  ctx.body = `${newUser.details()} `;
+    const newUser = new User({username: username, email: email, password: hash});
+    newUser.save();
+
+    ctx.body = `${newUser.details()} `;
+  } catch (error) {
+    ctx.body = error;
+  }
 
 });
 

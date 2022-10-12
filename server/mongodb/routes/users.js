@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.js';
 
 const router = new Router({ prefix: '/users' })
+// Default is 10, but setting this variable allows for potential config.
+const saltRounds = 10;
 
 router.get('/', async (ctx) => {
 	ctx.body = await User.find();
@@ -14,19 +16,24 @@ router.get('/:username', async (ctx) => {
 });
 
 // Create user
-router.post('/', async (ctx) => {
+router.post('/signup', async (ctx) => {
   /*
     ctx.request.body will only work with koaBody in db.js
-    curl -H 'Content-Type: application/json' -d '{"username": "text", "email":"testemail", "password": "insecure"}' -X POST http://localhost:3012/users
+    curl -H 'Content-Type: application/json' -d '{"username": "text", "email":"testemail", "password": "insecure"}' \
+      -X POST http://localhost:3012/users/signup
     should return {"username": "name"}
   */
   const postBody = ctx.request.body;
-  // const username = postBody.username;
-  // const email = postBody.email;
-  // const password = postBody.password;
+  const username = postBody.username;
+  const email = postBody.email;
+  const password = postBody.password;
 
-  // TODO: Add input validation
-  const newUser = new User(postBody);
+  if(!(username && email && password)) {
+    ctx.status = 400;
+    throw new Error("Invalid form data!");
+  }
+
+  const newUser = new User({username, email, password});
   newUser.save();
 
   ctx.body = `${newUser.details()} `;

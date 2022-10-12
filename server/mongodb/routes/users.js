@@ -38,7 +38,7 @@ router.post('/signup', async (ctx) => {
     const hash = bcrypt.hashSync(password, salt);
 
     const newUser = new User({username: username, email: email, password: hash});
-    newUser.save();
+    await newUser.save();
 
     ctx.body = `${newUser.details()} `;
   } catch (error) {

@@ -12,11 +12,15 @@ function AuthenticationForm({header, postRoute, fields}) {
     </Fragment>);
   });
 
+  const passwordLabel = 'password';
+
   return (
     <>
       <h2> {header} </h2>
       <form className={styles.card} method="POST" action={postRoute}>
         {formFields}
+        <label className={formStyles.label} htmlFor={passwordLabel}> {passwordLabel} </label>
+        <input id={passwordLabel} name={passwordLabel} className={formStyles.formInput} /><br/><br/>
         <button className={formStyles.button} type='submit'> {header} </button>
       </form>
     </>
@@ -24,17 +28,17 @@ function AuthenticationForm({header, postRoute, fields}) {
 }
 
 export function LoginForm() {
-  const fields = ["email", "password"];
+  const fields = ["email"];
 
   return (
-    <AuthenticationForm header="Login" postRoute="/login" fields={fields} />
+    <AuthenticationForm header="Login" postRoute="/users/login" fields={fields} />
   )
 }
 
 export function SignupForm() {
-  const fields = ["username", "email", "password"]
+  const fields = ["username", "email"]
   return (
-    <AuthenticationForm header="Sign Up" postRoute="/signup" fields={fields} />
+    <AuthenticationForm header="Sign Up" postRoute="/users/signup" fields={fields} />
   )
 }
 

@@ -20,7 +20,7 @@ function AuthenticationForm({header, postRoute, fields}) {
       <form className={styles.card} method="POST" action={postRoute}>
         {formFields}
         <label className={formStyles.label} htmlFor={passwordLabel}> {passwordLabel} </label>
-        <input id={passwordLabel} name={passwordLabel} className={formStyles.formInput} /><br/><br/>
+        <input type='password' id={passwordLabel} name={passwordLabel} className={formStyles.formInput} /><br/><br/>
         <button className={formStyles.button} type='submit'> {header} </button>
       </form>
     </>
@@ -38,7 +38,7 @@ export function LoginForm() {
 export function SignupForm() {
   const fields = ["username", "email"]
   return (
-    <AuthenticationForm header="Sign Up" postRoute="/users/signup" fields={fields} />
+    <AuthenticationForm header="Sign Up" postRoute="http://localhost:3011/users/signup" fields={fields} />
   )
 }
 

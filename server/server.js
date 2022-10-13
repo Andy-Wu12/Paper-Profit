@@ -1,21 +1,29 @@
 import Koa from 'koa';
 import Router from '@koa/router';
+import koaBody from 'koa-body';
 import cors from '@koa/cors';
 import fetch from 'isomorphic-fetch';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+import userRouter from './mongodb/routes/users.js';
 
 const app = new Koa();
 const router = new Router();
 const port = 3011;
-const config = dotenv.config();
+dotenv.config();
 
+const db_name = "stock-sim";
+const uri = `mongodb://localhost:27017/${db_name}`;
+mongoose.connect(uri);
 
+app.use(koaBody());
 app.use(cors({origin: '*'}));
 
 router.get('/', (ctx) => {
 	console.log(ctx.request);
 	ctx.body = {'Server\'s API Endpoints': {
-		'Getting random dog image': {
+		'Get information of specific stock': {
 			'route' : '/stock-info/:ticker',
 			'example' : 'http://localhost:3011/stock-info/AAPL'},
 	}};
@@ -23,11 +31,9 @@ router.get('/', (ctx) => {
 
 // Route to fetch from Yahoo's /stock-info endpoint
 router.get('/stock-info/:ticker', async (ctx) => {
-	console.log(ctx.request);
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];
 	encodedParams.append("symbol", ticker);
-	console.log(encodedParams);
 
 	const options = {
 		method: 'POST',
@@ -85,6 +91,7 @@ app.use(async (ctx, next) => {
 });
 
 app.use(router.routes());
+app.use(userRouter.routes());
 
 app.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`);

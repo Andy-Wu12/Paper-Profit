@@ -34,6 +34,7 @@ router.post('/signup', async (ctx) => {
     await newUser.save();
 
     // TODO: Automatically login user and set session cookie
+
     ctx.redirect(ctx.request.header.origin);
 
   } catch (error) {

@@ -38,7 +38,7 @@ export function LoginForm() {
 export function SignupForm() {
   const fields = ["username", "email"]
   return (
-    <AuthenticationForm header="Sign Up" postRoute="http://localhost:3011/users/signup" fields={fields} />
+    <AuthenticationForm header="Sign Up" postRoute="http://localhost:3011/auth/signup" fields={fields} />
   )
 }
 

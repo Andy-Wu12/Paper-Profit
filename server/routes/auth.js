@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import { randomBytes } from 'crypto';
 
 import User from '../mongodb/models/user.js';
-
+import Session from '../mongodb/models/session.js';
 
 export const router = new Router({prefix: '/auth'});
 // Default is 10, but setting this variable allows for potential config.
@@ -40,9 +40,13 @@ router.post('/signup', async (ctx) => {
     }
 
     // TODO: Automatically login user and set session cookie
-    const buf = randomBytes(356);
-    ctx.cookies.set('stocksim-sess', buf.toString('hex'), config);
+    const sessionCookie = randomBytes(356).toString('hex');
 
+    ctx.cookies.set('stocksim-sess', sessionCookie, config);
+    // Add session cookie to mongodb and associate with new user
+    const session = new Session({userEmail: email, cookie: sessionCookie});
+    session.save();
+    
     ctx.redirect(ctx.request.header.origin);
 
   } catch (error) {

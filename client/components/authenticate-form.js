@@ -33,9 +33,10 @@ export function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await fetch(`${baseAPI_URL}/auth/login`, {
+    await fetch(`${baseAPI_URL}/auth/login`, {
       method: "POST",
       mode: "cors",
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },
@@ -57,9 +58,10 @@ export function SignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await fetch(`${baseAPI_URL}/auth/signup`, {
+    await fetch(`${baseAPI_URL}/auth/signup`, {
       method: "POST",
       mode: "cors",
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },

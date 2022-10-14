@@ -3,6 +3,8 @@ import formStyles from '../styles/forms.module.css'
 
 import { Fragment } from 'react';
 
+const baseAPI_URL = 'http://localhost:3011';
+
 function AuthenticationForm({header, postRoute, fields}) {
   const formFields = fields.map((field) => {
     return (
@@ -31,14 +33,15 @@ export function LoginForm() {
   const fields = ["email"];
 
   return (
-    <AuthenticationForm header="Login" postRoute="/users/login" fields={fields} />
+    <AuthenticationForm header="Login" postRoute={`${baseAPI_URL}/auth/login`} fields={fields} />
   )
 }
 
 export function SignupForm() {
-  const fields = ["username", "email"]
+  const fields = ["username", "email"];
+
   return (
-    <AuthenticationForm header="Sign Up" postRoute="http://localhost:3011/auth/signup" fields={fields} />
+    <AuthenticationForm header="Sign Up" postRoute={`${baseAPI_URL}/auth/signup`} fields={fields} />
   )
 }
 

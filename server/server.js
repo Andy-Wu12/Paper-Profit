@@ -21,7 +21,7 @@ const uri = `mongodb://localhost:27017/${db_name}`;
 mongoose.connect(uri);
 
 //  Koa sessions
-app.keys = ['secret'];
+// app.keys = ['secret'];
 
 // const CONFIG = {
 //   key: 'koa.sess', /** (string) cookie key (default is koa.sess) */

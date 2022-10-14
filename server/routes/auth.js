@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import Router from '@koa/router';
+import { randomBytes } from 'crypto';
 
 import User from '../mongodb/models/user.js';
 
@@ -33,8 +34,15 @@ router.post('/signup', async (ctx) => {
     const newUser = new User({username: username, email: email, password: hash});
     await newUser.save();
 
+    const config = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 8640000)
+    }
+
     // TODO: Automatically login user and set session cookie
-    ctx.session.login = true;
+    const buf = randomBytes(356);
+    ctx.cookies.set('stocksim-sess', buf.toString('hex'), config);
+
     ctx.redirect(ctx.request.header.origin);
 
   } catch (error) {

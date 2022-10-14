@@ -78,6 +78,7 @@ router.post('/login', async (ctx) => {
     const queryReturn = await User.findOne({email: email});
 
     if(!queryReturn) {
+      ctx.status = 400;
       ctx.body['message'] = 'No user with that email exists!';
     }
     else {
@@ -90,11 +91,13 @@ router.post('/login', async (ctx) => {
         ctx.body['message'] = 'Login success!';
       }
       else {
+        ctx.status = 400;
         ctx.body['message'] = 'Incorrect credentials provided!';
       }
     }
 
   } catch(error) {
+    ctx.status = 400;
     ctx.body['message'] = error.message;
   }
 });

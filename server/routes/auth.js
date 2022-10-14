@@ -30,7 +30,8 @@ router.post('/signup', async (ctx) => {
 
   if(!(username && email && password)) {
     ctx.status = 400;
-    throw new Error("Invalid form data!");
+    ctx.body = {'message': 'Invalid form submission'};
+    return
   }
 
   try {
@@ -48,10 +49,13 @@ router.post('/signup', async (ctx) => {
     const session = new Session({userEmail: email, cookie: sessionCookie});
     session.save();
     
-    ctx.redirect(ctx.request.header.origin);
+    // ctx.redirect(ctx.request.header.origin);
+    ctx.body = {'message': 'Success'}
+    ctx.status = 200;
 
   } catch (error) {
-    throw new Error("Error creating user");
+    ctx.status = 400;
+    ctx.body = {'message': 'Error occurred when creating user'};
   }
 
 });

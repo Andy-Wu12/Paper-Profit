@@ -30,8 +30,8 @@ router.post('/signup', async (ctx) => {
 
   if(!(username && email && password)) {
     ctx.status = 400;
-    ctx.body = {'message': 'Invalid form submission'};
-    return
+    ctx.body = {'message': 'Invalid form submission. Enter all required fields!'};
+    return;
   }
 
   try {
@@ -42,7 +42,7 @@ router.post('/signup', async (ctx) => {
     await newUser.save();
 
     // TODO: Automatically login user and set session cookie
-    const sessionCookie = randomBytes(356).toString('hex');
+    const sessionCookie = randomBytes(256).toString('hex');
 
     ctx.cookies.set('stocksim-sess', sessionCookie, sessionConfig);
     // Add session cookie to mongodb and associate with new user
@@ -68,23 +68,26 @@ router.post('/login', async (ctx) => {
 
   if(!(email && password)) {
     ctx.status = 400;
-    throw new Error("Invalid form data!");
+    ctx.body = {'message': 'Invalid form submission'};
+    return
   }
 
   try {
     // Check if email is valid
     const queryReturn = await User.findOne({email: email});
+    // Check if password is valid
+
 
     if(!queryReturn) {
-      ctx.response['message'] = "No user with that email exists!";
+      ctx.body = {"message": "No user with that email exists!"};
     }
     else {
-      // Set session cookie from database.
+      // Set a new session cookie (and delete old one stored in db)
     }
 
-    queryReturn ? ctx.body = queryReturn : ctx.body = ctx.response;
+    // queryReturn ? ctx.body = queryReturn : ctx.body = ctx.response;
 
-    ctx.redirect(ctx.request.header.origin);
+    // ctx.redirect(ctx.request.header.origin);
 
   } catch(error) {
     throw new Error("Trouble logging in!");

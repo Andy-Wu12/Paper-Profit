@@ -3,7 +3,10 @@ import formStyles from '../styles/forms.module.css'
 
 import { Fragment } from 'react';
 
-function AuthenticationForm({header, postRoute, fields}) {
+const baseAPI_URL = 'http://localhost:3011';
+const passwordLabel = 'password';
+
+function AuthenticationForm({header, onSubmit, fields}) {
   const formFields = fields.map((field) => {
     return (
     <Fragment key={`form-${field}`}>
@@ -12,12 +15,10 @@ function AuthenticationForm({header, postRoute, fields}) {
     </Fragment>);
   });
 
-  const passwordLabel = 'password';
-
   return (
     <>
       <h2> {header} </h2>
-      <form className={styles.card} method="POST" action={postRoute}>
+      <form className={styles.card} method="POST" onSubmit={onSubmit}>
         {formFields}
         <label className={formStyles.label} htmlFor={passwordLabel}> {passwordLabel} </label>
         <input type='password' id={passwordLabel} name={passwordLabel} className={formStyles.formInput} /><br/><br/>
@@ -30,15 +31,51 @@ function AuthenticationForm({header, postRoute, fields}) {
 export function LoginForm() {
   const fields = ["email"];
 
+  async function handleSubmit(e) {
+    e.preventDefault();
+    await fetch(`${baseAPI_URL}/auth/login`, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": e.target.elements.email.value, 
+        "password": e.target.elements.password.value
+      })
+    });
+    
+  }
+
   return (
-    <AuthenticationForm header="Login" postRoute="/users/login" fields={fields} />
+    <AuthenticationForm header="Login" onSubmit={handleSubmit} fields={fields} />
   )
 }
 
 export function SignupForm() {
-  const fields = ["username", "email"]
+  const fields = ["username", "email"];
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    await fetch(`${baseAPI_URL}/auth/signup`, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": e.target.elements.email.value, 
+        "password": e.target.elements.password.value,
+        "username": e.target.elements.username.value
+      })
+    });
+    
+  }
+
   return (
-    <AuthenticationForm header="Sign Up" postRoute="http://localhost:3011/auth/signup" fields={fields} />
+    <AuthenticationForm header="Sign Up" onSubmit={handleSubmit} fields={fields} />
   )
 }
 

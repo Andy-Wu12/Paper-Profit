@@ -21,7 +21,7 @@ const uri = `mongodb://localhost:27017/${db_name}`;
 mongoose.connect(uri);
 
 //  Koa sessions
-app.keys = ['secret'];
+// app.keys = ['secret'];
 
 // const CONFIG = {
 //   key: 'koa.sess', /** (string) cookie key (default is koa.sess) */
@@ -41,7 +41,7 @@ app.keys = ['secret'];
 
 app
 	// .use(session(CONFIG, app))
-	.use(cors({origin: '*'}));
+	.use(cors({origin: 'http://localhost:3000', credentials: true}));
 	
 app.use(koaBody());
 
@@ -63,6 +63,11 @@ router.get('/', (ctx) => {
 	}};
 });
 
+app.use(async (ctx, next) => {
+	ctx.set('Access-Control-Allow-Methods', 'POST, GET, DELETE, OPTIONS');
+	ctx.set('Access-Control-Allow-Credentials', 'true');
+	await next();
+});
 
 app.use(async (ctx, next) => {
 	await next();

@@ -9,12 +9,18 @@ export const router = new Router({prefix: '/auth'});
 // Default is 10, but setting this variable allows for potential config.
 const saltRounds = 10;
 
+const sessionConfig = {
+  sameSite: 'lax',
+  httpOnly: false,
+  expires: new Date(Date.now() + 8640000)
+};
+
 // Create user
 router.post('/signup', async (ctx) => {
   /*
-    ctx.request.body will only work with koaBody in db.js
+    ctx.request.body will only work with koaBody
     curl -H 'Content-Type: application/json' -d '{"username": "text", "email":"testemail", "password": "insecure"}' \
-      -X POST http://localhost:3011/users/signup
+      -X POST http://localhost:3011/auth/signup
     should return {"username": "name"}
   */
   const postBody = ctx.request.body;
@@ -24,7 +30,7 @@ router.post('/signup', async (ctx) => {
 
   if(!(username && email && password)) {
     ctx.status = 400;
-    throw new Error("Invalid form data!");
+    return;
   }
 
   try {
@@ -34,35 +40,84 @@ router.post('/signup', async (ctx) => {
     const newUser = new User({username: username, email: email, password: hash});
     await newUser.save();
 
-    const config = {
-      httpOnly: true,
-      expires: new Date(Date.now() + 8640000)
-    }
-
     // TODO: Automatically login user and set session cookie
-    const sessionCookie = randomBytes(356).toString('hex');
+    const cookie = await makeAndSaveSessionCookie(email);
+    console.log(cookie);
+    ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
 
-    ctx.cookies.set('stocksim-sess', sessionCookie, config);
-    // Add session cookie to mongodb and associate with new user
-    const session = new Session({userEmail: email, cookie: sessionCookie});
-    session.save();
-    
-    ctx.redirect(ctx.request.header.origin);
+    ctx.status = 200;
 
   } catch (error) {
-    throw new Error("Error creating user");
+    ctx.status = 400;
   }
 
 });
 
 // Login user and generate session cookie
 router.post('/login', async (ctx) => {
-  ctx.body = "Logged In";
+  const postBody = ctx.request.body;
+  const email = postBody.email;
+  const password = postBody.password;
+
+  ctx.body = {};
+
+  if(!(email && password)) {
+    ctx.status = 400;
+    ctx.body['message'] = 'Invalid form submission';
+    return
+  }
+
+  if(password.length < 1 || email.length < 1) {
+    ctx.body['message'] = 'You need to provide a value for both fields!';
+    return
+  }
+
+  
+  try {
+    // Check if email is valid
+    const queryReturn = await User.findOne({email: email});
+
+    if(!queryReturn) {
+      ctx.status = 400;
+      ctx.body['message'] = 'No user with that email exists!';
+    }
+    else {
+      // Check if password is valid
+      const response = await bcrypt.compare(password, queryReturn['password']);
+      if(response) {
+        // Set a new session cookie
+        const cookie = await makeAndSaveSessionCookie(email);
+        ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
+        ctx.body['message'] = 'Login success!';
+      }
+      else {
+        ctx.status = 400;
+        ctx.body['message'] = 'Incorrect credentials provided!';
+      }
+    }
+
+  } catch(error) {
+    ctx.status = 400;
+    ctx.body['message'] = error.message;
+  }
 });
 
 // Logout user and remove session cookie
 router.post('/logout', async (ctx) => {
   ctx.body = "Logged Out";
 });
+
+
+function generateSessionCookie() {
+  return randomBytes(256).toString('hex');
+}
+
+async function makeAndSaveSessionCookie(userEmail) {
+  const sessionCookie = generateSessionCookie();
+  const session = new Session({userEmail: userEmail, cookie: sessionCookie});
+  session.save();
+
+  return sessionCookie;
+}
 
 export default router;

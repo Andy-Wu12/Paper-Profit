@@ -1,14 +1,17 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 
 import styles from '../styles/Home.module.css'
 import formStyles from '../styles/forms.module.css'
 
 import forms from '../components/authenticate-form'
+import AuthContext from '../components/authContext'
 
-export default function Home(props) {
+export default function Home() {
   const [isLogin, setIsLogin] = useState(false);
+  const user = useContext(AuthContext);
 
+  console.log(user);
   function handleClick(e) {
     setIsLogin(e.target.checked);
   }

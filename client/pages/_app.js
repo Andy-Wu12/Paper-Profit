@@ -12,9 +12,12 @@ function MyApp({ Component, pageProps }) {
     const getUser = async () => {
       const data = await getUserDetails();
       if(data.ok) {
-        setCurrentUser(data.username);
+        const response = await data.json();
+        setCurrentUser({ name: response.username });
       }
-      
+      else {
+        setCurrentUser({ name: 'Guest' })
+      }
     }
 
     getUser();

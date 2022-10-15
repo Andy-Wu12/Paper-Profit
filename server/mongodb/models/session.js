@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-  userEmail: { type: String, required: true, unique: true, dropDups: true },
+  username: { type: String, required: true, unique: true, dropDups: true },
   cookie: { type: String, required: true, unique: true, dropDups: true }
 });
 

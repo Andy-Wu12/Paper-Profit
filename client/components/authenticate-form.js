@@ -29,7 +29,7 @@ function AuthenticationForm({header, onSubmit, fields}) {
 }
 
 export function LoginForm() {
-  const fields = ["email"];
+  const fields = ["username"];
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,7 +41,7 @@ export function LoginForm() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "email": e.target.elements.email.value, 
+        "username": e.target.elements.username.value, 
         "password": e.target.elements.password.value
       })
     });

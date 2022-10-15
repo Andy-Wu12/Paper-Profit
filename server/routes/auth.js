@@ -41,11 +41,11 @@ router.post('/signup', async (ctx) => {
     const newUser = new User({username: username, email: email});
     await newUser.save();
 
-    const newAuth = new Auth({email: email, password: hash});
+    const newAuth = new Auth({username: username, password: hash});
     await newAuth.save();
 
     // TODO: Automatically login user and set session cookie
-    const cookie = await makeAndSaveSessionCookie(email);
+    const cookie = await makeAndSaveSessionCookie(username);
     ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
 
     ctx.status = 200;
@@ -59,26 +59,20 @@ router.post('/signup', async (ctx) => {
 // Login user and generate session cookie
 router.post('/login', async (ctx) => {
   const postBody = ctx.request.body;
-  const email = postBody.email;
+  const username = postBody.username;
   const password = postBody.password;
 
   ctx.body = {};
 
-  if(!(email && password)) {
+  if(!(username && password)) {
     ctx.status = 400;
     ctx.body['message'] = 'Invalid form submission';
     return
   }
-
-  if(password.length < 1 || email.length < 1) {
-    ctx.body['message'] = 'You need to provide a value for both fields!';
-    return
-  }
-
   
   try {
     // Check if email is valid
-    const queryReturn = await Auth.findOne({email: email});
+    const queryReturn = await Auth.findOne({username: username});
     console.log(queryReturn);
     if(!queryReturn) {
       ctx.status = 400;
@@ -89,7 +83,7 @@ router.post('/login', async (ctx) => {
       const response = await bcrypt.compare(password, queryReturn['password']);
       if(response) {
         // Set a new session cookie
-        const cookie = await makeAndSaveSessionCookie(email);
+        const cookie = await makeAndSaveSessionCookie(username);
         ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
         ctx.body['message'] = 'Login success!';
       }
@@ -115,9 +109,9 @@ function generateSessionCookie() {
   return randomBytes(256).toString('hex');
 }
 
-async function makeAndSaveSessionCookie(userEmail) {
+async function makeAndSaveSessionCookie(username) {
   const sessionCookie = generateSessionCookie();
-  const session = new Session({userEmail: userEmail, cookie: sessionCookie});
+  const session = new Session({username: username, cookie: sessionCookie});
   session.save();
 
   return sessionCookie;

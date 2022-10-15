@@ -2,15 +2,12 @@ import Head from 'next/head'
 import { useState, useContext } from 'react'
 
 import styles from '../styles/Home.module.css'
-import formStyles from '../styles/forms.module.css'
 
 import ToggleableForm from '../components/toggle-form'
-import Footer from '../components/footer'
 import AuthContext from '../components/authContext'
 
 export default function Home() {
   const user = useContext(AuthContext);
-  console.log(user);
 
   return (
     <>
@@ -45,9 +42,7 @@ function LandingPageForm() {
         </p>
 
       <ToggleableForm isLogin={isLogin} handleClick={handleClick}/>
-      </main>
-
-      <Footer />      
+      </main>      
     </div>
   )
 }
@@ -74,7 +69,6 @@ function HomePage() {
         </p>
       </main>
 
-      <Footer />
     </div>
   )
 }

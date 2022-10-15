@@ -3,6 +3,8 @@ import '../styles/globals.css'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext, getUserDetails } from '../components/authContext'
 
+import Footer from '../components/footer';
+
 function MyApp({ Component, pageProps }) {
   const userContext = useContext(AuthContext);
 
@@ -25,9 +27,12 @@ function MyApp({ Component, pageProps }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={currentUser}>
-      <Component {...pageProps} />
-    </AuthContext.Provider>
+    <>
+      <AuthContext.Provider value={currentUser}>
+        <Component {...pageProps} />
+      </AuthContext.Provider>
+      <Footer />
+    </>
   )
 }
 

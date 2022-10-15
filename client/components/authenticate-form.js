@@ -2,6 +2,7 @@ import styles from '../styles/Home.module.css'
 import formStyles from '../styles/forms.module.css'
 
 import { Fragment } from 'react';
+import { useRouter } from 'next/router';
 
 const baseAPI_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const passwordLabel = 'password';
@@ -30,6 +31,7 @@ function AuthenticationForm({header, onSubmit, fields}) {
 
 export function LoginForm() {
   const fields = ["username"];
+  const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -45,6 +47,8 @@ export function LoginForm() {
         "password": e.target.elements.password.value
       })
     });
+    router.reload();
+
     
   }
 
@@ -55,6 +59,7 @@ export function LoginForm() {
 
 export function SignupForm() {
   const fields = ["username", "email"];
+  const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -71,6 +76,7 @@ export function SignupForm() {
         "username": e.target.elements.username.value
       })
     });
+    router.reload();
     
   }
 

@@ -3,7 +3,7 @@ import formStyles from '../styles/forms.module.css'
 
 import { Fragment } from 'react';
 
-const baseAPI_URL = process.env.NEXT_PUBLIC_BASEAPI_URL;
+const baseAPI_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const passwordLabel = 'password';
 
 function AuthenticationForm({header, onSubmit, fields}) {

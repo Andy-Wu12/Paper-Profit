@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 
 import User from '../mongodb/models/user.js';
 import Session from '../mongodb/models/session.js';
+import Auth from '../mongodb/models/auth.js';
 
 export const router = new Router({prefix: '/auth'});
 // Default is 10, but setting this variable allows for potential config.
@@ -37,12 +38,14 @@ router.post('/signup', async (ctx) => {
     const salt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(password, salt);
 
-    const newUser = new User({username: username, email: email, password: hash});
+    const newUser = new User({username: username, email: email});
     await newUser.save();
+
+    const newAuth = new Auth({email: email, password: hash});
+    await newAuth.save();
 
     // TODO: Automatically login user and set session cookie
     const cookie = await makeAndSaveSessionCookie(email);
-    console.log(cookie);
     ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
 
     ctx.status = 200;
@@ -75,8 +78,8 @@ router.post('/login', async (ctx) => {
   
   try {
     // Check if email is valid
-    const queryReturn = await User.findOne({email: email});
-
+    const queryReturn = await Auth.findOne({email: email});
+    console.log(queryReturn);
     if(!queryReturn) {
       ctx.status = 400;
       ctx.body['message'] = 'No user with that email exists!';

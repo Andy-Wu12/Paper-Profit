@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }) {
         setCurrentUser({ name: response.username });
       }
       else {
-        setCurrentUser({ name: 'Guest' })
+        setCurrentUser({ name: '' })
       }
     }
 

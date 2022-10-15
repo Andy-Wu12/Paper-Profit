@@ -12,26 +12,33 @@ router.get('/', async (ctx) => {
 });
 
 router.get('/session', async (ctx) => {
-	const requestCookies = ctx.request.headers.cookie;
-	const cookies = requestCookies.split('; ');
-	const sessionCookie = cookies.find(element => element.startsWith(`${sessionCookieName}=`));
-	
-	if(!sessionCookie) {
-		ctx.body = {message: 'Session cookie not found!'};
+	try {
+		const requestCookies = ctx.request.headers.cookie;
+		const cookies = requestCookies.split('; ');
+		const sessionCookie = cookies.find(element => element.startsWith(`${sessionCookieName}=`));
+		
+		if(!sessionCookie) {
+			ctx.body = {message: 'Session cookie not found!'};
+			ctx.status = 400;
+			return;
+		}
+
+		const cookieStr = sessionCookie.split('=')[1];
+		const sessionDoc = await Session.findOne({cookie: cookieStr});
+
+		if(!sessionDoc) {
+			ctx.body = {message: 'Invalid session cookie!'};
+			ctx.status = 400;
+			return;
+		}
+		ctx.body = {message: 'Success', username: sessionDoc.username};
+		ctx.status = 200;
+
+	} catch (e) {
+		ctx.body = {message: 'Error occurred!'};
 		ctx.status = 400;
 		return;
 	}
-
-	const cookieStr = sessionCookie.split('=')[1];
-	const sessionDoc = await Session.findOne({cookie: cookieStr});
-
-	if(!sessionDoc) {
-		ctx.body = {message: 'Invalid session cookie!'};
-		ctx.status = 400;
-		return;
-	}
-	ctx.body = {message: 'Success', username: sessionDoc.username};
-	ctx.status = 200;
 
 });
 

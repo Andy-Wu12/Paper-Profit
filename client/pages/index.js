@@ -4,14 +4,23 @@ import { useState, useContext } from 'react'
 import styles from '../styles/Home.module.css'
 import formStyles from '../styles/forms.module.css'
 
-import forms from '../components/authenticate-form'
+import ToggleableForm from '../components/toggle-form'
 import AuthContext from '../components/authContext'
 
 export default function Home() {
-  const [isLogin, setIsLogin] = useState(false);
   const user = useContext(AuthContext);
-
   console.log(user);
+
+  return (
+    <>
+      {user ? <HomePage /> : <LandingPageForm />}
+    </>
+  );
+}
+
+function LandingPageForm() {
+  const [isLogin, setIsLogin] = useState(false);
+  
   function handleClick(e) {
     setIsLogin(e.target.checked);
   }
@@ -45,15 +54,10 @@ export default function Home() {
   )
 }
 
-function ToggleableForm({isLogin, handleClick}) {
-  return (
-    <>
-      <div className='toggleSwitch'>
-        <label htmlFor="toggleForm"> Already Signed Up? </label>
-        <input id="toggleForm" type="checkbox" checked={isLogin} onChange={handleClick} />
-      </div>
+function HomePage() {
+  const user = useContext(AuthContext);
 
-      {isLogin ? <forms.LoginForm /> : <forms.SignupForm />}
-    </>
+  return (
+    <h1> Hello, {user.name} </h1>
   )
 }

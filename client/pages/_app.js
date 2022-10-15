@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { AuthContext, getUserDetails } from '../components/authContext'
 
 import Footer from '../components/footer';
+import LogoutForm from '../components/logout-button';
 
 function MyApp({ Component, pageProps }) {
   const userContext = useContext(AuthContext);
@@ -18,7 +19,7 @@ function MyApp({ Component, pageProps }) {
         setCurrentUser({ name: response.username });
       }
       else {
-        setCurrentUser({ name: '' })
+        setCurrentUser({ name: '' });
       }
     }
 
@@ -30,6 +31,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <AuthContext.Provider value={currentUser}>
         <Component {...pageProps} />
+        <LogoutForm />
       </AuthContext.Provider>
       <Footer />
     </>

@@ -6,7 +6,7 @@ import formStyles from '../styles/forms.module.css'
 
 import forms from '../components/authenticate-form'
 
-export default function Home() {
+export default function Home(props) {
   const [isLogin, setIsLogin] = useState(false);
 
   function handleClick(e) {

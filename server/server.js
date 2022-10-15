@@ -16,8 +16,7 @@ const router = new Router();
 const port = 3011;
 dotenv.config();
 
-const db_name = "stock-sim";
-const uri = `mongodb://localhost:27017/${db_name}`;
+const uri = process.env.MONGO_URI;
 mongoose.connect(uri);
 
 //  Koa sessions
@@ -41,7 +40,7 @@ mongoose.connect(uri);
 
 app
 	// .use(session(CONFIG, app))
-	.use(cors({origin: 'http://localhost:3000', credentials: true}));
+	.use(cors({origin: process.env.FRONTEND_BASE_URL, credentials: true}));
 	
 app.use(koaBody());
 

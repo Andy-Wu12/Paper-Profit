@@ -7,6 +7,9 @@ import Session from '../mongodb/models/session.js';
 import Auth from '../mongodb/models/auth.js';
 
 export const router = new Router({prefix: '/auth'});
+
+export const sessionCookieName = 'stocksim-sess';
+
 // Default is 10, but setting this variable allows for potential config.
 const saltRounds = 10;
 
@@ -46,7 +49,7 @@ router.post('/signup', async (ctx) => {
 
     // TODO: Automatically login user and set session cookie
     const cookie = await makeAndSaveSessionCookie(username);
-    ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
+    ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
 
     ctx.status = 200;
 
@@ -73,7 +76,6 @@ router.post('/login', async (ctx) => {
   try {
     // Check if email is valid
     const queryReturn = await Auth.findOne({username: username});
-    console.log(queryReturn);
     if(!queryReturn) {
       ctx.status = 400;
       ctx.body['message'] = 'No user with that email exists!';
@@ -84,7 +86,7 @@ router.post('/login', async (ctx) => {
       if(response) {
         // Set a new session cookie
         const cookie = await makeAndSaveSessionCookie(username);
-        ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
+        ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
         ctx.body['message'] = 'Login success!';
       }
       else {

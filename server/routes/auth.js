@@ -103,7 +103,33 @@ router.post('/login', async (ctx) => {
 
 // Logout user and remove session cookie
 router.post('/logout', async (ctx) => {
-  ctx.body = "Logged Out";
+  const postBody = ctx.request.body;
+  const username = postBody.username;
+  
+  ctx.body = {};
+
+  if(!(username)) {
+    ctx.status = 400;
+    ctx.body['message'] = 'Invalid form submission';
+    return;
+  }
+  
+  try {
+    const result = await Session.deleteOne({username: username});
+    if(result.acknowledged && result.deletedCount == 1) {
+      ctx.status = 200;
+      ctx.body['message'] = 'Session deleted.';
+    }
+    else {
+      ctx.status = 400;
+      ctx.body['message'] = 'That user does not exist';
+    }
+
+  } catch(error) {
+    ctx.status = 400;
+    ctx.body['message'] = error.message;
+  }
+
 });
 
 

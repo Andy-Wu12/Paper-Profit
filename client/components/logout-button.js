@@ -14,11 +14,15 @@ export default function LogoutForm() {
 }
 
 function LogoutButton() {
+  const logout = async () => {
+    console.log('logging out!')
+  }
+
   return (
     <div className={formStyles.button}>
-      <button type="button">
+      <button type="button" onClick={logout}>
         Log Out
-      </button> 
+      </button>
     </div>
   )
 }

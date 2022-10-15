@@ -49,7 +49,7 @@ router.post('/signup', async (ctx) => {
 
     // TODO: Automatically login user and set session cookie
     const cookie = await makeAndSaveSessionCookie(username);
-    ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
+    ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
 
     ctx.status = 200;
 
@@ -86,7 +86,7 @@ router.post('/login', async (ctx) => {
       if(response) {
         // Set a new session cookie
         const cookie = await makeAndSaveSessionCookie(username);
-        ctx.cookies.set('stocksim-sess', cookie, sessionConfig);
+        ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
         ctx.body['message'] = 'Login success!';
       }
       else {
@@ -124,6 +124,7 @@ router.post('/logout', async (ctx) => {
       ctx.status = 400;
       ctx.body['message'] = 'That user does not exist';
     }
+    ctx.cookies.set(sessionCookieName, '', sessionConfig);
 
   } catch(error) {
     ctx.status = 400;

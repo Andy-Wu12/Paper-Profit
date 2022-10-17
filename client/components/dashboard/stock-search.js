@@ -1,21 +1,19 @@
-import { useState, useEffect } from 'react';
 import styles from '../../styles/Home.module.css'
 
-export default function StockSearchForm() {
-  const [stock, setStock] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [stockData, setStockData] = useState(null);
-  
-  function handleSubmit(e) {
+export default function StockSearchForm({setStockData}) {  
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log('Search initiated')
+    const tickerSymbol = e.target.ticker.value;
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
+    const stockData = await response.json();
+    setStockData(stockData);
   }
 
   return (
     <>
-      <form className={styles.card} method='POST' onSubmit={handleSubmit}>
-        <label htmlFor='ticker-symbol'> Search Ticker Symbol </label><br/>
-        <input type='text' placeholder='AAPL' name='ticker-symbol' id='ticker-symbol' />
+      <form className={styles.card} method='GET' onSubmit={handleSubmit}>
+        <label htmlFor='ticker'> Search Ticker Symbol </label><br/>
+        <input type='text' placeholder='AAPL' name='ticker-symbol' id='ticker' />
         <button type='submit'> Search </button>
       </form>
     </>

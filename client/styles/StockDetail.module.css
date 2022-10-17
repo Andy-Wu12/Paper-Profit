@@ -1,12 +1,16 @@
 
 .prices {
-  font-size: calc(100% - 4px);
+  font-size: clamp(5pt, 5vw, 12pt);
 }
 
 .askPrice {
-  color: green;
+  color: #4fe50b;
 }
 
 .bidPrice {
   color: red;
+}
+
+.descList {
+  font-size: 20px;
 }

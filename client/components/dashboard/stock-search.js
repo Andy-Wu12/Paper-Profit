@@ -12,7 +12,6 @@ export default function StockSearchForm({setStockData}) {
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
     const stockData = await response.json();
-    console.log(stockData);
     setStockData(stockData);
   }
 

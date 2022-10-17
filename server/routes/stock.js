@@ -32,7 +32,7 @@ router.get('/:ticker', async (ctx) => {
 
 	} catch (e) {
 		ctx.status = 400;
-		ctx.body = {message: "Error fetching response from server!"};
+		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
 		return;
 	}
 
@@ -49,7 +49,7 @@ router.get('/:ticker', async (ctx) => {
 	so create error message if this data is received before passing to body */
 	if(!queryData.data.regularMarketPrice) {
 		ctx.status = 400;
-		ctx.body = {message: "Invalid ticker symbol"};
+		ctx.body = {message: "Invalid ticker symbol", status: ctx.status};
 		return;
 	}
 

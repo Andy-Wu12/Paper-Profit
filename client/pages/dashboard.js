@@ -12,10 +12,6 @@ export default function Dashboard() {
   
   const [stockData, setStockData] = useState(null);
 
-  useEffect(() => {
-    console.log(stockData);
-  }, [stockData])
-
   return (
     <div className={styles.container}>
       <Head>
@@ -24,14 +20,11 @@ export default function Dashboard() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className={styles.main}>
-        <h1 className={styles.title}> 
-          Dashboard
-        </h1>
+      <h1 className={styles.title}> Dashboard </h1>
 
-        <StockSearchForm setStockData={setStockData} />
-        <StockDetails stockData={stockData} />
-      </div>
+      <StockSearchForm setStockData={setStockData} />
+      {stockData && <StockDetails stockDataJSON={stockData} />}
+
     </div>
   );
 }

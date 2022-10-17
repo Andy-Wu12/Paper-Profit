@@ -1,0 +1,12 @@
+
+.prices {
+  font-size: calc(100% - 4px);
+}
+
+.askPrice {
+  color: green;
+}
+
+.bidPrice {
+  color: red;
+}

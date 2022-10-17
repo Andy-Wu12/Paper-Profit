@@ -4,8 +4,15 @@ export default function StockSearchForm({setStockData}) {
   async function handleSubmit(e) {
     e.preventDefault();
     const tickerSymbol = e.target.ticker.value;
+    if(!tickerSymbol) {
+      // Another option is to setStockData(null) to show error in StockDetail component, 
+      // but this may be against good UX
+      return;
+    }
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
     const stockData = await response.json();
+    console.log(stockData);
     setStockData(stockData);
   }
 

@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 
 import Transaction from '../mongodb/models/transaction.js';
+import User from '../mongodb/models/user.js';
 
 export const router = new Router({prefix: '/transaction'});
 
@@ -21,6 +22,15 @@ router.post('/buy', async (ctx) => {
     }
 
     // TODO: Check if user has enough money to buy
+    const user = await User.findOne({username: username});
+    const transactionCost = quantity * price;
+
+    // console.log({transactionCost: transactionCost, balance: user.balance});
+
+    if(user.balance < transactionCost) {
+      throw new Error('User balance too low for transaction');
+    }
+
     const transaction = new Transaction({
       username: username, 
       symbol: symbol,
@@ -30,12 +40,18 @@ router.post('/buy', async (ctx) => {
     });
     transaction.save();
 
+    await User.updateOne(
+      {username: username},
+      {balance: user.balance - transactionCost}
+    );
+
+
     ctx.status = 200;
     ctx.body = {message: 'Transaction successful', status: ctx.status};
     
   } catch(e) {
     ctx.status = 400;
-    ctx.body = {message: 'Bad request', status: ctx.status}
+    ctx.body = {message: e.message, status: ctx.status}
   }
 
 });

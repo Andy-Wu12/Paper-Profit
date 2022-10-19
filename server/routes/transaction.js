@@ -9,6 +9,7 @@ router.post('/buy', async (ctx) => {
   const postBody = ctx.request.body;
 
   const username = postBody.username;
+  const price = postBody.price;
   const symbol = queryDict.symbol;
 
   // Hardcode quantity for now
@@ -20,7 +21,13 @@ router.post('/buy', async (ctx) => {
     }
 
     // TODO: Check if user has enough money to buy
-    const transaction = new Transaction({username: username, symbol: symbol, action: 'buy', quantity: quantity});
+    const transaction = new Transaction({
+      username: username, 
+      symbol: symbol,
+      action: 'buy', 
+      quantity: quantity, 
+      price: price
+    });
     transaction.save();
 
     ctx.status = 200;
@@ -38,6 +45,7 @@ router.post('/sell', async (ctx) => {
   const postBody = ctx.request.body;
 
   const username = postBody.username;
+  const price = postBody.price;
   const symbol = queryDict.symbol;
 
   // Hardcode quantity for now
@@ -49,7 +57,13 @@ router.post('/sell', async (ctx) => {
     }
     
     // TODO: Check if user owns shares before transaction is made.
-    const transaction = new Transaction({username: username, symbol: symbol, action: 'sell', quantity: quantity});
+    const transaction = new Transaction({
+      username: username, 
+      symbol: symbol, 
+      action: 'sell', 
+      quantity: quantity,
+      price: price
+    });
     transaction.save();
 
     ctx.status = 200;

@@ -6,7 +6,7 @@ import stockDetailStyles from '../../styles/StockDetail.module.css';
 import ActionButton from '../generic/action-button';
 
 // TODO: Allow user to choose amount of shares to purchase / sell
-export function BuyForm({stockSymbol}) {
+export function BuyForm({stockSymbol, symbolData}) {
   const user = useContext(AuthContext);
   const router = useRouter();
 
@@ -19,7 +19,8 @@ export function BuyForm({stockSymbol}) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "username": user.name
+        "username": user.name,
+        "price": symbolData.ask
       })
     });
     // router.reload();
@@ -32,7 +33,7 @@ export function BuyForm({stockSymbol}) {
   )
 }
 
-export function SellForm({stockSymbol}) {
+export function SellForm({stockSymbol, symbolData}) {
   const user = useContext(AuthContext);
 
   const sell = async () => {
@@ -44,7 +45,8 @@ export function SellForm({stockSymbol}) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "username": user.name
+        "username": user.name,
+        "price": symbolData.bid
       })
     });
   }

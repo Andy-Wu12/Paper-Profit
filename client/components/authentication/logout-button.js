@@ -2,7 +2,9 @@ import { useContext } from "react";
 import AuthContext from "./authContext";
 import { useRouter } from "next/router";
 
-import formStyles from '../styles/forms.module.css';
+import ActionButton from "../generic/action-button";
+
+import formStyles from '../../styles/forms.module.css';
 
 export default function LogoutForm() {
   const user = useContext(AuthContext);
@@ -29,14 +31,11 @@ function LogoutButton({username}) {
         "username": username
       })
     });
+    // TODO: Trigger redirect to signup / login page
     router.reload();
   }
 
   return (
-    <div className={formStyles.button}>
-      <button type="button" onClick={logout}>
-        Log Out
-      </button>
-    </div>
+    <ActionButton onClick={logout} buttonText='Log Out' className={formStyles.button} />
   )
 }

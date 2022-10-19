@@ -1,5 +1,5 @@
-import styles from '../styles/Home.module.css'
-import formStyles from '../styles/forms.module.css'
+import styles from '../../styles/Home.module.css'
+import formStyles from '../../styles/forms.module.css'
 
 import { Fragment } from 'react';
 import { useRouter } from 'next/router';

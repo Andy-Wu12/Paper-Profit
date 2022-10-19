@@ -1,4 +1,4 @@
-import forms from '../components/authenticate-form'
+import forms from './authenticate-form'
 
 export default function ToggleableForm({isLogin, handleClick}) {
   return (

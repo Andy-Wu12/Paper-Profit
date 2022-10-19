@@ -3,9 +3,9 @@ import { useState, useContext, useEffect } from 'react'
 
 import styles from '../styles/Home.module.css'
 
-import AuthContext from '../components/authContext'
-import StockSearchForm from '../components/dashboard/stock-search'
-import StockDetails from '../components/dashboard/stock-details'
+import AuthContext from '../components/authentication/authContext.js'
+import StockSearchForm from '../components/dashboard/stock-search.js'
+import StockDetails from '../components/dashboard/stock-details.js'
 
 export default function Dashboard() {
   const user = useContext(AuthContext);

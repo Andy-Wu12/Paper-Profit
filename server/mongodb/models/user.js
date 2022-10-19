@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.details = function getDetails() {
-  const details = this;
+  const details = {username: this.username, balance: this.balance, email: this.email};
   return details;
 }
 

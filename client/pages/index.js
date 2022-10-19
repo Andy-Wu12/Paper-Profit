@@ -6,8 +6,8 @@ import { useState, useContext } from 'react'
 import styles from '../styles/Home.module.css'
 import formStyles from '../styles/forms.module.css'
 
-import ToggleableForm from '../components/toggle-form'
-import AuthContext from '../components/authContext'
+import ToggleableForm from '../components/authentication/toggle-form.js'
+import AuthContext from '../components/authentication/authContext.js'
 
 export default function Home() {
   const user = useContext(AuthContext);

@@ -1,10 +1,11 @@
 import '../styles/globals.css'
 
 import { useContext, useEffect, useState } from 'react'
-import { AuthContext, getUserDetails } from '../components/authContext'
-
 import Footer from '../components/footer';
-import LogoutForm from '../components/logout-button';
+
+import { AuthContext, getUserDetails } from '../components/authentication/authContext'
+import LogoutForm from '../components/authentication/logout-button';
+
 
 function MyApp({ Component, pageProps }) {
   const userContext = useContext(AuthContext);

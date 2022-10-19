@@ -43,6 +43,7 @@ router.post('/signup', async (ctx) => {
 
     const newUser = new User({username: username, email: email});
     await newUser.save();
+    console.log(newUser.details());
 
     const newAuth = new Auth({username: username, password: hash});
     await newAuth.save();

@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, dropDups: true},
   email: { type: String, required: true, unique: true, dropDups: true },
+  balance: { type: Number, default: 100000 }
 });
 
-userSchema.methods.details = function getName() {
-  const details = {username: this.username, email: this.email};
+userSchema.methods.details = function getDetails() {
+  const details = this;
   return details;
 }
 

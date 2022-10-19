@@ -11,8 +11,21 @@ export function BuyForm({stockSymbol}) {
   const router = useRouter();
 
   const buy = async () => {
-    console.log(`Bought ${stockSymbol}`)
-  };
+    console.log(`Bought ${stockSymbol}`);
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transaction/buy?symbol=${stockSymbol}`, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "username": user.name
+      })
+    });
+    // TODO: Trigger redirect to signup / login page
+    // router.reload();
+  }
 
   return (
     <>
@@ -34,5 +47,4 @@ export function SellForm({stockSymbol}) {
   )
 }
 
-export const TransactionButton = { BuyForm, SellForm };
-export default TransactionButton;
+export default { BuyForm, SellForm };

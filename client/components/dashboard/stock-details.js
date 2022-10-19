@@ -1,5 +1,9 @@
+import { useRouter } from 'next/router';
+
 import styles from '../../styles/Home.module.css'
+
 import stockDetailStyles from '../../styles/StockDetail.module.css'
+import { BuyForm, SellForm } from './transaction-form';
 
 export default function StockDetails({stockDataJSON}) {  
   const isSuccess = stockDataJSON.status === 200;
@@ -22,14 +26,18 @@ export function StockDetail({stockData}) {
 }
 
 export function StockHeading({stockData}) {
+  const router = useRouter();
+
+  const params = router.query;
+
   return (
     <>
       <h2> {stockData.longName + ' '} </h2>
       <span className={stockDetailStyles.prices}>
         <span className={stockDetailStyles.askPrice}> {stockData.ask} </span>
-        <button className={stockDetailStyles.buy}> BUY </button> <br/><br/>
+        <BuyForm stockSymbol={params.symbol} /> <br/><br/>
         <span className={stockDetailStyles.bidPrice}> {stockData.bid} </span>
-        <button className={stockDetailStyles.sell}> SELL </button>
+        <SellForm stockSymbol={params.symbol} /> 
       </span>
     </>
   )

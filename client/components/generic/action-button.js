@@ -1,10 +1,10 @@
 
 export default function ActionButton({onClick, buttonText, className}) {
   return (
-    <div className={className}>
-      <button type="button" onClick={onClick}>
+    <>
+      <button className={className} type="button" onClick={onClick}>
         {buttonText}
       </button>
-    </div>
+    </>
   )
 }

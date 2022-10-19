@@ -26,9 +26,10 @@ export function StockHeading({stockData}) {
     <>
       <h2> {stockData.longName + ' '} </h2>
       <span className={stockDetailStyles.prices}>
-        <span className={stockDetailStyles.askPrice}> {stockData.ask} </span> {' '}
-        / {' '} 
+        <span className={stockDetailStyles.askPrice}> {stockData.ask} </span>
+        <button className={stockDetailStyles.buy}> BUY </button> <br/><br/>
         <span className={stockDetailStyles.bidPrice}> {stockData.bid} </span>
+        <button className={stockDetailStyles.sell}> SELL </button>
       </span>
     </>
   )

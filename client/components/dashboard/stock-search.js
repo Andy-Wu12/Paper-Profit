@@ -1,6 +1,9 @@
+import { useRouter } from 'next/router';
 import styles from '../../styles/Home.module.css'
 
 export default function StockSearchForm({setStockData}) {  
+  const router = useRouter();
+
   async function handleSubmit(e) {
     e.preventDefault();
     const tickerSymbol = e.target.ticker.value;
@@ -10,6 +13,7 @@ export default function StockSearchForm({setStockData}) {
       return;
     }
 
+    router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
     const stockData = await response.json();
     setStockData(stockData);

@@ -124,7 +124,7 @@ router.post('/logout', async (ctx) => {
       ctx.status = 400;
       ctx.body['message'] = 'That user does not exist';
     }
-    ctx.cookies.set(sessionCookieName);
+    ctx.cookies.set(sessionCookieName, null, sessionConfig);
 
   } catch(error) {
     ctx.status = 400;

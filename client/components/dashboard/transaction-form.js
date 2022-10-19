@@ -11,7 +11,6 @@ export function BuyForm({stockSymbol}) {
   const router = useRouter();
 
   const buy = async () => {
-    console.log(`Bought ${stockSymbol}`);
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transaction/buy?symbol=${stockSymbol}`, {
       method: "POST",
       mode: "cors",
@@ -23,7 +22,6 @@ export function BuyForm({stockSymbol}) {
         "username": user.name
       })
     });
-    // TODO: Trigger redirect to signup / login page
     // router.reload();
   }
 
@@ -35,9 +33,20 @@ export function BuyForm({stockSymbol}) {
 }
 
 export function SellForm({stockSymbol}) {
+  const user = useContext(AuthContext);
 
   const sell = async () => {
-    console.log(`Sold ${stockSymbol}`)
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transaction/sell?symbol=${stockSymbol}`, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "username": user.name
+      })
+    });
   }
 
   return (

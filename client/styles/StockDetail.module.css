@@ -14,3 +14,20 @@
 .descList {
   font-size: 20px;
 }
+
+.buy {
+  background-color: #4fe50b;
+  
+}
+
+.sell {
+  background-color: red;
+}
+
+.buy,
+.sell {
+  height: clamp(30px, 10vw, 50px);
+  width: clamp(50px, 10vw, 80px);
+  color: black;
+  font-weight: 800;
+}

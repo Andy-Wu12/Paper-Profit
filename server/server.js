@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 import userRouter from './routes/users.js';
 import authRouter from './routes/auth.js';
 import stockRouter from './routes/stock.js';
+import transactionRouter from './routes/transaction.js';
 
 const app = new Koa();
 const router = new Router();
@@ -86,6 +87,7 @@ app.use(router.routes());
 app.use(userRouter.routes());
 app.use(authRouter.routes());
 app.use(stockRouter.routes());
+app.use(transactionRouter.routes());
 
 app.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`);

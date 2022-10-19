@@ -36,6 +36,8 @@ function LogoutButton({username}) {
   }
 
   return (
-    <ActionButton onClick={logout} buttonText='Log Out' className={formStyles.button} />
+    <div className={formStyles.button}>
+      <ActionButton onClick={logout} buttonText='Log Out' />
+    </div>
   )
 }

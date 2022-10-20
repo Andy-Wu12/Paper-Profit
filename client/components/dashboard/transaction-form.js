@@ -8,7 +8,7 @@ import ActionButton from '../generic/action-button';
 // TODO: Allow user to choose amount of shares to purchase / sell
 export function BuyForm({stockSymbol, symbolData}) {
   const user = useContext(AuthContext);
-  const router = useRouter();
+  const inputID = 'buy-quantity-input';
 
   const buy = async () => {
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transaction/buy?symbol=${stockSymbol}`, {
@@ -20,21 +20,23 @@ export function BuyForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData.ask
+        "price": symbolData.ask,
+        "quantity": document.getElementById(inputID).value
       })
     });
-    // router.reload();
   }
 
   return (
     <>
-      <ActionButton onClick={buy} buttonText='Buy' className={stockDetailStyles.buy} />
+      <ActionButton onClick={buy} buttonText='Buy' className={stockDetailStyles.buy} /> &nbsp;
+      <input type="number" className={stockDetailStyles.quantityInput} defaultValue='1' id={inputID} name="buy-quantity" />
     </>
   )
 }
 
 export function SellForm({stockSymbol, symbolData}) {
   const user = useContext(AuthContext);
+  const inputID = 'sell-quantity-input';
 
   const sell = async () => {
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/transaction/sell?symbol=${stockSymbol}`, {
@@ -46,14 +48,16 @@ export function SellForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData.bid
+        "price": symbolData.bid,
+        "quantity": document.getElementById(inputID).value
       })
     });
   }
 
   return (
     <>
-      <ActionButton onClick={sell} buttonText='Sell' className={stockDetailStyles.sell} />
+      <ActionButton onClick={sell} buttonText='Sell' className={stockDetailStyles.sell} /> &nbsp;
+      <input type="number" className={stockDetailStyles.quantityInput} defaultValue='1' id={inputID} name="sell-quantity" />
     </>
   )
 }

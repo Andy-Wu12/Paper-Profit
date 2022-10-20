@@ -77,7 +77,7 @@ router.post('/sell', async (ctx) => {
   const postBody = ctx.request.body;
 
   const username = postBody.username;
-  const price = postBody.price;
+  const sellPrice = postBody.price;
   const symbol = queryDict.symbol;
 
   // Hardcode quantity for now
@@ -91,13 +91,13 @@ router.post('/sell', async (ctx) => {
     const user = await User.findOne({username: username});
     // Check if user's portfolio contains the specified symbols
     const portfolio = await Portfolio.findOne({username: username, 'holdings.symbol': {$in: symbol}});
-    if(portfolio.length < 1) {
+    if(!portfolio) {
       throw new Error(`${username} does not own shares of ${symbol}`);
     }
 
     // Sort assets by date to get FIFO sell order
     const holdings = portfolio.holdings;
-    sortedByDate(holdings, 'datePurchased');
+    sortByDate(holdings, 'datePurchased');
 
     // Validate enough shares of symbol
     let numShares = 0;
@@ -113,37 +113,50 @@ router.post('/sell', async (ctx) => {
       }
     };
 
-    console.log(fifoHoldings);
-    // TODO: If valid number of shares, sell else throw Error
+    // TODO: If valid number of shares, sell with FIFO principle else throw Error.
+    if(numShares >= quantity) {
+      let valueLoss = 0;
+      let netProfit = 0;
+      let sharesToSell = quantity;
+      let index = 0;
+      while(sharesToSell > 0) {
+        // Iterate through holdings until desired amount of shares sold.
+        let holding = fifoHoldings[index++];
+        const sharesToSellFromDoc = Math.min(holding.quantity, sharesToSell);
+        sharesToSell -= sharesToSellFromDoc;
+        // Track remaining holding quantity and value loss of portfolio (not net profit / loss)
+        holding.quantity -= sharesToSellFromDoc;
+        valueLoss += sharesToSellFromDoc * holding.pricePerShare;
+        netProfit += sharesToSellFromDoc * sellPrice;
 
-    // const gain = 0;
-
-    // const transaction = new Transaction({
-    //   username: username, 
-    //   symbol: symbol, 
-    //   action: 'sell', 
-    //   quantity: quantity,
-    //   price: price,
-    //   date: Date.now()
-    // });
-    // transaction.save();
-
-    // await Portfolio.updateOne(
-    //   {username: username},
-    //   {
-    //     value: portfolio.value + (price * quantity),
-    //     $push: {holdings: {
-    //     symbol: symbol,
-    //     quantity: quantity,
-    //     pricePerShare: price,
-    //     datePurchased: purchaseTime
-    //   }}},
-    // );
-    
-    // await User.updateOne(
-    //   {username: username},
-    //   {balance: user.balance + gain}
-    // );
+        if(holding.quantity < 1) {
+          // Remove the element from holdings if all of the shares are sold
+          await Portfolio.updateOne(
+            {username: username},
+            {
+              value: portfolio.value - valueLoss,
+              $pull: {holdings: {
+                _id: holding._id
+            }}},
+          );
+        }
+        else {
+          // Only portion of all shares sold from this holding
+          await Portfolio.findOneAndUpdate({'holdings._id': holding._id}, 
+          {$set: {
+              'holdings.$.quantity': holding.quantity, 
+              value: portfolio.value - valueLoss
+            }
+          });
+        }
+      }
+      // Update user balance with profit / loss
+      user.balance += netProfit;
+      user.save();
+    }
+    else {
+      throw new Error(`${username} does not own enough shares of ${symbol} to sell ${quantity}`);
+    }
 
     ctx.status = 200;
     ctx.body = {message: 'Transaction successful', status: ctx.status};
@@ -155,7 +168,7 @@ router.post('/sell', async (ctx) => {
 
 });
 
-function sortedByDate(list, dateKeyName) {
+function sortByDate(list, dateKeyName) {
   list.sort(function(a, b) {
     if(a[dateKeyName] < b[dateKeyName]) return -1;
     if(a[dateKeyName] > b[dateKeyName]) return 1;

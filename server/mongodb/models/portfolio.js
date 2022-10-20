@@ -6,7 +6,7 @@ const portfolioSchema = new mongoose.Schema({
     symbol: { type: String, required: true },
     quantity: { type: Number, required: true },
     pricePerShare: { type: Number, required: true },
-    datePurchased: { type: Date, default: Date.now() }
+    datePurchased: { type: Date, required: true }
   }], default: []},
   value: { type: Number, default: 0 }
 

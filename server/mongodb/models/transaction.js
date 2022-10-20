@@ -7,7 +7,7 @@ const transactionSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
   action: { type: String, required: true },
-  date: { type: Date, default: Date.now }
+  date: { type: Date, required: true }
 
 });
 

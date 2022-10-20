@@ -29,12 +29,15 @@ router.post('/buy', async (ctx) => {
       throw new Error('User balance too low for transaction');
     }
 
+    const purchaseTime = Date.now();
+
     const transaction = new Transaction({
       username: username,
       symbol: symbol,
       action: 'buy', 
       quantity: quantity, 
-      price: price
+      price: price,
+      date: purchaseTime
     });
     transaction.save();
 
@@ -48,7 +51,8 @@ router.post('/buy', async (ctx) => {
         $push: {holdings: {
         symbol: symbol,
         quantity: quantity,
-        pricePerShare: price
+        pricePerShare: price,
+        datePurchased: purchaseTime
       }}},
     );
     

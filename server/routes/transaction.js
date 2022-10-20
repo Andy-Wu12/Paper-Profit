@@ -13,9 +13,7 @@ router.post('/buy', async (ctx) => {
   const username = postBody.username;
   const price = postBody.price;
   const symbol = queryDict.symbol;
-
-  // Hardcode quantity for now
-  const quantity = 1;
+  const quantity = postBody.quantity;
 
   try {
     if(queryDict === '{}') {
@@ -79,9 +77,7 @@ router.post('/sell', async (ctx) => {
   const username = postBody.username;
   const sellPrice = postBody.price;
   const symbol = queryDict.symbol;
-
-  // Hardcode quantity for now
-  const quantity = 1;
+  const quantity = postBody.quantity;
 
   try {
     if(queryDict === '{}') {

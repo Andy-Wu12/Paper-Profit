@@ -5,6 +5,7 @@ import { randomBytes } from 'crypto';
 import User from '../mongodb/models/user.js';
 import Session from '../mongodb/models/session.js';
 import Auth from '../mongodb/models/auth.js';
+import Portfolio from '../mongodb/models/portfolio.js';
 
 export const router = new Router({prefix: '/auth'});
 
@@ -47,8 +48,10 @@ router.post('/signup', async (ctx) => {
 
     const newAuth = new Auth({username: username, password: hash});
     await newAuth.save();
+    
+    const portfolio = new Portfolio({username: username});
+    portfolio.save();
 
-    // TODO: Automatically login user and set session cookie
     const cookie = await makeAndSaveSessionCookie(username);
     ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
 

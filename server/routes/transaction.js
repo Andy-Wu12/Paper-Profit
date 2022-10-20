@@ -2,6 +2,7 @@ import Router from '@koa/router';
 
 import Transaction from '../mongodb/models/transaction.js';
 import User from '../mongodb/models/user.js';
+import Portfolio from '../mongodb/models/portfolio.js';
 
 export const router = new Router({prefix: '/transaction'});
 
@@ -21,18 +22,15 @@ router.post('/buy', async (ctx) => {
       throw new Error('Invalid request');
     }
 
-    // TODO: Check if user has enough money to buy
     const user = await User.findOne({username: username});
     const transactionCost = quantity * price;
-
-    // console.log({transactionCost: transactionCost, balance: user.balance});
 
     if(user.balance < transactionCost) {
       throw new Error('User balance too low for transaction');
     }
 
     const transaction = new Transaction({
-      username: username, 
+      username: username,
       symbol: symbol,
       action: 'buy', 
       quantity: quantity, 
@@ -40,6 +38,20 @@ router.post('/buy', async (ctx) => {
     });
     transaction.save();
 
+    // Update User's portfolio holdings
+    const portfolio = await Portfolio.findOne({username: username});
+
+    await Portfolio.updateOne(
+      {username: username},
+      {
+        value: portfolio.value + (price * quantity),
+        $push: {holdings: {
+        symbol: symbol,
+        quantity: quantity,
+        pricePerShare: price
+      }}},
+    );
+    
     await User.updateOne(
       {username: username},
       {balance: user.balance - transactionCost}

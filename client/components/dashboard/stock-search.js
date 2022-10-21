@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
 import styles from '../../styles/Home.module.css'
 
-export default function StockSearchForm({setStockData, setShowHoldings}) {  
+export default function StockSearchForm({setStockData, setShowHoldings, setIsLoading}) {  
   const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setIsLoading(true);
     const tickerSymbol = e.target.ticker.value;
     if(!tickerSymbol) {
       // Another option is to setStockData(null) to show error in StockDetail component, 
@@ -18,6 +19,7 @@ export default function StockSearchForm({setStockData, setShowHoldings}) {
     const stockData = await response.json();
     setStockData(stockData);
     setShowHoldings(false);
+    setIsLoading(false);
   }
 
   return (

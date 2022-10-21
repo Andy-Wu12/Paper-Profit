@@ -7,14 +7,22 @@ import styles from '../styles/Home.module.css'
 import AuthContext from '../components/authentication/authContext.js'
 import StockSearchForm from '../components/dashboard/stock-search.js'
 import StockDetails from '../components/dashboard/stock-details.js'
-import HoldingDetails from '../components/dashboard/holdings.js'
+import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
+import Loading from '../components/generic/loading'
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
-  
+
   const [stockData, setStockData] = useState(null);
   const [showHoldings, setShowHoldings] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const setterProps = {
+    setStockData,
+    setShowHoldings,
+    setIsLoading
+  }
 
   return (
     <div className={styles.container}>
@@ -26,30 +34,21 @@ export default function Dashboard() {
 
       <h1 className={styles.title}> Dashboard </h1>
       {/* Components that should always render */}
-      <NavStateTriggers setStockData={setStockData} setShowHoldings={setShowHoldings} />
-      <StockSearchForm setStockData={setStockData} setShowHoldings={setShowHoldings} />
+      <NavStateTriggers setShowHoldings={setShowHoldings} />
+      <StockSearchForm {...setterProps} />
 
       {/* Components that conditionally render */}
-      {showHoldings ? <Holdings /> : 
-      <StockSearch stockData={stockData} setStockData={setStockData} /> }
+      {isLoading ? <Loading /> : 
+      showHoldings ? <Positions /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
 
     </div>
   );
 }
 
-function StockSearch({stockData, setStockData}) {
+function StockSearch({stockData}) {
   return (
     <>
       {stockData && <StockDetails stockDataJSON={stockData} />}
-    </>
-  );
-}
-
-function Holdings() {
-  return (
-    <>
-      <h2> Holdings </h2>
-      <HoldingDetails />
     </>
   );
 }

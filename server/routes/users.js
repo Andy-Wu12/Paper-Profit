@@ -3,6 +3,7 @@ import Router from '@koa/router';
 import User from '../mongodb/models/user.js';
 import Session from '../mongodb/models/session.js';
 import { sessionCookieName } from './auth.js';
+import Portfolio from '../mongodb/models/portfolio.js';
 
 const router = new Router({ prefix: '/users' })
 
@@ -42,8 +43,51 @@ router.get('/session', async (ctx) => {
 
 });
 
+router.get('/:username/holdings', async (ctx) => {
+	try {
+		const portfolio = await Portfolio.findOne({username: ctx.params['username']});
+		const holdings = portfolio.holdings;
+		const uniqueSymbols = Array.from(new Set(holdings.map((holding) => { return holding.symbol } )));
+		
+		/* Combine all different holdings of same symbol into one
+			{
+				unique_symbol: string {
+					# shares: int,
+					totalPrice: float,
+					avgPrice: float,
+				}
+				uniqueSymbolTwo: string {
+					# shares: int, 
+					totalPrice: float,
+					avgPrice: float,
+				}
+			}
+		*/
+		const symbolData = {};
+
+		for(const symbol of uniqueSymbols) {
+			symbolData[symbol] = { quantity: 0, totalPrice: 0, avgPrice: 0 };
+		}
+
+		// Process all positions and update corresponding symbol's data
+		for(const holding of holdings) {
+			const positionData = symbolData[holding.symbol];
+
+			positionData.quantity += holding.quantity;
+			positionData.totalPrice += holding.pricePerShare * holding.quantity;
+			positionData.avgPrice = positionData.totalPrice / positionData.quantity;
+		}
+		
+		ctx.body = symbolData;
+		
+	} catch (e) {
+		ctx.status = 400;
+		ctx.message = e.message;
+	}
+});
+
 router.get('/:username', async (ctx) => {
-	ctx.body = await User.find({username: ctx.params['username']});
+	ctx.body = await User.findOne({username: ctx.params['username']});
 });
 
 export default router;

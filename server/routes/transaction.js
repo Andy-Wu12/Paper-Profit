@@ -109,7 +109,6 @@ router.post('/sell', async (ctx) => {
       }
     };
 
-    // TODO: If valid number of shares, sell with FIFO principle else throw Error.
     if(numShares >= quantity) {
       let valueLoss = 0;
       let netProfit = 0;
@@ -149,6 +148,17 @@ router.post('/sell', async (ctx) => {
       // Update user balance with profit / loss
       user.balance += netProfit;
       user.save();
+
+      // Add transaction record
+      const transaction = new Transaction({
+        username: username,
+        symbol: symbol,
+        action: 'sell', 
+        quantity: quantity,
+        price: sellPrice,
+        date: Date.now(),
+      });
+      transaction.save();
     }
     else {
       throw new Error(`${username} does not own enough shares of ${symbol} to sell ${quantity}`);

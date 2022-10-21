@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import styles from '../../styles/Home.module.css'
 
-export default function StockSearchForm({setStockData}) {  
+export default function StockSearchForm({setStockData, setShowHoldings}) {  
   const router = useRouter();
 
   async function handleSubmit(e) {
@@ -17,6 +17,7 @@ export default function StockSearchForm({setStockData}) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
     const stockData = await response.json();
     setStockData(stockData);
+    setShowHoldings(false);
   }
 
   return (

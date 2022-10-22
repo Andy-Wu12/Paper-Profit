@@ -63,14 +63,11 @@ function HomePage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome {user.name}.
+          Welcome {user.name}
         </h1>
 
-        <p className={styles.description}>
-          Get started with your virtual $100000 by clicking the button below.
-        </p>
         <button type='click' className={formStyles.button}>
-          <Link href='/dashboard'><a> Dashboard </a></Link>
+          <Link href='/dashboard'><a> Go to Dashboard </a></Link>
         </button>
       </main>
 

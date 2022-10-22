@@ -27,7 +27,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if(!localStorage.getItem('user')) { 
-      router.push('/'); 
+      router.push('/');
     }
   }, [user.name])
 
@@ -41,6 +41,7 @@ export default function Dashboard() {
 
       <h1 className={styles.title}> Dashboard </h1>
       {/* Components that should always render */}
+      <Balance username={user.name} />
       <NavStateTriggers setShowHoldings={setShowHoldings} />
       <StockSearchForm {...setterProps} />
 
@@ -87,4 +88,25 @@ function ShowHoldingsButton({holdingsTrigger}) {
   return (
     <ActionButton onClick={onClick} buttonText='Show Holdings' />
   );
+}
+
+function Balance({username}) {
+  const [balance, setBalance] = useState(null);
+
+  useEffect(() => {
+    const getBalance = async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${username}`);
+      const data = await response.json();
+      setBalance((data.balance).toFixed(2));
+    };
+
+    getBalance();
+
+  });
+
+  return (
+    <>
+      {balance && <h2> Your Remaining Cash: {balance} </h2>}
+    </>
+  )
 }

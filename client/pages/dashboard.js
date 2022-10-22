@@ -1,5 +1,5 @@
 import Head from 'next/head'
-
+import {useRouter} from 'next/router'
 import { useState, useContext, useEffect } from 'react'
 
 import styles from '../styles/Home.module.css'
@@ -13,6 +13,7 @@ import Loading from '../components/generic/loading'
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
+  const router = useRouter();
 
   const [stockData, setStockData] = useState(null);
   const [showHoldings, setShowHoldings] = useState(true);
@@ -23,6 +24,12 @@ export default function Dashboard() {
     setShowHoldings,
     setIsLoading
   }
+
+  useEffect(() => {
+    if(!localStorage.getItem('user')) { 
+      router.push('/'); 
+    }
+  }, [user.name])
 
   return (
     <div className={styles.container}>

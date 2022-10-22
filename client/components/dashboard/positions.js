@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import styles from '../../styles/Home.module.css'
+
 import AuthContext from '../authentication/authContext';
 
 export default function Positions() {
@@ -9,10 +9,18 @@ export default function Positions() {
   
   useEffect(() => {
     const getPositions = async() => {
-      if(user.name) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.name}/holdings`);
-        const data = await response.json();
-        setPositionsData(data);
+      try {
+        if(user.name) {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.name}/holdings`);
+          const data = await response.json();
+          if(Object.keys(data).length === 0) { setPositionsData(null); }
+          else { setPositionsData(data); }
+        }
+        else {
+          throw new Error();
+        }
+      } catch (e) {
+        setPositionsData(null);
       }
     };
 
@@ -23,17 +31,9 @@ export default function Positions() {
   return (
     <>
       <h2> Your Positions </h2>
-      <PositionDetails positionDataJSON={positionData} />
+      {positionData ? <PositionGrid positionDataJSON={positionData} /> : <h3> No positions to show! </h3> }
     </>
   );
-}
-
-function PositionDetails({positionDataJSON}) {
-  return (
-    <>
-      {positionDataJSON ? <PositionGrid positionDataJSON={{}} /> : <h3> No positions to show! </h3> }
-    </>
-  )
 }
 
 function PositionGrid({positionDataJSON}) {

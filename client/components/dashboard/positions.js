@@ -37,6 +37,20 @@ export default function Positions() {
 }
 
 function PositionGrid({positionDataJSON}) {
+  const positions = [];
+
+  for (const [symbol, data] of Object.entries(positionDataJSON)) {
+    const gridRow = (
+      <tr key={`${symbol}-grid-data`}>
+        <td> {symbol} </td>
+        <td> {data.avgPrice.toFixed(2)} </td>
+        <td> {data.totalPrice.toFixed(2)} </td>
+        <td> {data.quantity} </td>
+      </tr>
+    )
+    positions.push(gridRow);
+  }
+
   return (
     <>
       <table>
@@ -48,6 +62,7 @@ function PositionGrid({positionDataJSON}) {
             <th> Quantity </th>
           </tr>
           {/* Render position data */}
+          {positions}
         </tbody>
       </table>
     </>

@@ -35,7 +35,8 @@ export function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await fetch(`${baseAPI_URL}/auth/login`, {
+    const username = e.target.elements.username.value;
+    const response = await fetch(`${baseAPI_URL}/auth/login`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -43,10 +44,13 @@ export function LoginForm() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "username": e.target.elements.username.value, 
+        "username": username, 
         "password": e.target.elements.password.value
       })
     });
+    if(response.ok) {
+      localStorage.setItem("user", JSON.stringify({user: username}));
+    }
     router.reload();
 
     
@@ -63,7 +67,8 @@ export function SignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await fetch(`${baseAPI_URL}/auth/signup`, {
+    const username = e.target.elements.username.value;
+    const response = await fetch(`${baseAPI_URL}/auth/signup`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -73,9 +78,12 @@ export function SignupForm() {
       body: JSON.stringify({
         "email": e.target.elements.email.value, 
         "password": e.target.elements.password.value,
-        "username": e.target.elements.username.value
+        "username": username
       })
     });
+    if(response.ok) {
+      localStorage.setItem("user", JSON.stringify({user: username}));
+    }
     router.reload();
     
   }

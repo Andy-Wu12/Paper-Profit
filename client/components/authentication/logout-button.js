@@ -20,7 +20,7 @@ function LogoutButton({username}) {
   const router = useRouter();
   
   const logout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -31,7 +31,9 @@ function LogoutButton({username}) {
         "username": username
       })
     });
-    // TODO: Trigger redirect to signup / login page
+    if(response.ok) {
+      localStorage.removeItem('user');
+    }
     router.reload();
   }
 

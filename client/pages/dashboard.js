@@ -40,7 +40,6 @@ export default function Dashboard() {
       {/* Components that conditionally render */}
       {isLoading ? <Loading /> : 
       showHoldings ? <Positions /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
-
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import AuthContext from '../authentication/authContext';
+import gridStyles from '../../styles/PositionGrid.module.css';
 
 export default function Positions() {
   const user = useContext(AuthContext);
@@ -41,7 +42,7 @@ function PositionGrid({positionDataJSON}) {
 
   for (const [symbol, data] of Object.entries(positionDataJSON)) {
     const gridRow = (
-      <tr key={`${symbol}-grid-data`}>
+      <tr key={`${symbol}-grid-data`} className={gridStyles.gridRow}>
         <td> {symbol} </td>
         <td> {data.avgPrice.toFixed(2)} </td>
         <td> {data.totalPrice.toFixed(2)} </td>
@@ -54,8 +55,8 @@ function PositionGrid({positionDataJSON}) {
   return (
     <>
       <table>
-        <tbody>
-          <tr>
+        <tbody className={gridStyles.positionsTable}>
+          <tr className={gridStyles.gridRow}>
             <th> Position </th>
             <th> Trade Price </th>
             <th> Cost </th>

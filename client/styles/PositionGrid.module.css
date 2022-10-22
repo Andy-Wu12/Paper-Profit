@@ -1,0 +1,6 @@
+.gridRow > th,
+.gridRow > td {
+  padding-right: 10px;
+  outline: 2px solid grey;
+  text-align: left;
+}

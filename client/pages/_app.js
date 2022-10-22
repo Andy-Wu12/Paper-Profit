@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <AuthContext.Provider value={currentUser}>
-        <Component {...pageProps} />
+        <Component {...pageProps} /> <br/>
         <LogoutForm />
       </AuthContext.Provider>
       <Footer />

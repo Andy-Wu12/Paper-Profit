@@ -95,14 +95,18 @@ function Balance({username}) {
 
   useEffect(() => {
     const getBalance = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${username}`);
-      const data = await response.json();
-      setBalance((data.balance).toFixed(2));
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${username}`);
+        const data = await response.json();
+        setBalance((data.balance).toFixed(2));
+      } catch (e) {
+        setBalance(null);
+      }
     };
 
     getBalance();
 
-  });
+  }, [username]);
 
   return (
     <>

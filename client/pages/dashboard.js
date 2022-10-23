@@ -92,25 +92,23 @@ function ShowHoldingsButton({holdingsTrigger}) {
 
 function Balance({username}) {
   const [balance, setBalance] = useState(null);
+  const [websocket, setWebsocket] = useState(null);
 
   useEffect(() => {
-    const getBalance = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${username}`);
-        const data = await response.json();
-        setBalance((data.balance).toFixed(2));
-      } catch (e) {
-        setBalance(null);
-      }
-    };
-
-    getBalance();
-
-  }, [username]);
+    if(!websocket && username) {
+      const ws = new WebSocket("ws://localhost:3011/balance");
+      ws.addEventListener('open', () => { ws.send(username); });
+      ws.addEventListener('message', (event) => {
+        setBalance(event.data);
+        ws.send(username);
+      })
+      setWebsocket(ws);
+    }
+  });
 
   return (
     <>
-      {balance && <h2> Your Remaining Cash: {balance} </h2>}
+      {balance && <h2> Your Remaining Cash: {parseFloat(balance).toFixed(2)} </h2>}
     </>
   )
 }

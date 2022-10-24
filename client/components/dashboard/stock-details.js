@@ -65,7 +65,7 @@ export function StockDescriptionList({stockData}) {
     return (
       <div key={field} className={stockDetailStyles.descField}>
         <dt className={stockDetailStyles.label}> {fieldToLabel[field]} </dt>
-        <dd className={stockDetailStyles.value}> {stockData[field]} </dd>
+        <dd className={stockDetailStyles.value}> {stockData[field] || '-'} </dd>
       </div>
     )
   });

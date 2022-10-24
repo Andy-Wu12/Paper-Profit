@@ -46,10 +46,9 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
         setWebsocket(socket);
       }
     } catch (e) {
-      // setWebsocket(null);
-      setTest(false);
+      setWebsocket(null);
     }
-  }, []);
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();

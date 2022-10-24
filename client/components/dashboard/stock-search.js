@@ -22,7 +22,11 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
         "source": userPrincipalsResponse.streamerInfo.appId,
         "parameters": {
             "keys": symbol,
-            "fields": "0,1,2"
+            /* 
+            Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
+            for meaning of '#' fields
+            */
+            "fields": "0,1,2,8,30,31,33"
         }
       }
     ]}

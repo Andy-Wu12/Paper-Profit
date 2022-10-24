@@ -26,6 +26,11 @@ export function StockDetail({stockData}) {
 }
 
 export function StockHeading({stockData}) {
+  /* 
+  Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
+  for meaning of ['#'] indexed fields
+  */
+
   const router = useRouter();
 
   const params = router.query;
@@ -34,9 +39,9 @@ export function StockHeading({stockData}) {
     <>
       <h2> {stockData.key + ' '} </h2>
       <span className={stockDetailStyles.prices}>
-        <span className={stockDetailStyles.askPrice}> {stockData['2']} </span>
+        <span className={stockDetailStyles.askPrice}> {stockData['2'].toFixed(2)} </span>
         <BuyForm stockSymbol={params.symbol} symbolData={stockData} /> <br/><br/>
-        <span className={stockDetailStyles.bidPrice}> {stockData['1']} </span>
+        <span className={stockDetailStyles.bidPrice}> {stockData['1'].toFixed(2)} </span>
         <SellForm stockSymbol={params.symbol} symbolData={stockData} /> 
       </span>
     </>
@@ -44,11 +49,16 @@ export function StockHeading({stockData}) {
 }
 
 export function StockDescriptionList({stockData}) {
+  /* 
+  Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
+  for meaning of ['#'] indexed fields
+  */
+
   const fieldToLabel = {
-    'volume': 'Volume',
-    'fiftyTwoWeekHigh': '52-wk High',
-    'fiftyTwoWeekLow': '52-wk Low',
-    'lastDividendValue': 'Dividend'
+    '8': 'Volume',
+    '30': '52-wk High',
+    '31': '52-wk Low',
+    '33': 'Dividend'
   };
 
   const fields = Object.keys(fieldToLabel).map((field) => {

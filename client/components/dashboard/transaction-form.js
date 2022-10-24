@@ -7,6 +7,10 @@ import ActionButton from '../generic/action-button';
 
 // TODO: Allow user to choose amount of shares to purchase / sell
 export function BuyForm({stockSymbol, symbolData}) {
+  /* 
+  Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
+  for meaning of ['#'] indexed fields
+  */
   const user = useContext(AuthContext);
   const inputID = 'buy-quantity-input';
 
@@ -20,7 +24,7 @@ export function BuyForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData.ask,
+        "price": symbolData['2'],
         "quantity": document.getElementById(inputID).value
       })
     });
@@ -48,7 +52,7 @@ export function SellForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData.bid,
+        "price": symbolData['1'],
         "quantity": document.getElementById(inputID).value
       })
     });

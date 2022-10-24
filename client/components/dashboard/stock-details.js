@@ -6,11 +6,11 @@ import stockDetailStyles from '../../styles/StockDetail.module.css'
 import { BuyForm, SellForm } from './transaction-form';
 
 export default function StockDetails({stockDataJSON}) {  
-  const isSuccess = stockDataJSON.status === 200;
+  const isSuccess = stockDataJSON.key;
 
   return (
     <div className={styles.card}>
-      {isSuccess ? <StockDetail stockData={stockDataJSON.data} /> : <h2> Invalid Ticker Symbol </h2>}
+      {isSuccess ? <StockDetail stockData={stockDataJSON} /> : <h2> Invalid Ticker Symbol </h2>}
     </div>
   )
 }
@@ -32,11 +32,11 @@ export function StockHeading({stockData}) {
 
   return (
     <>
-      <h2> {stockData.longName + ' '} </h2>
+      <h2> {stockData.key + ' '} </h2>
       <span className={stockDetailStyles.prices}>
-        <span className={stockDetailStyles.askPrice}> {stockData.ask} </span>
+        <span className={stockDetailStyles.askPrice}> {stockData['2']} </span>
         <BuyForm stockSymbol={params.symbol} symbolData={stockData} /> <br/><br/>
-        <span className={stockDetailStyles.bidPrice}> {stockData.bid} </span>
+        <span className={stockDetailStyles.bidPrice}> {stockData['1']} </span>
         <SellForm stockSymbol={params.symbol} symbolData={stockData} /> 
       </span>
     </>

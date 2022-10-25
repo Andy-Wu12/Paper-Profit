@@ -3,40 +3,17 @@ import { useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css'
 
 // Ameritrade websocket stuff
-import userPrincipals from '../../pages/api/userprincipal.json'
-import CreateWebsocket from '../generic/ameritrade-websocket'
+import Ameritrade from '../generic/ameritrade-websocket'
 
 export default function StockSearchForm({setStockData, setShowHoldings, setIsLoading}) {  
   const router = useRouter();
 
   const [websocket, setWebsocket] = useState(null);
 
-  // TODO: Make API fetch if possible
-  const userPrincipalsResponse = userPrincipals;
-  const stockSubRequest = (symbol) => {
-    return {"requests": [
-      {
-        "service": "QUOTE",
-        "command": "SUBS",
-        "requestid": 1,
-        "account": userPrincipalsResponse.accounts[0].accountId,
-        "source": userPrincipalsResponse.streamerInfo.appId,
-        "parameters": {
-            "keys": symbol,
-            /* 
-            Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
-            for meaning of '#' fields
-            */
-            "fields": "0,1,2,8,30,31,33"
-        }
-      }
-    ]}
-  };
-
   useEffect(() => {
     try {
       if(!websocket) {
-        const socket = CreateWebsocket({
+        const socket = Ameritrade.createWebsocket({
           onMessage: (message) => {
             const data = JSON.parse(message.data);
             if(data.data) {
@@ -56,7 +33,7 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
     e.preventDefault();
     setIsLoading(true);
     const tickerSymbol = e.target.ticker.value;
-    websocket.send(JSON.stringify(stockSubRequest(tickerSymbol)));
+    websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, "0,1,2,8,30,31,33")));
     if(!tickerSymbol) {
       // Another option is to setStockData(null) to show error in StockDetail component, 
       // but this may be against good UX

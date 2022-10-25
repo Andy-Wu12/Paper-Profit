@@ -8,9 +8,9 @@ function jsonToQueryString(json) {
   }).join('&');
 }
 
-export default function CreateWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
-  const userPrincipalsResponse = userPrincipals
+const userPrincipalsResponse = userPrincipals
 
+export function createWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
   //Converts ISO-8601 response in snapshot to ms since epoch accepted by Streamer
   const tokenTimeStampAsDateObj = new Date(userPrincipalsResponse.streamerInfo.tokenTimestamp);
   const tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
@@ -61,3 +61,26 @@ export default function CreateWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onC
 
   return mySock;
 }
+
+export const stockSubRequest = (symbols, fields) => {
+  return {"requests": [
+    {
+      "service": "QUOTE",
+      "command": "SUBS",
+      "requestid": 1,
+      "account": userPrincipalsResponse.accounts[0].accountId,
+      "source": userPrincipalsResponse.streamerInfo.appId,
+      "parameters": {
+          "keys": symbols,
+          /* 
+          Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
+          for meaning of '#' fields
+          */
+          "fields": fields
+      }
+    }
+  ]}
+};
+
+export const Ameritrade = {createWebsocket, stockSubRequest};
+export default Ameritrade;

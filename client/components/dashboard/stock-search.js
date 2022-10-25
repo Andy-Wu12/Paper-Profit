@@ -11,6 +11,7 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
 
   const [websocket, setWebsocket] = useState(null);
 
+  // TODO: Make API fetch if possible
   const userPrincipalsResponse = userPrincipals;
   const stockSubRequest = (symbol) => {
     return {"requests": [

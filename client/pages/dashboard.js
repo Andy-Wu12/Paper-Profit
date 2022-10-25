@@ -95,14 +95,18 @@ function Balance({username}) {
   const [websocket, setWebsocket] = useState(null);
 
   useEffect(() => {
-    if(!websocket && username) {
-      const ws = new WebSocket("ws://localhost:3011/balance");
-      ws.addEventListener('open', () => { ws.send(username); });
-      ws.addEventListener('message', (event) => {
-        setBalance(event.data);
-        ws.send(username);
-      })
-      setWebsocket(ws);
+    try {
+      if(!websocket && username) {
+        const ws = new WebSocket("ws://localhost:3011/balance");
+        ws.addEventListener('open', () => { ws.send(JSON.stringify({username: username, action: 'sub'})); });
+        ws.addEventListener('message', (event) => {
+          setBalance(event.data);
+          // ws.send(username);
+        })
+        setWebsocket(ws);
+      }
+    } catch (e) {
+      setWebsocket(null);
     }
   });
 

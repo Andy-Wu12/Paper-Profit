@@ -40,7 +40,7 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
             const data = JSON.parse(message.data);
             if(data.data) {
               const newData = data.data[0].content[0];
-              setStockData(oldData => {console.log({...oldData, ...newData})});
+              setStockData(oldData => {return {...oldData, ...newData} });
             }
           }
        });

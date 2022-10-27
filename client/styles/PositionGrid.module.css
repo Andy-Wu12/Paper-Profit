@@ -4,3 +4,16 @@
   outline: 2px solid grey;
   text-align: left;
 }
+
+.rtPriceLower {
+  color: red;
+}
+
+.rtPriceHigher {
+  color: greenyellow;
+}
+
+.rtPriceHigher,
+.rtPriceLower {
+  font-size: calc(100% - 3px);
+}

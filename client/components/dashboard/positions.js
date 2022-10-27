@@ -9,7 +9,10 @@ export default function Positions({websocket}) {
   const user = useContext(AuthContext);
 
   const [positionData, setPositionsData] = useState(null);
+
   const [realtimeData, setRealtimeData] = useState(null);
+  const [realtimeIsLoading, setRealtimeIsLoading] = useState(true);
+
   const [isSubbed, setIsSubbed] = useState(false);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function Positions({websocket}) {
         setIsSubbed(false);
       }
 
-      console.log(realtimeData);
+      // console.log(realtimeData);
       if(websocket && positionData) {
         websocket.onmessage = (message) => {
           const data = JSON.parse(message.data);
@@ -53,19 +56,20 @@ export default function Positions({websocket}) {
 
       if(!isSubbed && positionData) {
         const symbols = Object.keys(positionData).join(',');
-        console.log(symbols);
         websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, "0, 2")));
         setIsSubbed(true);
       }
     } catch (e) {
       console.log(e.message);
     }
-  }, [positionData, websocket])
+  }, [realtimeData, positionData, websocket])
 
   return (
     <>
       <h2> Your Positions </h2>
-      {positionData ? <PositionGrid positionDataJSON={positionData} realtimeJSON={realtimeData} /> : <h3> No positions to show! </h3> }
+      {/* TODO: Find way to guarantee realtimeData is fetched and available before reaching this function (on initial render)
+      so extra conditional is not needed */}
+      {(positionData && realtimeData) ? <PositionGrid positionDataJSON={positionData} realtimeJSON={realtimeData} /> : <h3> No positions to show! </h3> }
     </>
   );
 }
@@ -73,11 +77,22 @@ export default function Positions({websocket}) {
 function PositionGrid({positionDataJSON, realtimeJSON}) {
   const positions = [];
 
+  const realtimeData = {};
+
+  // Re-map realtimeJSON data to more easily accessible format when templating
+  for(const [, data] of Object.entries(realtimeJSON)) {
+    realtimeData[data.key] = data;
+  }
+
   for (const [symbol, data] of Object.entries(positionDataJSON)) {
+    const avgPrice = data.avgPrice.toFixed(2);
+    const realtimePrice = realtimeData[symbol][2].toFixed(2);
+    const realtimeClassName = realtimePrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
+
     const gridRow = (
       <tr key={`${symbol}-grid-data`} className={gridStyles.gridRow}>
-        <td> {symbol} </td>
-        <td> {data.avgPrice.toFixed(2)} </td>
+        <td> {symbol} <span className={realtimeClassName}> {realtimePrice} </span> </td>
+        <td> {avgPrice} </td>
         <td> {data.totalPrice.toFixed(2)} </td>
         <td> {data.quantity} </td>
       </tr>

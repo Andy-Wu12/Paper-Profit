@@ -54,7 +54,7 @@ export default function Dashboard() {
 
       {/* Components that conditionally render */}
       {isLoading ? <Loading /> : 
-      showHoldings ? <Positions /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
+      showHoldings ? <Positions websocket={websocket} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
     </div>
   );
 }

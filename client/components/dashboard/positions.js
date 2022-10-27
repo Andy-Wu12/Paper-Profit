@@ -1,13 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
 
 import AuthContext from '../authentication/authContext';
+import Ameritrade from '../generic/ameritrade-websocket';
+
 import gridStyles from '../../styles/PositionGrid.module.css';
 
-export default function Positions() {
+export default function Positions({websocket}) {
   const user = useContext(AuthContext);
 
   const [positionData, setPositionsData] = useState(null);
-  
+  const [realtimeData, setRealtimeData] = useState(null);
+  const [isSubbed, setIsSubbed] = useState(false);
+
   useEffect(() => {
     const getPositions = async() => {
       try {
@@ -29,15 +33,44 @@ export default function Positions() {
     
   }, [user.name]);
 
+  // Handle websocket stuff
+  useEffect(() => {
+    try {
+      if(!websocket) {
+        setIsSubbed(false);
+      }
+
+      console.log(realtimeData);
+      if(websocket && positionData) {
+        websocket.onmessage = (message) => {
+          const data = JSON.parse(message.data);
+          if(data.data) {
+            const newData = data.data[0].content;
+            setRealtimeData(oldData => {return {...oldData, ...newData} });
+          }
+        }
+      };
+
+      if(!isSubbed && positionData) {
+        const symbols = Object.keys(positionData).join(',');
+        console.log(symbols);
+        websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, "0, 2")));
+        setIsSubbed(true);
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  }, [positionData, websocket])
+
   return (
     <>
       <h2> Your Positions </h2>
-      {positionData ? <PositionGrid positionDataJSON={positionData} /> : <h3> No positions to show! </h3> }
+      {positionData ? <PositionGrid positionDataJSON={positionData} realtimeJSON={realtimeData} /> : <h3> No positions to show! </h3> }
     </>
   );
 }
 
-function PositionGrid({positionDataJSON}) {
+function PositionGrid({positionDataJSON, realtimeJSON}) {
   const positions = [];
 
   for (const [symbol, data] of Object.entries(positionDataJSON)) {

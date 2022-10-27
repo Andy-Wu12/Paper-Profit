@@ -5,27 +5,22 @@ import styles from '../../styles/Home.module.css'
 // Ameritrade websocket stuff
 import Ameritrade from '../generic/ameritrade-websocket'
 
-export default function StockSearchForm({setStockData, setShowHoldings, setIsLoading}) {  
+export default function StockSearchForm({websocket, setStockData, setShowHoldings, setIsLoading}) {  
   const router = useRouter();
-
-  const [websocket, setWebsocket] = useState(null);
 
   useEffect(() => {
     try {
-      if(!websocket) {
-        const socket = Ameritrade.createWebsocket({
-          onMessage: (message) => {
-            const data = JSON.parse(message.data);
-            if(data.data) {
-              const newData = data.data[0].content[0];
-              setStockData(oldData => {return {...oldData, ...newData} });
-            }
+      if(websocket) {
+        websocket.onmessage = (message) => {
+          const data = JSON.parse(message.data);
+          if(data.data) {
+            const newData = data.data[0].content[0];
+            setStockData(oldData => {return {...oldData, ...newData} });
           }
-       });
-        setWebsocket(socket);
-      }
+        }
+      };
     } catch (e) {
-      setWebsocket(null);
+      console.log(e.message);
     }
   });
 
@@ -37,6 +32,7 @@ export default function StockSearchForm({setStockData, setShowHoldings, setIsLoa
     if(!tickerSymbol) {
       // Another option is to setStockData(null) to show error in StockDetail component, 
       // but this may be against good UX
+      setIsLoading(false);
       return;
     }
 

@@ -36,7 +36,7 @@ export default function Dashboard() {
       const socket = Ameritrade.createWebsocket();
       setWebsocket(socket);
     }
-  }, [user.name])
+  }, [user.name, stockData])
 
   return (
     <div className={styles.container}>
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
       {/* Components that conditionally render */}
       {isLoading ? <Loading /> : 
-      showHoldings ? <Positions websocket={websocket} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
+      showHoldings ? <Positions websocket={websocket} {...setterProps} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
     </div>
   );
 }

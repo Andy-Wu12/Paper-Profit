@@ -17,3 +17,8 @@
 .rtPriceLower {
   font-size: calc(100% - 3px);
 }
+
+.positionSymbol:hover {
+  cursor: pointer;
+  color: #121212;
+}

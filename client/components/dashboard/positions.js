@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
 import AuthContext from '../authentication/authContext';
 import Ameritrade from '../generic/ameritrade-websocket';
@@ -7,7 +6,7 @@ import ActionButton from '../generic/action-button';
 
 import gridStyles from '../../styles/PositionGrid.module.css';
 
-export default function Positions({websocket, setShowHoldings}) {
+export default function Positions({websocket, ...setterProps}) {
   const user = useContext(AuthContext);
 
   const [positionData, setPositionsData] = useState(null);
@@ -69,15 +68,14 @@ export default function Positions({websocket, setShowHoldings}) {
       <h2> Your Positions </h2>
       {/* TODO: Find way to guarantee realtimeData is fetched and available before reaching this function (on initial render)
       so extra conditional is not needed */}
-      {(positionData && realtimeData) ? <PositionGrid positionDataJSON={positionData} realtimeJSON={realtimeData} setShowHoldings={setShowHoldings} /> : <h3> No positions to show! </h3> }
+      {(positionData && realtimeData) ? <PositionGrid {...setterProps} websocket={websocket} positionDataJSON={positionData} realtimeJSON={realtimeData} /> : <h3> No positions to show! </h3> }
     </>
   );
 }
 
-function PositionGrid({positionDataJSON, realtimeJSON, setShowHoldings}) {
+function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps}) {
   const positions = [];
   const realtimeData = {};
-  const router = useRouter();
 
   // Re-map realtimeJSON data to more easily accessible format when templating
   for(const [, data] of Object.entries(realtimeJSON)) {
@@ -85,12 +83,6 @@ function PositionGrid({positionDataJSON, realtimeJSON, setShowHoldings}) {
   }
 
   for (const [symbol, data] of Object.entries(positionDataJSON)) {
-    // Clicking on the stock name should redirect to stock search details
-    // and modify the global TD websocket to stream corresponding data
-    const onClick = () => {
-      setShowHoldings(false);
-    }
-
     const avgPrice = data.avgPrice.toFixed(2);
     const realtimePrice = realtimeData[symbol][2].toFixed(2);
     const realtimeClassName = realtimePrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
@@ -98,7 +90,7 @@ function PositionGrid({positionDataJSON, realtimeJSON, setShowHoldings}) {
     const gridRow = (
       <tr key={`${symbol}-grid-data`} className={gridStyles.gridRow}>
         <td> 
-          <ActionButton buttonText={symbol} className='' onClick={onClick} /> 
+          <StockSymbolButton setShowHoldings={setterProps.setShowHoldings} symbol={symbol} /> 
           <span className={realtimeClassName}> {realtimePrice} </span> 
         </td>
         <td> {avgPrice} </td>
@@ -124,5 +116,18 @@ function PositionGrid({positionDataJSON, realtimeJSON, setShowHoldings}) {
         </tbody>
       </table>
     </>
+  )
+}
+
+function StockSymbolButton({symbol, websocket, ...setterProps}) {
+  // Clicking on the stock name should redirect to stock search details
+    // and modify the global TD websocket to stream corresponding data
+  const onClick = () => {
+    setterProps.setShowHoldings(false);
+  }
+
+  return (
+    
+    <ActionButton buttonText={symbol} className='' onClick={onClick} />
   )
 }

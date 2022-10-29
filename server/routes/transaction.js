@@ -32,12 +32,12 @@ router.post('/buy', async (ctx) => {
     const transaction = new Transaction({
       username: username,
       symbol: symbol,
-      action: 'buy', 
+      action: 'buy',
       quantity: quantity, 
       price: price,
       date: purchaseTime
     });
-    transaction.save();
+    await transaction.save();
 
     // Update User's portfolio holdings
     const portfolio = await Portfolio.findOne({username: username});
@@ -147,7 +147,7 @@ router.post('/sell', async (ctx) => {
       }
       // Update user balance with profit / loss
       user.balance += netProfit;
-      user.save();
+      await user.save();
 
       // Add transaction record
       const transaction = new Transaction({
@@ -158,7 +158,7 @@ router.post('/sell', async (ctx) => {
         price: sellPrice,
         date: Date.now(),
       });
-      transaction.save();
+      await transaction.save();
     }
     else {
       throw new Error(`${username} does not own enough shares of ${symbol} to sell ${quantity}`);

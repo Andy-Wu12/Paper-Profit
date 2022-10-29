@@ -1,5 +1,7 @@
 import userPrincipals from '../../pages/api/userprincipal.json'
 
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
+
 // Utility
 function jsonToQueryString(json) {
   return Object.keys(json).map(function(key) {
@@ -10,7 +12,7 @@ function jsonToQueryString(json) {
 
 const userPrincipalsResponse = userPrincipals
 
-export function createWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
+export function createWebsocket(refObj, { onOpen=()=> {}, onMessage=()=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
   //Converts ISO-8601 response in snapshot to ms since epoch accepted by Streamer
   const tokenTimeStampAsDateObj = new Date(userPrincipalsResponse.streamerInfo.tokenTimestamp);
   const tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
@@ -46,23 +48,25 @@ export function createWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onClose=()=
     ]
   }
 
-  const mySock = new WebSocket("wss://" + userPrincipalsResponse.streamerInfo.streamerSocketUrl + "/ws");
+  let mySock = new W3CWebSocket("wss://" + userPrincipalsResponse.streamerInfo.streamerSocketUrl + "/ws");
   mySock.onopen = function() { 
     mySock.send(JSON.stringify(authRequest));
     onOpen();
   }
   mySock.onmessage = function(evt) { 
     onMessage(evt);
-  }; 
+  };
   mySock.onclose = function() { 
-    console.log("CLOSED"); 
-    onClose();
     // Ameritrade only allows one connection at a time and we need one always active
     // so create another instance in case current one closes for any reason
-    setTimeout(createWebsocket(onOpen, onMessage, onClose, onError), 5000);
+    mySock.send(JSON.stringify(logoutRequest));
+    onClose();
+
+    // Reassign websocket variable in dashboard to this new websocket through recursive call
+    setTimeout(() => {createWebsocket(refObj, {onOpen, onMessage, onClose, onError})}, 5000);
   };
 
-  return mySock;
+  refObj.websocket = mySock;
 }
 
 export const stockSubRequest = (symbols, fields) => {
@@ -84,6 +88,19 @@ export const stockSubRequest = (symbols, fields) => {
     }
   ]}
 };
+
+export const logoutRequest = () => {
+  return {"requests": [
+    {
+      "service": "ADMIN",
+      "requestid": "1",
+      "command": "LOGOUT",
+      "account": userPrincipalsResponse.accounts[0].accountId,
+      "source": userPrincipalsResponse.streamerInfo.appId,
+      "parameters": { }
+    }
+  ]}
+}
 
 export const Ameritrade = {createWebsocket, stockSubRequest};
 export default Ameritrade;

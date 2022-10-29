@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import AuthContext from '../authentication/authContext';
 import Ameritrade from '../generic/ameritrade-websocket';
@@ -55,7 +56,7 @@ export default function Positions({websocket, ...setterProps}) {
 
       if(!isSubbed && positionData) {
         const symbols = Object.keys(positionData).join(',');
-        websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, "0, 2")));
+        websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, "0, 1")));
         setIsSubbed(true);
       }
     } catch (e) {
@@ -91,14 +92,15 @@ function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps
 
   for (const [symbol, data] of Object.entries(positionDataJSON)) {
     const avgPrice = data.avgPrice.toFixed(2);
-    const realtimePrice = realtimeData[symbol][2].toFixed(2);
-    const realtimeClassName = realtimePrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
+
+    const realtimeBidPrice = realtimeData[symbol][1].toFixed(2);
+    const realtimeClassName = realtimeBidPrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
 
     const gridRow = (
       <tr key={`${symbol}-grid-data`} className={gridStyles.gridRow}>
         <td> 
           <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} /> 
-          <span className={realtimeClassName}> {realtimePrice} </span> 
+          <span className={realtimeClassName}> {realtimeBidPrice} </span> 
         </td>
         <td> {avgPrice} </td>
         <td> {data.totalPrice.toFixed(2)} </td>
@@ -127,6 +129,7 @@ function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps
 }
 
 function StockSymbolButton({symbol, websocket, ...setterProps}) {
+  const router = useRouter();
   // Clicking on the stock name should redirect to stock search details
     // and modify the global TD websocket to stream corresponding data
   const onClick = () => {
@@ -141,6 +144,7 @@ function StockSymbolButton({symbol, websocket, ...setterProps}) {
       websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, "0,1,2,8,30,31,33")));
       setterProps.setShowHoldings(false);
     }
+    router.push(`/dashboard?symbol=${symbol}`);
   }
 
   return (

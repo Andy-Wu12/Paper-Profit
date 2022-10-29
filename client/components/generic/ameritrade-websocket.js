@@ -57,6 +57,9 @@ export function createWebsocket({ onOpen=()=> {}, onMessage=()=> {}, onClose=()=
   mySock.onclose = function() { 
     console.log("CLOSED"); 
     onClose();
+    // Ameritrade only allows one connection at a time and we need one always active
+    // so create another instance in case current one closes for any reason
+    setTimeout(createWebsocket(onOpen, onMessage, onClose, onError), 5000);
   };
 
   return mySock;

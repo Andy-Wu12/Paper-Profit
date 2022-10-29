@@ -12,6 +12,9 @@ import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 import Ameritrade from '../components/generic/ameritrade-websocket'
 
+const websocketObj = {};
+Ameritrade.createWebsocket(websocketObj);
+
 export default function Dashboard() {
   const user = useContext(AuthContext);
   const router = useRouter();
@@ -19,7 +22,7 @@ export default function Dashboard() {
   const [stockData, setStockData] = useState(null);
   const [showHoldings, setShowHoldings] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [websocket, setWebsocket] = useState(false);
+  // const [websocket, setWebsocket] = useState(null);
 
   const setterProps = {
     setStockData,
@@ -30,11 +33,6 @@ export default function Dashboard() {
   useEffect(() => {
     if(!localStorage.getItem('user')) { 
       router.push('/');
-    }
-
-    if(!websocket) {
-      const socket = Ameritrade.createWebsocket();
-      setWebsocket(socket);
     }
   }, [user.name, stockData])
 
@@ -50,11 +48,11 @@ export default function Dashboard() {
       {/* Components that should always render */}
       <Balance username={user.name} />
       <NavStateTriggers setShowHoldings={setShowHoldings} />
-      <StockSearchForm websocket={websocket} {...setterProps} />
+      <StockSearchForm websocket={websocketObj.websocket} {...setterProps} />
 
       {/* Components that conditionally render */}
       {isLoading ? <Loading /> : 
-      showHoldings ? <Positions websocket={websocket} {...setterProps} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
+      showHoldings ? <Positions websocket={websocketObj.websocket} {...setterProps} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
     </div>
   );
 }

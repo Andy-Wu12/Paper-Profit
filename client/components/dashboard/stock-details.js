@@ -78,15 +78,15 @@ export function StockDescriptionList({stockData}) {
   const fields = Object.keys(fieldToLabel).map((field) => {
     return (
       <div key={field} className={stockDetailStyles.descField}>
-        <dt className={stockDetailStyles.label}> {fieldToLabel[field]} </dt>
-        <dd className={stockDetailStyles.value}> {stockData[field] || '-'} </dd>
+        <span className={stockDetailStyles.label}> {fieldToLabel[field]} </span>
+        <span className={stockDetailStyles.value}> {stockData[field] || '-'} </span>
       </div>
     )
   });
 
   return (
-    <dl className={stockDetailStyles.descList}>
+    <div className={stockDetailStyles.descList}>
       {fields}
-    </dl>
+    </div>
   )
 }

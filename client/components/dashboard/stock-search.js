@@ -37,9 +37,6 @@ export default function StockSearchForm({websocket, setStockData, setShowHolding
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, "0,1,2,3,8,12,13,15,30,31,32,33")));
 
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
-    // const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/${tickerSymbol}`);
-    // const stockData = await response.json();
-    // setStockData(stockData);
     setShowHoldings(false);
     setIsLoading(false);
   }
@@ -47,7 +44,7 @@ export default function StockSearchForm({websocket, setStockData, setShowHolding
   return (
     <>
       <form className={styles.card} method='GET' onSubmit={handleSubmit}>
-        <label htmlFor='ticker'> Search Ticker Symbol </label><br/>
+        <label htmlFor='ticker'> Search Ticker Symbol </label>
         <input type='text' placeholder='AAPL' name='ticker-symbol' id='ticker' />
         <button type='submit'> Search </button>
       </form>

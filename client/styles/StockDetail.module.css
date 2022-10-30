@@ -15,10 +15,31 @@
   font-size: clamp(5pt, calc(100% - 2pt), 12pt);
 }
 
+/* Stock quote details */
 .descList {
-  font-size: 20px;
+  font-size: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 1000px;
+  width: 95vw;
+  margin: 10px 0;
 }
 
+.descField {
+  flex-basis: 24%;
+  margin: 5px;
+  background-color: #202020;
+}
+
+.value {
+  float: right;
+}
+
+.value {
+  clear: both;
+}
+
+/* Stock transactions */
 .buy {
   background-color: #4fe50b;
   

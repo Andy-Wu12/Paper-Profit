@@ -35,13 +35,22 @@ export function StockHeading({stockData}) {
 
   const params = router.query;
 
+  const labelToField = {
+    'bid': '1',
+    'ask': '2',
+    'last': '3'
+  };
+
   return (
     <>
-      <h2> {stockData.key + ' '} </h2>
+      <h2> 
+        {stockData.key + ' '} 
+        (Last: <span className={stockDetailStyles.lastPrice}> {stockData[labelToField.last].toFixed(2)} </span>)
+      </h2>
       <span className={stockDetailStyles.prices}>
-        <span className={stockDetailStyles.askPrice}> {stockData['2'].toFixed(2)} </span>
+        <span className={stockDetailStyles.askPrice}> {stockData[labelToField.ask].toFixed(2)} </span>
         <BuyForm stockSymbol={params.symbol} symbolData={stockData} /> <br/><br/>
-        <span className={stockDetailStyles.bidPrice}> {stockData['1'].toFixed(2)} </span>
+        <span className={stockDetailStyles.bidPrice}> {stockData[labelToField.bid].toFixed(2)} </span>
         <SellForm stockSymbol={params.symbol} symbolData={stockData} /> 
       </span>
     </>
@@ -54,10 +63,15 @@ export function StockDescriptionList({stockData}) {
   for meaning of ['#'] indexed fields
   */
 
+  0,1,2,8,12,13,15,25,30,31,32,33
   const fieldToLabel = {
     '8': 'Volume',
+    '12': 'Day High',
+    '13': 'Day Low',
+    '15': 'Close Price',
     '30': '52-wk High',
     '31': '52-wk Low',
+    '32': 'PE Ratio',
     '33': 'Dividend'
   };
 

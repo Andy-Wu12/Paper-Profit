@@ -11,6 +11,10 @@
   color: red;
 }
 
+.lastPrice {
+  font-size: clamp(5pt, calc(100% - 2pt), 12pt);
+}
+
 .descList {
   font-size: 20px;
 }

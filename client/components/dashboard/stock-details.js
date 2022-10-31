@@ -62,8 +62,6 @@ export function StockDescriptionList({stockData}) {
   Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
   for meaning of ['#'] indexed fields
   */
-
-  0,1,2,8,12,13,15,25,30,31,32,33
   const fieldToLabel = {
     '8': 'Volume',
     '12': 'Day High',

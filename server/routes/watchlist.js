@@ -5,6 +5,18 @@ import Watchlist from '../mongodb/models/watchlist.js';
 
 export const router = new Router({prefix: '/watchlist'});
 
+router.get('/user/:username', async(ctx) => {
+  const username = ctx.params['username'];
+
+  try {
+    const list = await Watchlist.findOne({username: username});
+    ctx.body = list.symbols;
+  } catch (e) {
+    ctx.status = 400;
+    ctx.body = {message: e.message, status: ctx.status};
+  }
+});
+
 router.post('/watch', async (ctx) => {
   const queryDict = ctx.request.query;
   const postBody = ctx.request.body;

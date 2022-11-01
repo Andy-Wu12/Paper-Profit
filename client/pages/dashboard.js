@@ -35,6 +35,19 @@ export default function Dashboard() {
     if(!localStorage.getItem('user')) { 
       router.push('/');
     }
+
+    const getWatchlist = async () => {
+      if(user.name) {
+        const watchlistAPI_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/user/${user.name}`;
+        const response = await fetch(watchlistAPI_URL);
+        const data = await response.json();
+        console.log(data);
+        setWatchlist(data);
+      }
+    }
+
+    getWatchlist();
+
   }, [user.name, stockData])
 
   return (

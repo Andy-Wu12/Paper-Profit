@@ -12,6 +12,7 @@ import authRouter from './routes/auth.js';
 import stockRouter from './routes/stock.js';
 import transactionRouter from './routes/transaction.js';
 import wsRouter from './routes/websockets.js';
+import watchlistRouter from './routes/watchlist.js';
 
 const app = websockify(new Koa());
 const router = new Router();
@@ -72,6 +73,7 @@ app.use(userRouter.routes());
 app.use(authRouter.routes());
 app.use(stockRouter.routes());
 app.use(transactionRouter.routes());
+app.use(watchlistRouter.routes());
 
 app.listen(port, () => {
 	console.log(`Server running on http://localhost:${port}`);

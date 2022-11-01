@@ -1,9 +1,12 @@
 import { useRouter } from 'next/router';
+import { useContext } from 'react';
 
 import styles from '../../styles/Home.module.css'
 
+import AuthContext from '../authentication/authContext';
 import stockDetailStyles from '../../styles/StockDetail.module.css'
 import { BuyForm, SellForm } from './transaction-form';
+import ActionButton from '../generic/action-button';
 
 export default function StockDetails({stockDataJSON}) {  
   const isSuccess = stockDataJSON.key;
@@ -51,7 +54,8 @@ export function StockHeading({stockData}) {
         <BuyForm stockSymbol={params.symbol} symbolData={stockData} /> <br/><br/>
         <span className={stockDetailStyles.bidPrice}> {stockData[labelToField.bid].toFixed(2)} </span>
         <SellForm stockSymbol={params.symbol} symbolData={stockData} /> 
-      </span>
+      </span> <br/><br/>
+      <WatchForm stockSymbol={stockData.key}/>
     </>
   )
 }
@@ -85,5 +89,29 @@ export function StockDescriptionList({stockData}) {
     <div className={stockDetailStyles.descList}>
       {fields}
     </div>
+  )
+}
+
+export function WatchForm({stockSymbol}) {
+  const user = useContext(AuthContext);
+
+  const watch = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/watch?symbol=${stockSymbol}`, {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "username": user.name,
+      })
+    });
+  }
+
+  return (
+    <>
+      <ActionButton onClick={watch} buttonText='Add to Watchlist' /> &nbsp;
+    </>
   )
 }

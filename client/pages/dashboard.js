@@ -12,6 +12,7 @@ import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 import Ameritrade from '../components/generic/ameritrade-websocket'
+import WatchList from '../components/dashboard/watchlist'
 
 const websocketObj = {};
 Ameritrade.createWebsocket(websocketObj);
@@ -69,6 +70,7 @@ export default function Dashboard() {
         {watchList &&
           <div className={dashboardStyles.watchlist}>
             <h2> Watchlist </h2>
+            <WatchList watchListJSON={watchList} />
           </div>
         }
         <div className={dashboardStyles.conditionalRenderSection}>

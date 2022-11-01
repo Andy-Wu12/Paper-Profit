@@ -16,7 +16,6 @@ export default function StockDetails({stockDataJSON}) {
 }
 
 export function StockDetail({stockData}) {
-  // TODO: Add real-time data
   return (
     <>
       <StockHeading stockData={stockData} />

@@ -1,0 +1,7 @@
+.splitGridContainer {
+  display: flex;
+}
+
+.splitGridContainer > div {
+  flex: 1;
+}

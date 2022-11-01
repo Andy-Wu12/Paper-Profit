@@ -22,6 +22,7 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [stockData, setStockData] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const [showHoldings, setShowHoldings] = useState(true);
   const [watchList, setWatchlist] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +30,8 @@ export default function Dashboard() {
   const setterProps = {
     setStockData,
     setShowHoldings,
-    setIsLoading
+    setIsLoading,
+    setHasSearched
   }
 
   useEffect(() => {
@@ -42,7 +44,6 @@ export default function Dashboard() {
         const watchlistAPI_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/user/${user.name}`;
         const response = await fetch(watchlistAPI_URL);
         const data = await response.json();
-        console.log(data);
         setWatchlist(data);
       }
     }
@@ -76,7 +77,7 @@ export default function Dashboard() {
         <div className={dashboardStyles.conditionalRenderSection}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
-          showHoldings ? <Positions websocket={websocketObj.websocket} {...setterProps} /> : <StockSearch stockData={stockData} setStockData={setStockData} /> }
+          showHoldings ? <Positions websocket={websocketObj.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
         </div>
       </div>
     </div>

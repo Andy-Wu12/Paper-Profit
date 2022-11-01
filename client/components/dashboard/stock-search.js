@@ -5,7 +5,7 @@ import styles from '../../styles/Home.module.css'
 // Ameritrade websocket stuff
 import Ameritrade from '../generic/ameritrade-websocket'
 
-export default function StockSearchForm({websocket, setStockData, setShowHoldings, setIsLoading}) {  
+export default function StockSearchForm({websocket, setStockData, setShowHoldings, setIsLoading, setHasSearched}) {  
   const router = useRouter();
 
   useEffect(() => {
@@ -41,6 +41,7 @@ export default function StockSearchForm({websocket, setStockData, setShowHolding
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
     setShowHoldings(false);
     setIsLoading(false);
+    setHasSearched(true);
   }
 
   return (

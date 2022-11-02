@@ -1,8 +1,8 @@
 import gridStyles from '../../styles/PositionGrid.module.css';
 
-export default function WatchList({watchListJSON, realtimeData}) {  
+export default function WatchList({watchListData, realtimeData}) {  
 
-  const watchListHTML = watchListJSON.map((data) => 
+  const watchListHTML = watchListData.map((data) => 
     {
       return (
         <tr key={`${data}-watchlist-row`} className={gridStyles.gridRow}>

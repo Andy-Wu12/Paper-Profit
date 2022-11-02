@@ -10,8 +10,7 @@ import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 
 import Ameritrade from '../components/generic/ameritrade-websocket'
-import WatchList from '../components/dashboard/watchlist'
-import { router } from 'websocket'
+import WatchList from '../components/watchlist/watchlist'
 
 const websocketObj = {};
 Ameritrade.createWebsocket(websocketObj);
@@ -51,7 +50,7 @@ export default function Watchlist() {
 
       <h1 className={styles.title}> Watchlist </h1>
       <DashboardRedirect /> <br/><br/>
-      {watchList && <WatchList watchListData={watchList} />}
+      {!isLoading ? watchList && <WatchList watchListData={watchList} /> : <Loading />}
     </div>
   );
 }

@@ -5,6 +5,8 @@ import styles from '../../styles/Home.module.css'
 // Ameritrade websocket stuff
 import Ameritrade from '../generic/ameritrade-websocket'
 
+export const subscriptionFields = "0,1,2,3,8,12,13,15,30,31,32,33";
+
 export default function StockSearchForm({websocket, setStockData, setShowHoldings, setIsLoading, setHasSearched}) {  
   const router = useRouter();
 
@@ -36,7 +38,7 @@ export default function StockSearchForm({websocket, setStockData, setShowHolding
     }
     // Set stockData(null) on new search
     setStockData(null);
-    websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, "0,1,2,3,8,12,13,15,30,31,32,33")));
+    websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, subscriptionFields)));
 
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
     setShowHoldings(false);

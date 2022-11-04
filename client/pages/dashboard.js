@@ -11,20 +11,18 @@ import StockDetails from '../components/dashboard/stock-details.js'
 import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
-import Ameritrade from '../components/generic/ameritrade-websocket'
-import WatchList from '../components/dashboard/watchlist'
+import TD_WebsocketContext from '../components/generic/td-websocketContext'
 
-const websocketObj = {};
-Ameritrade.createWebsocket(websocketObj);
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
+  const websocketCtx = useContext(TD_WebsocketContext);
+
   const router = useRouter();
 
   const [stockData, setStockData] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [showHoldings, setShowHoldings] = useState(true);
-  const [watchList, setWatchlist] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const setterProps = {
@@ -39,18 +37,7 @@ export default function Dashboard() {
       router.push('/');
     }
 
-    const getWatchlist = async () => {
-      if(user.name) {
-        const watchlistAPI_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/user/${user.name}`;
-        const response = await fetch(watchlistAPI_URL);
-        const data = await response.json();
-        setWatchlist(data);
-      }
-    }
-
-    getWatchlist();
-
-  }, [user.name, stockData])
+  }, [user.name])
 
   return (
     <div className={styles.container}>
@@ -63,21 +50,15 @@ export default function Dashboard() {
       <h1 className={styles.title}> Dashboard </h1>
       {/* Components that should always render */}
       <Balance username={user.name} />
-      <NavStateTriggers setShowHoldings={setShowHoldings} />
-      <StockSearchForm websocket={websocketObj.websocket} {...setterProps} />
+      <NavMenu setShowHoldings={setShowHoldings} />
+      <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
 
       {/* Show watchlist and positions/quote details side-by-side */}
       <div className={dashboardStyles.splitGridContainer}>
-        {watchList &&
-          <div className={dashboardStyles.watchlist}>
-            <h2> Watchlist </h2>
-            <WatchList watchListJSON={watchList} />
-          </div>
-        }
         <div className={dashboardStyles.conditionalRenderSection}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
-          showHoldings ? <Positions websocket={websocketObj.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
+          showHoldings ? <Positions websocket={websocketCtx.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
         </div>
       </div>
     </div>
@@ -92,11 +73,12 @@ function StockSearch({stockData}) {
   );
 }
 
-function NavStateTriggers({setShowHoldings}) {
+function NavMenu({setShowHoldings}) {
   return (
     <nav>
       <ShowLastSearchButton holdingsTrigger={setShowHoldings} />
       <ShowHoldingsButton holdingsTrigger={setShowHoldings} />
+      <WatchListButton />
     </nav>
   );
 }
@@ -119,6 +101,18 @@ function ShowHoldingsButton({holdingsTrigger}) {
 
   return (
     <ActionButton onClick={onClick} buttonText='Show Holdings' />
+  );
+}
+
+function WatchListButton() {
+  const router = useRouter();
+
+  const onClick = () => {
+    router.push('/watchlist');
+  }
+
+  return (
+    <ActionButton onClick={onClick} buttonText='See Watchlist' />
   );
 }
 

@@ -9,30 +9,32 @@ import AuthContext from '../components/authentication/authContext.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 
-import Ameritrade from '../components/generic/ameritrade-websocket'
 import WatchList from '../components/watchlist/watchlist'
+import TD_WebsocketContext from '../components/generic/td-websocketContext'
 
-const websocketObj = {};
-Ameritrade.createWebsocket(websocketObj);
 
 export default function Watchlist() {
   const user = useContext(AuthContext);
-  const router = useRouter();
+  const wsCTX = useContext(TD_WebsocketContext);
 
+  const router = useRouter();
   const [watchList, setWatchlist] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if(!localStorage.getItem('user')) { 
+    if(!user.name) { 
       router.push('/');
+      return;
     }
 
     const getWatchlist = async () => {
       if(user.name) {
+        setIsLoading(true);
         const watchlistAPI_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/user/${user.name}`;
         const response = await fetch(watchlistAPI_URL);
         const data = await response.json();
         setWatchlist(data);
+        setIsLoading(false);
       }
     }
 
@@ -50,7 +52,7 @@ export default function Watchlist() {
 
       <h1 className={styles.title}> Watchlist </h1>
       <DashboardRedirect /> <br/><br/>
-      {!isLoading ? watchList && <WatchList watchListData={watchList} /> : <Loading />}
+      {!isLoading ? watchList && <WatchList websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
     </div>
   );
 }

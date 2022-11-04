@@ -11,13 +11,13 @@ import StockDetails from '../components/dashboard/stock-details.js'
 import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
-import Ameritrade from '../components/generic/ameritrade-websocket'
+import TD_WebsocketContext from '../components/generic/td-websocketContext'
 
-const websocketObj = {};
-Ameritrade.createWebsocket(websocketObj);
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
+  const websocketCtx = useContext(TD_WebsocketContext);
+
   const router = useRouter();
 
   const [stockData, setStockData] = useState(null);
@@ -51,14 +51,14 @@ export default function Dashboard() {
       {/* Components that should always render */}
       <Balance username={user.name} />
       <NavMenu setShowHoldings={setShowHoldings} />
-      <StockSearchForm websocket={websocketObj.websocket} {...setterProps} />
+      <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
 
       {/* Show watchlist and positions/quote details side-by-side */}
       <div className={dashboardStyles.splitGridContainer}>
         <div className={dashboardStyles.conditionalRenderSection}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
-          showHoldings ? <Positions websocket={websocketObj.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
+          showHoldings ? <Positions websocket={websocketCtx.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
         </div>
       </div>
     </div>

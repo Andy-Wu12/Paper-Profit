@@ -5,8 +5,9 @@ import AuthContext from '../authentication/authContext';
 import Ameritrade from '../generic/ameritrade-websocket';
 import ActionButton from '../generic/action-button';
 import { subscriptionFields } from './stock-search';
-
+import TD_WebsocketContext from '../generic/td-websocketContext';
 import gridStyles from '../../styles/PositionGrid.module.css';
+
 
 export default function Positions({websocket, ...setterProps}) {
   const user = useContext(AuthContext);

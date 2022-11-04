@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import AuthContext from '../authentication/authContext';
 import Ameritrade from '../generic/ameritrade-websocket';
 import ActionButton from '../generic/action-button';
+import { subscriptionFields } from './stock-search';
 
 import gridStyles from '../../styles/PositionGrid.module.css';
 
@@ -141,7 +142,8 @@ function StockSymbolButton({symbol, websocket, ...setterProps}) {
           setterProps.setStockData(oldData => {return {...oldData, ...newData} });
         }
       }
-      websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, "0,1,2,3,8,30,31,33")));
+
+      websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, subscriptionFields)));
       setterProps.setHasSearched(true);
       setterProps.setShowHoldings(false);
     }

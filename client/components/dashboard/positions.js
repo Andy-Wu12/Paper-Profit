@@ -146,7 +146,7 @@ function StockSymbolButton({symbol, websocket, ...setterProps}) {
 
       websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, subscriptionFields)));
       setterProps.setHasSearched(true);
-      setterProps.setShowHoldings(false);
+      setterProps.setDashboardComponent('quote');
     }
     router.push(`/dashboard?symbol=${symbol}`);
   }

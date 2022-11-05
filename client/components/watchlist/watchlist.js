@@ -25,26 +25,49 @@ export default function WatchList({websocket, watchListData}) {
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, subscriptionFields)));
   }, [watchListData])
 
+  // Process realtime data
+  if(realtimeData) {
+    const symbolData = [];
+    for(const [,symbolObj] of Object.entries(realtimeData)) {
+      symbolData.push(symbolObj);
+    }
+
+    return (
+      <>
+        <WatchlistGrid realtimeData={symbolData} />
+      </>
+    )
+  }
+
+  return (
+    <>
+      {watchListData ? <h1> Loading data... </h1> : <h1> Your watchlist is empty </h1>}
+    </>
+  )
+}
+
+export function WatchlistGrid({realtimeData}) {
   const watchListHTML = [];
   
-  if(realtimeData) { 
-    for(const [,symbolData] of Object.entries(realtimeData)) {
-      console.log(symbolData);
-      const symbolHTML = (
-        <tr key={`${symbolData.key}-watchlist-row`} className={gridStyles.gridRow}>
-          <td> {symbolData.key} </td>
-          {/* TODO: Color should change depending on previous price (red down, green up)  */}
-          <td className={quoteStyles.askPrice}> {symbolData['1']} </td>
-        </tr>
-      )
-      watchListHTML.push(symbolHTML);
-    }
-  }
-    
+  realtimeData.map((symbolData) => {
+    const symbolHTML = (
+      <tr key={`${symbolData.key}-watchlist-row`} className={gridStyles.gridRow}>
+        <td> {symbolData.key} </td>
+        {/* TODO: Color should change depending on previous price (red down, green up)  */}
+        <td className={quoteStyles.askPrice}> {symbolData['1']} </td>
+      </tr>
+    );
+    // console.log(symbolHTML);
+    watchListHTML.push(symbolHTML);
+  })
 
   return (
     <table>
       <tbody>
+        <tr className={gridStyles.gridRow}>
+          <th> Position </th>
+          <th> Trade Price </th>
+        </tr>
         {watchListHTML}
       </tbody>
     </table>

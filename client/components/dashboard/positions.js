@@ -130,7 +130,7 @@ function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps
   )
 }
 
-function StockSymbolButton({symbol, websocket, ...setterProps}) {
+export function StockSymbolButton({symbol, websocket, ...setterProps}) {
   const router = useRouter();
   // Clicking on the stock name should redirect to stock search details
     // and modify the global TD websocket to stream corresponding data

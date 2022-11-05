@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import gridStyles from '../../styles/PositionGrid.module.css';
 import quoteStyles from '../../styles/StockDetail.module.css';
 
+import { StockSymbolButton } from '../dashboard/positions';
 import Ameritrade from '../generic/ameritrade-websocket';
 
-export default function WatchList({websocket, watchListData}) {  
+export default function WatchList({websocket, watchListData, ...setterProps}) {  
   const [realtimeData, setRealtimeData] = useState(null);
 
   const subscriptionFields = "0,1";
@@ -34,7 +35,7 @@ export default function WatchList({websocket, watchListData}) {
 
     return (
       <>
-        <WatchlistGrid realtimeData={symbolData} />
+        <WatchlistGrid {...setterProps} websocket={websocket} realtimeData={symbolData} />
       </>
     )
   }
@@ -46,13 +47,13 @@ export default function WatchList({websocket, watchListData}) {
   )
 }
 
-export function WatchlistGrid({realtimeData}) {
+export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
   const watchListHTML = [];
   
   realtimeData.map((symbolData) => {
     const symbolHTML = (
       <tr key={`${symbolData.key}-watchlist-row`} className={gridStyles.gridRow}>
-        <td> {symbolData.key} </td>
+        <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbolData.key} />  </td>
         {/* TODO: Color should change depending on previous price (red down, green up)  */}
         <td className={quoteStyles.askPrice}> {symbolData['1']} </td>
       </tr>

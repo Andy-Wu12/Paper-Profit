@@ -11,7 +11,7 @@ import WatchList from './watchlist'
 import TD_WebsocketContext from '../generic/td-websocketContext'
 
 
-export default function Watchlist() {
+export default function Watchlist({...setterProps}) {
   const user = useContext(AuthContext);
   const wsCTX = useContext(TD_WebsocketContext);
 
@@ -47,7 +47,7 @@ export default function Watchlist() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {!isLoading ? watchList && <WatchList websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
+      {!isLoading ? watchList && <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
     </div>
   );
 }

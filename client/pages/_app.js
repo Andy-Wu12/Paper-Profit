@@ -1,20 +1,19 @@
 import '../styles/globals.css'
 
 import { useContext, useEffect, useState } from 'react'
-import Footer from '../components/footer';
 
+import Footer from '../components/footer';
+import Loading from '../components/generic/loading';
 import { AuthContext, getUserDetails } from '../components/authentication/authContext'
 import TD_WebsocketContext from '../components/generic/td-websocketContext';
 import Ameritrade from '../components/generic/ameritrade-websocket';
-
 import LogoutForm from '../components/authentication/logout-button';
 
 function MyApp({ Component, pageProps }) {
   const userContext = useContext(AuthContext);
-  const wsContext = useContext(TD_WebsocketContext);
 
   const [currentUser, setCurrentUser] = useState(userContext);
-  const [websocket, setWebsocket] = useState(wsContext);
+  const [websocketCtx, setWebsocketCtx] = useState(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -36,22 +35,30 @@ function MyApp({ Component, pageProps }) {
     const getTDWebsocket = async () => {
       const websocketObj = {};
       Ameritrade.createWebsocket(websocketObj);
-      setWebsocket({ websocket: websocketObj.websocket })
+      setWebsocketCtx(websocketObj)
     }
 
     getTDWebsocket();
 
   }, [])
 
+  if(websocketCtx && websocketCtx.websocket) {
+    return (
+      <>
+        <AuthContext.Provider value={currentUser}>
+          <TD_WebsocketContext.Provider value={websocketCtx}>
+            <Component {...pageProps} /> <br/>
+            <LogoutForm />
+          </TD_WebsocketContext.Provider>
+        </AuthContext.Provider>
+        <Footer />
+      </>
+    )
+  }
+
   return (
     <>
-      <AuthContext.Provider value={currentUser}>
-        <TD_WebsocketContext.Provider value={websocket}>
-          <Component {...pageProps} /> <br/>
-          <LogoutForm />
-        </TD_WebsocketContext.Provider>
-      </AuthContext.Provider>
-      <Footer />
+      <Loading />
     </>
   )
 }

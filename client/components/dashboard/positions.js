@@ -143,6 +143,8 @@ export function StockSymbolButton({symbol, websocket, ...setterProps}) {
           setterProps.setStockData(oldData => {return {...oldData, ...newData} });
         }
       }
+      // Set stockData(null) on new search
+      setterProps.setStockData(null);
 
       websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, subscriptionFields)));
       setterProps.setHasSearched(true);

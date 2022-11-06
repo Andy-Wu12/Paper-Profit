@@ -78,7 +78,6 @@ export default function Dashboard() {
 }
 
 function StockSearch({stockData}) {
-  console.log(stockData);
   return (
     <>
       {stockData && <StockDetails stockDataJSON={stockData} />}

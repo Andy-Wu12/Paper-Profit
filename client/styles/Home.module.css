@@ -106,3 +106,8 @@
     filter: invert(1);
   }
 }
+
+.centered {
+  padding: 2rem 0;
+  text-align: center;
+}

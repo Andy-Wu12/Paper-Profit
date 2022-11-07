@@ -48,8 +48,8 @@ export default function StockSearchForm({websocket, setStockData, setDashboardCo
 
   return (
     <>
-      <form className={styles.card} method='GET' onSubmit={handleSubmit}>
-        <label htmlFor='ticker'> Search Ticker Symbol </label>
+      <form className={styles.centered} method='GET' onSubmit={handleSubmit}>
+        <label htmlFor='ticker'> Search Ticker Symbol </label> <br/>
         <input type='text' placeholder='AAPL' name='ticker-symbol' id='ticker' />
         <button type='submit'> Search </button>
       </form>

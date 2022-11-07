@@ -61,13 +61,12 @@ export default function Dashboard() {
 
       <h1 className={styles.title}> Dashboard </h1>
       {/* Components that should always render */}
-      <Balance username={user.name} />
-      <NavMenu setDashboardComponent={setDashboardComponent} />
-      <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
+      <div className={styles.main}> 
+        <Balance username={user.name} />
+        <NavMenu setDashboardComponent={setDashboardComponent} />
+        <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
 
-      {/* Show watchlist and positions/quote details side-by-side */}
-      <div className={dashboardStyles.splitGridContainer}>
-        <div className={dashboardStyles.conditionalRenderSection}>
+        <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
           <EnumState state={dashboardComponent} />}

@@ -34,7 +34,7 @@ export default function Dashboard() {
   
   ///// Handle conditional rendering for the three different dashboard components /////
   const ENUM_COMPONENTS = {
-    quote: <StockSearch stockData={stockData} />,
+    quote: (hasSearched && stockData) ? <StockSearch stockData={stockData} /> : <> No stock quote to show </>,
     watch: <Watchlist setDashboardComponent={setDashboardComponent} {...setterProps} />,
     positions: <Positions websocket={websocketCtx.websocket} {...setterProps} />
   }

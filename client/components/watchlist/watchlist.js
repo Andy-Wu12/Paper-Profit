@@ -35,14 +35,9 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
 
   // Process realtime data
   if(realtimeData) {
-    const symbolData = [];
-    for(const [,symbolObj] of Object.entries(realtimeData)) {
-      symbolData.push(symbolObj);
-    }
-
     return (
       <>
-        <WatchlistGrid {...setterProps} websocket={websocket} realtimeData={symbolData} />
+        <WatchlistGrid {...setterProps} websocket={websocket} realtimeData={realtimeData} />
       </>
     )
   }
@@ -73,31 +68,30 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     tableHeaders.push(<th key={`${label}-label`}> {label} </th>);
   }
 
-
   // Map all fields for each symbol
-  realtimeData.map((symbolData) => {
-    const bid = symbolData['1'];
-    const ask = symbolData['2'];
+  for(const [symbol, data] of Object.entries(realtimeData)) {
+    const bid = data['1'];
+    const ask = data['2'];
     const mark = (bid + ask) / 2;
 
     const symbolHTML = (
-      <tr key={`${symbolData.key}-watchlist-row`} className={gridStyles.gridRow}>
-        <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbolData.key} />  </td>
+      <tr key={`${symbol}-watchlist-row`} className={gridStyles.gridRow}>
+        <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} />  </td>
         {/* TODO: Color should change depending on previous price (red down, green up)  */}
         <td> {mark.toFixed(2)} </td>
         {Object.keys(fieldToLabelMap).map((key) => {
           const fieldName = fieldToLabelMap[key];
           return (
-            <td key={`${symbolData.key}-${fieldName}`}>
+            <td key={`${symbol}-${fieldName}`}>
               {/* Don't show decimal points for volume */}
-              {(fieldName === 'Volume') ? symbolData[key] : symbolData[key].toFixed(2) || '-'} 
+              {(fieldName === 'Volume') ? data[key] : data[key].toFixed(2) || '-'} 
             </td>
           )
         })}
       </tr>
     );
     watchListHTML.push(symbolHTML);
-  })
+  }
 
   return (
     <table>

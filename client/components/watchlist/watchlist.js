@@ -16,7 +16,14 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
       const data = JSON.parse(message.data);
       if(data.data) {
         const newData = data.data[0].content;
-        setRealtimeData(oldData => {return {...oldData, ...newData} });
+        setRealtimeData(oldData => {
+          const rtData = {};
+          // Re-map realtimeJSON data to more easily accessible format when templating
+          for(const [, data] of Object.entries(newData)) {
+            rtData[data.key] = data;
+          }
+          return {...oldData, ...rtData}
+        });
       }
     }
   }, [])
@@ -51,12 +58,12 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
   const watchListHTML = [];
   
   const fieldToLabelMap = {
-    '1': 'Bid',
-    '2': 'Ask',
-    '3': 'Last',
-    '8': 'Volume',
-    '30': '52 High',
-    '31': '52 Low',
+    1: 'Bid',
+    2: 'Ask',
+    3: 'Last',
+    8: 'Volume',
+    30: '52 High',
+    31: '52 Low',
   }
 
   const tableHeaders = [];
@@ -65,6 +72,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
   for(const [,label] of Object.entries(fieldToLabelMap)) {
     tableHeaders.push(<th key={`${label}-label`}> {label} </th>);
   }
+
 
   // Map all fields for each symbol
   realtimeData.map((symbolData) => {
@@ -88,7 +96,6 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
         })}
       </tr>
     );
-    // console.log(symbolHTML);
     watchListHTML.push(symbolHTML);
   })
 

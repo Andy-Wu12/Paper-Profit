@@ -12,6 +12,7 @@
 		"koa": "^2.13.4",
 		"koa-body": "^5.0.0",
 		"koa-session": "^6.2.0",
+		"koa-websocket": "^7.0.0",
 		"mongodb": "^4.10.0",
 		"mongoose": "^6.6.5"
 	}

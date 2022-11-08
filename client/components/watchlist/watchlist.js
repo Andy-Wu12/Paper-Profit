@@ -44,7 +44,7 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
 
   return (
     <>
-      {watchListData ? <h1> Loading data... </h1> : <h1> Your watchlist is empty </h1>}
+      {watchListData && <h1> Loading data... </h1>}
     </>
   )
 }

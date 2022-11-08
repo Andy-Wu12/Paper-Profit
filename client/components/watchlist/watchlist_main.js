@@ -30,8 +30,14 @@ export default function Watchlist({...setterProps}) {
         setIsLoading(true);
         const watchlistAPI_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/user/${user.name}`;
         const response = await fetch(watchlistAPI_URL);
-        const data = await response.json();
-        setWatchlist(data);
+        if(response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setWatchlist(data);
+        }
+        else {
+          setWatchlist(null);
+        }
         setIsLoading(false);
       }
     }
@@ -47,7 +53,11 @@ export default function Watchlist({...setterProps}) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {!isLoading ? watchList && <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
+      {!isLoading ? 
+        (watchList ? 
+          <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} />
+          : <h1> Your watchlist is empty </h1> ) 
+        : <Loading />}
     </div>
   );
 }

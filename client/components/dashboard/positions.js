@@ -51,7 +51,14 @@ export default function Positions({websocket, ...setterProps}) {
           const data = JSON.parse(message.data);
           if(data.data) {
             const newData = data.data[0].content;
-            setRealtimeData(oldData => {return {...oldData, ...newData} });
+            setRealtimeData(oldData => {
+              const rtData = {};
+              // Re-map realtimeJSON data to more easily accessible format when templating
+              for(const [, data] of Object.entries(newData)) {
+                rtData[data.key] = data;
+              }
+              return {...oldData, ...rtData} 
+            });
           }
         }
       };
@@ -76,21 +83,15 @@ export default function Positions({websocket, ...setterProps}) {
           {...setterProps} 
           websocket={websocket} 
           positionDataJSON={positionData} 
-          realtimeJSON={realtimeData} 
+          realtimeData={realtimeData} 
         /> : <h3> No positions to show! </h3> 
       }
     </>
   );
 }
 
-function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps}) {
+function PositionGrid({positionDataJSON, realtimeData, websocket, ...setterProps}) {
   const positions = [];
-  const realtimeData = {};
-
-  // Re-map realtimeJSON data to more easily accessible format when templating
-  for(const [, data] of Object.entries(realtimeJSON)) {
-    realtimeData[data.key] = data;
-  }
 
   for (const [symbol, data] of Object.entries(positionDataJSON)) {
     const avgPrice = data.avgPrice.toFixed(2);
@@ -130,7 +131,7 @@ function PositionGrid({positionDataJSON, realtimeJSON, websocket, ...setterProps
   )
 }
 
-function StockSymbolButton({symbol, websocket, ...setterProps}) {
+export function StockSymbolButton({symbol, websocket, ...setterProps}) {
   const router = useRouter();
   // Clicking on the stock name should redirect to stock search details
     // and modify the global TD websocket to stream corresponding data
@@ -143,10 +144,12 @@ function StockSymbolButton({symbol, websocket, ...setterProps}) {
           setterProps.setStockData(oldData => {return {...oldData, ...newData} });
         }
       }
+      // Set stockData(null) on new search
+      setterProps.setStockData(null);
 
       websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, subscriptionFields)));
       setterProps.setHasSearched(true);
-      setterProps.setShowHoldings(false);
+      setterProps.setDashboardComponent('quote');
     }
     router.push(`/dashboard?symbol=${symbol}`);
   }

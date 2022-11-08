@@ -7,7 +7,7 @@ import Ameritrade from '../generic/ameritrade-websocket'
 
 export const subscriptionFields = "0,1,2,3,8,12,13,15,30,31,32,33";
 
-export default function StockSearchForm({websocket, setStockData, setShowHoldings, setIsLoading, setHasSearched}) {  
+export default function StockSearchForm({websocket, setStockData, setDashboardComponent, setIsLoading, setHasSearched}) {  
   const router = useRouter();
 
   useEffect(() => {
@@ -41,15 +41,15 @@ export default function StockSearchForm({websocket, setStockData, setShowHolding
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, subscriptionFields)));
 
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
-    setShowHoldings(false);
+    setDashboardComponent('quote');
     setIsLoading(false);
     setHasSearched(true);
   }
 
   return (
     <>
-      <form className={styles.card} method='GET' onSubmit={handleSubmit}>
-        <label htmlFor='ticker'> Search Ticker Symbol </label>
+      <form className={styles.centered} method='GET' onSubmit={handleSubmit}>
+        <label htmlFor='ticker'> Search Ticker Symbol </label> <br/>
         <input type='text' placeholder='AAPL' name='ticker-symbol' id='ticker' />
         <button type='submit'> Search </button>
       </form>

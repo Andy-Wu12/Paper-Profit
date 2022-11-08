@@ -12,7 +12,7 @@ import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 import TD_WebsocketContext from '../components/generic/td-websocketContext'
-
+import Watchlist from '../components/watchlist/watchlist_main'
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
@@ -22,15 +22,27 @@ export default function Dashboard() {
 
   const [stockData, setStockData] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
-  const [showHoldings, setShowHoldings] = useState(true);
+  const [dashboardComponent, setDashboardComponent] = useState('positions');
   const [isLoading, setIsLoading] = useState(false);
 
   const setterProps = {
     setStockData,
-    setShowHoldings,
+    setDashboardComponent,
     setIsLoading,
     setHasSearched
   }
+  
+  ///// Handle conditional rendering for the three different dashboard components /////
+  const ENUM_COMPONENTS = {
+    quote: (hasSearched && stockData) ? <StockSearch stockData={stockData} /> : <> No stock quote to show </>,
+    watch: <Watchlist setDashboardComponent={setDashboardComponent} {...setterProps} />,
+    positions: <Positions websocket={websocketCtx.websocket} {...setterProps} />
+  }
+
+  function EnumState({state}) {
+    return <> {ENUM_COMPONENTS[state]} </>
+  }
+  ///// /////
 
   useEffect(() => {
     if(!localStorage.getItem('user')) { 
@@ -49,16 +61,15 @@ export default function Dashboard() {
 
       <h1 className={styles.title}> Dashboard </h1>
       {/* Components that should always render */}
-      <Balance username={user.name} />
-      <NavMenu setShowHoldings={setShowHoldings} />
-      <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
+      <div className={styles.main}> 
+        <Balance username={user.name} />
+        <NavMenu setDashboardComponent={setDashboardComponent} />
+        <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
 
-      {/* Show watchlist and positions/quote details side-by-side */}
-      <div className={dashboardStyles.splitGridContainer}>
-        <div className={dashboardStyles.conditionalRenderSection}>
+        <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
-          showHoldings ? <Positions websocket={websocketCtx.websocket} {...setterProps} /> : (hasSearched ? <StockSearch stockData={stockData} setStockData={setStockData} /> : <p> No stock quote to show! </p>)}
+          <EnumState state={dashboardComponent} />}
         </div>
       </div>
     </div>
@@ -73,19 +84,19 @@ function StockSearch({stockData}) {
   );
 }
 
-function NavMenu({setShowHoldings}) {
+function NavMenu({setDashboardComponent}) {
   return (
     <nav>
-      <ShowLastSearchButton holdingsTrigger={setShowHoldings} />
-      <ShowHoldingsButton holdingsTrigger={setShowHoldings} />
-      <WatchListButton />
+      <ShowLastSearchButton setDashboardComponent={setDashboardComponent} />
+      <ShowHoldingsButton setDashboardComponent={setDashboardComponent} />
+      <WatchListButton setDashboardComponent={setDashboardComponent} />
     </nav>
   );
 }
 
-function ShowLastSearchButton({holdingsTrigger}) {
+function ShowLastSearchButton({setDashboardComponent}) {
   function onClick() {
-    holdingsTrigger(false);
+    setDashboardComponent('quote');
   }
 
   return (
@@ -93,10 +104,10 @@ function ShowLastSearchButton({holdingsTrigger}) {
   );
 }
 
-function ShowHoldingsButton({holdingsTrigger}) {
+function ShowHoldingsButton({setDashboardComponent}) {
 
   function onClick() {
-    holdingsTrigger(true);
+    setDashboardComponent('positions');
   }
 
   return (
@@ -104,11 +115,9 @@ function ShowHoldingsButton({holdingsTrigger}) {
   );
 }
 
-function WatchListButton() {
-  const router = useRouter();
-
-  const onClick = () => {
-    router.push('/watchlist');
+function WatchListButton({setDashboardComponent}) {
+  function onClick() {
+    setDashboardComponent('watch');
   }
 
   return (

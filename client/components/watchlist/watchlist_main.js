@@ -2,18 +2,16 @@ import Head from 'next/head'
 import {useRouter} from 'next/router'
 import { useState, useContext, useEffect } from 'react'
 
-import styles from '../styles/Home.module.css'
-import dashboardStyles from '../styles/dashboard.module.css'
+import styles from '../../styles/Home.module.css'
 
-import AuthContext from '../components/authentication/authContext.js'
-import ActionButton from '../components/generic/action-button'
-import Loading from '../components/generic/loading'
+import AuthContext from '../authentication/authContext.js'
+import Loading from '../generic/loading'
 
-import WatchList from '../components/watchlist/watchlist'
-import TD_WebsocketContext from '../components/generic/td-websocketContext'
+import WatchList from './watchlist'
+import TD_WebsocketContext from '../generic/td-websocketContext'
 
 
-export default function Watchlist() {
+export default function Watchlist({...setterProps}) {
   const user = useContext(AuthContext);
   const wsCTX = useContext(TD_WebsocketContext);
 
@@ -22,7 +20,7 @@ export default function Watchlist() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if(!user.name) { 
+    if(!user.name) {
       router.push('/');
       return;
     }
@@ -45,24 +43,11 @@ export default function Watchlist() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>{`${user.name}'s Watchlist`}</title>
         <meta name="description" content="Stock Trading Simulator Watchlist" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1 className={styles.title}> Watchlist </h1>
-      <DashboardRedirect /> <br/><br/>
-      {!isLoading ? watchList && <WatchList websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
+      {!isLoading ? watchList && <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} /> : <Loading />}
     </div>
   );
-}
-
-function DashboardRedirect() {
-  const router = useRouter();
-
-  const onClick = () => {
-    router.push('/dashboard');
-  }
-
-  return <ActionButton onClick={onClick} buttonText='Go to Dashboard' />
 }

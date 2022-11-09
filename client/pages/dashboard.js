@@ -68,7 +68,7 @@ export default function Dashboard() {
         <Balance username={user.name} />
         <NavMenu setDashboardComponent={setDashboardComponent} />
         <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
-        <TransactionQuantities />
+        {dashboardComponent == 'quote' && <TransactionQuantities />}
         <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 

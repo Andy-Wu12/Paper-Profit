@@ -20,9 +20,11 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
           const rtData = {};
           // Re-map realtimeJSON data to more easily accessible format when templating
           for(const [, data] of Object.entries(newData)) {
-            rtData[data.key] = data;
+            const symbol = data.key;
+            if(oldData) { rtData[symbol] = {...oldData[symbol], ...data}; }
+            else { rtData[symbol] = data; }
           }
-          return {...oldData, ...rtData}
+          return {...oldData, ...rtData};
         });
       }
     }

@@ -33,7 +33,6 @@ export function BuyForm({stockSymbol, symbolData}) {
   return (
     <>
       <ActionButton onClick={buy} buttonText='Buy' className={stockDetailStyles.buy} /> &nbsp;
-      <input type="number" className={stockDetailStyles.quantityInput} defaultValue='1' id={inputID} name="buy-quantity" />
     </>
   )
 }
@@ -61,7 +60,6 @@ export function SellForm({stockSymbol, symbolData}) {
   return (
     <>
       <ActionButton onClick={sell} buttonText='Sell' className={stockDetailStyles.sell} /> &nbsp;
-      <input type="number" className={stockDetailStyles.quantityInput} defaultValue='1' id={inputID} name="sell-quantity" />
     </>
   )
 }

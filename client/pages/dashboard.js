@@ -8,11 +8,14 @@ import dashboardStyles from '../styles/dashboard.module.css'
 import AuthContext from '../components/authentication/authContext.js'
 import StockSearchForm from '../components/dashboard/stock-search.js'
 import StockDetails from '../components/dashboard/stock-details.js'
+
 import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 import TD_WebsocketContext from '../components/generic/td-websocketContext'
 import Watchlist from '../components/watchlist/watchlist_main'
+import TransactionQuantities from '../components/dashboard/transaction-quantity.js'
+
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
@@ -34,7 +37,7 @@ export default function Dashboard() {
   
   ///// Handle conditional rendering for the three different dashboard components /////
   const ENUM_COMPONENTS = {
-    quote: (hasSearched && stockData) ? <StockSearch stockData={stockData} /> : <> No stock quote to show </>,
+    quote: (hasSearched && stockData) ? <> <StockSearch stockData={stockData} /> </> : <> No stock quote to show </>,
     watch: <Watchlist setDashboardComponent={setDashboardComponent} {...setterProps} />,
     positions: <Positions websocket={websocketCtx.websocket} {...setterProps} />
   }
@@ -65,7 +68,7 @@ export default function Dashboard() {
         <Balance username={user.name} />
         <NavMenu setDashboardComponent={setDashboardComponent} />
         <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
-
+        <TransactionQuantities />
         <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 

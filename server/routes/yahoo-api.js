@@ -75,6 +75,60 @@ router.get('/news/:ticker', async (ctx) => {
 	ctx.body = queryData;
 });
 
+// Route to fetch from Yahoo's /earnings endpoint
+router.get('/earnings/:ticker', async (ctx) => {
+	const encodedParams = new URLSearchParams();
+	const ticker = ctx.params['ticker'];
+	encodedParams.append("symbol", ticker);
+
+	const options = createOptionsJSON(encodedParams);
+
+	let queryData = {};
+
+	try {
+		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/earnings', options)
+
+		if(!response.ok) {
+			throw new Error("Bad response from server");
+		}
+		queryData = await response.json();
+
+	} catch (e) {
+		ctx.status = 400;
+		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
+		return;
+	}
+
+	ctx.body = queryData;
+});
+
+// Route to fetch from Yahoo's /quarterly-earnings endpoint
+router.get('/quarterly-earnings/:ticker', async (ctx) => {
+	const encodedParams = new URLSearchParams();
+	const ticker = ctx.params['ticker'];
+	encodedParams.append("symbol", ticker);
+
+	const options = createOptionsJSON(encodedParams);
+
+	let queryData = {};
+
+	try {
+		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/quarterly-earnings', options)
+
+		if(!response.ok) {
+			throw new Error("Bad response from server");
+		}
+		queryData = await response.json();
+
+	} catch (e) {
+		ctx.status = 400;
+		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
+		return;
+	}
+
+	ctx.body = queryData;
+});
+
 function createOptionsJSON(encodedParams) {
 	return (
 		{

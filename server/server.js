@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 
 import userRouter from './routes/users.js';
 import authRouter from './routes/auth.js';
-import stockRouter from './routes/stock.js';
+import stockRouter from './routes/yahoo-api.js';
 import transactionRouter from './routes/transaction.js';
 import wsRouter from './routes/websockets.js';
 import watchlistRouter from './routes/watchlist.js';
@@ -31,9 +31,13 @@ app.use(koaBody());
 // Use index route to list all server endpoints
 router.get('/', (ctx) => {
 	ctx.body = {'Server\'s API Endpoints': {
-		'Get information of specific stock': {
-			'route' : '/stock-info/:ticker',
-			'example' : 'http://localhost:3011/stock-info/AAPL'
+		'Get quote information of specific stock': {
+			'route' : '/stock-info/quote/:ticker',
+			'example' : 'http://localhost:3011/stock-info/quote/AAPL'
+		},
+		'Get news of specific stock': {
+			'route' : '/stock-info/news/:ticker',
+			'example' : 'http://localhost:3011/stock-info/news/AAPL'
 		},
 		'Get list of all users': {
 			'route' : '/users',

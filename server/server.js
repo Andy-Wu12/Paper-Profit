@@ -28,25 +28,62 @@ app
 	
 app.use(koaBody());
 
+const baseURL = `http://localhost:${port}`
 // Use index route to list all server endpoints
 router.get('/', (ctx) => {
 	ctx.body = {'Server\'s API Endpoints': {
-		'Get quote information of specific stock': {
-			'route' : '/stock-info/quote/:ticker',
-			'example' : 'http://localhost:3011/stock-info/quote/AAPL'
+		'Stock Info' : {
+			'Base route' : '/stock-info',
+			'Sub routes' : [
+				{
+					'Get quote information of specific stock': {
+						'sub-route' : '/quote/:ticker',
+						'examples' : `${baseURL}/stock-info/quote/AAPL`
+					}
+				},
+				{
+					'Get news of specific stock': {
+						'sub-route' : '/news/:ticker',
+						'examples' : `${baseURL}/stock-info/news/AAPL`
+					}
+				},
+				{
+					'Get earnings data of specific stock': {
+						'sub-route' : '/earnings/:ticker',
+						'examples': `${baseURL}/stock-info/earnings/AAPL`
+					}
+				},
+				{
+					'Get quarterly earnings of specific stock': {
+						'sub-route' : '/quarterly-earnings/:ticker',
+						'examples' : `${baseURL}/stock-info/quarterly-earnings/AAPL`
+					}
+				},
+				{
+					'Get prices of a stock by desired period': {
+						'sub-route' : '/price/:period/:ticker',
+						'examples' : `${baseURL}s/stock-info/price/1wk/AAPL`
+					}
+				}
+			],
 		},
-		'Get news of specific stock': {
-			'route' : '/stock-info/news/:ticker',
-			'example' : 'http://localhost:3011/stock-info/news/AAPL'
-		},
-		'Get list of all users': {
-			'route' : '/users',
-			'example' : `http://localhost:${port}/users`
-		},
-		'Get specific user': {
-			'route' : '/users/:username',
-			'example' : `http://localhost:${port}/users/user1`
-		},
+		'Users' : {
+			'Base route' : '/users',
+			'Sub routes' : [
+				{
+					'Get list of all users': {
+						'route' : '/',
+						'examples' : `${baseURL}/users`
+					}
+				},
+				{
+					'Get specific user': {
+						'route' : '/users/:username',
+						'examples' : `${baseURL}/users/user1`
+					}
+				},
+			]
+		}
 	}};
 });
 

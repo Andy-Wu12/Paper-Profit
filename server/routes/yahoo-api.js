@@ -129,6 +129,39 @@ router.get('/quarterly-earnings/:ticker', async (ctx) => {
 	ctx.body = queryData;
 });
 
+// Fetch from /price endpoint allowing for Price by period (h,d,wk,y) functionality
+router.get('/price/:period/:ticker', async (ctx) => {
+	const encodedParams = new URLSearchParams();
+	const ticker = ctx.params['ticker'];
+	const period = ctx.params['period'];
+
+	// TODO: Add validation for period or just use default returned response on error
+	encodedParams.append("period", period)
+	encodedParams.append("symbol", ticker);
+
+	const options = createOptionsJSON(encodedParams);
+
+	let queryData = {};
+
+	try {
+		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/price', options)
+
+		if(!response.ok) {
+			throw new Error("Bad response from server");
+		}
+		queryData = await response.json();
+
+	} catch (e) {
+		ctx.status = 400;
+		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
+		return;
+	}
+
+	ctx.body = queryData;
+});
+
+
+
 function createOptionsJSON(encodedParams) {
 	return (
 		{

@@ -38,31 +38,44 @@ router.get('/', (ctx) => {
 				{
 					'Get quote information of specific stock': {
 						'sub-route' : '/quote/:ticker',
-						'examples' : `${baseURL}/stock-info/quote/AAPL`
+						'examples' : [
+							`${baseURL}/stock-info/quote/AAPL`
+						]
 					}
 				},
 				{
 					'Get news of specific stock': {
 						'sub-route' : '/news/:ticker',
-						'examples' : `${baseURL}/stock-info/news/AAPL`
+						'examples' : [
+							`${baseURL}/stock-info/news/AAPL`
+						]
 					}
 				},
 				{
 					'Get earnings data of specific stock': {
 						'sub-route' : '/earnings/:ticker',
-						'examples': `${baseURL}/stock-info/earnings/AAPL`
+						'examples': [
+							`${baseURL}/stock-info/earnings/AAPL`
+						]
 					}
 				},
 				{
 					'Get quarterly earnings of specific stock': {
 						'sub-route' : '/quarterly-earnings/:ticker',
-						'examples' : `${baseURL}/stock-info/quarterly-earnings/AAPL`
+						'examples' : [
+							`${baseURL}/stock-info/quarterly-earnings/AAPL`
+						]
 					}
 				},
 				{
 					'Get prices of a stock by desired period': {
 						'sub-route' : '/price/:period/:ticker',
-						'examples' : `${baseURL}s/stock-info/price/1wk/AAPL`
+						'examples' : [
+							`${baseURL}/stock-info/price/1wk/AAPL`,
+							`${baseURL}/stock-info/price/10d/AAPL`,
+							`${baseURL}/stock-info/price/8h/AAPL`,
+							`${baseURL}/stock-info/price/1y/AAPL`,
+						]
 					}
 				}
 			],
@@ -72,16 +85,41 @@ router.get('/', (ctx) => {
 			'Sub routes' : [
 				{
 					'Get list of all users': {
-						'route' : '/',
-						'examples' : `${baseURL}/users`
+						'sub-route' : '/',
+						'examples' : [
+							`${baseURL}/users`
+						]
 					}
 				},
 				{
 					'Get specific user': {
-						'route' : '/users/:username',
-						'examples' : `${baseURL}/users/user1`
+						'sub-route' : '/:username',
+						'examples' : [
+							`${baseURL}/users/user1`
+						]
 					}
 				},
+				{
+					'Get specific user\'s held positions': {
+						'sub-route': '/:username/holdings',
+						'exmaples': [
+							`${baseURL}/users/user1/holdings`
+						]
+					}
+				}
+			]
+		},
+		'Watchlist' : {
+			'Base route': '/watchlist',
+			'Sub routes' : [
+				{
+					'Get user\'s watchlist' : {
+						'sub-route': '/user/:username',
+						'examples': [
+							`${baseURL}/watchlist/user/user1`
+						]
+					}
+				}
 			]
 		}
 	}};

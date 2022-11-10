@@ -6,8 +6,9 @@ import styles from '../styles/Home.module.css'
 import dashboardStyles from '../styles/dashboard.module.css'
 
 import AuthContext from '../components/authentication/authContext.js'
-import StockSearchForm from '../components/dashboard/stock-search.js'
+import StockSearchForm, {subscriptionFields} from '../components/dashboard/stock-search.js'
 import StockDetails from '../components/dashboard/stock-details.js'
+import Ameritrade from '../components/generic/ameritrade-websocket'
 
 import Positions from '../components/dashboard/positions.js'
 import ActionButton from '../components/generic/action-button'
@@ -25,6 +26,7 @@ export default function Dashboard() {
 
   const [stockData, setStockData] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [lastSearch, setLastSearch] = useState(null);
   const [dashboardComponent, setDashboardComponent] = useState('positions');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,7 +34,8 @@ export default function Dashboard() {
     setStockData,
     setDashboardComponent,
     setIsLoading,
-    setHasSearched
+    setHasSearched,
+    setLastSearch
   }
   
   ///// Handle conditional rendering for the three different dashboard components /////
@@ -66,8 +69,9 @@ export default function Dashboard() {
       {/* Components that should always render */}
       <div className={styles.main}> 
         <Balance username={user.name} />
-        <NavMenu setDashboardComponent={setDashboardComponent} />
+        <NavMenu {...setterProps} setDashboardComponent={setDashboardComponent} lastSearch={lastSearch} websocket={websocketCtx.websocket} />
         <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
+
         {dashboardComponent == 'quote' && <TransactionQuantities />}
         <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
           {/* Components that conditionally render */}
@@ -87,27 +91,45 @@ function StockSearch({stockData}) {
   );
 }
 
-function NavMenu({setDashboardComponent}) {
+function NavMenu({setDashboardComponent, lastSearch, websocket, ...setterProps}) {
   return (
     <nav>
-      <ShowLastSearchButton setDashboardComponent={setDashboardComponent} />
+      <ShowLastSearchButton {...setterProps} setDashboardComponent={setDashboardComponent} websocket={websocket} lastSearch={lastSearch}/>
       <ShowHoldingsButton setDashboardComponent={setDashboardComponent} />
       <WatchListButton setDashboardComponent={setDashboardComponent} />
     </nav>
   );
 }
 
-function ShowLastSearchButton({setDashboardComponent}) {
-  function onClick() {
-    setDashboardComponent('quote');
+function ShowLastSearchButton({websocket, lastSearch, ...setterProps}) {
+  const router = useRouter();
+
+  async function handleClick(e) {
+    e.preventDefault();
+    setterProps.setIsLoading(true);
+    const tickerSymbol = lastSearch
+    if(!tickerSymbol) {
+      // Another option is to setStockData(null) to show error in StockDetail component, 
+      // but this may be against good UX
+      setterProps.setIsLoading(false);
+      return;
+    }
+    // Set stockData(null) on new search
+    setterProps.setStockData(null);
+    websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, subscriptionFields)));
+
+    router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
+    setterProps.setDashboardComponent('quote');
+    setterProps.setIsLoading(false);
+    setterProps.setHasSearched(true);
   }
 
   return (
-    <ActionButton onClick={onClick} buttonText='Show Last Search' />
+    <ActionButton onClick={handleClick} buttonText='Show Last Search' />
   );
 }
 
-function ShowHoldingsButton({setDashboardComponent}) {
+function ShowHoldingsButton({setDashboardComponent, lastSearch={lastSearch}}) {
 
   function onClick() {
     setDashboardComponent('positions');

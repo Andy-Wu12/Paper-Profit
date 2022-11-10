@@ -7,7 +7,7 @@ import Ameritrade from '../generic/ameritrade-websocket'
 
 export const subscriptionFields = "0,1,2,3,8,12,13,15,30,31,32,33";
 
-export default function StockSearchForm({websocket, setStockData, setDashboardComponent, setIsLoading, setHasSearched}) {  
+export default function StockSearchForm({websocket, ...setterProps}) {  
   const router = useRouter();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function StockSearchForm({websocket, setStockData, setDashboardCo
           const data = JSON.parse(message.data);
           if(data.data) {
             const newData = data.data[0].content[0];
-            setStockData(oldData => {return {...oldData, ...newData} });
+            setterProps.setStockData(oldData => {return {...oldData, ...newData} });
           }
         }
       };
@@ -28,22 +28,23 @@ export default function StockSearchForm({websocket, setStockData, setDashboardCo
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setIsLoading(true);
+    setterProps.setIsLoading(true);
     const tickerSymbol = e.target.ticker.value;
     if(!tickerSymbol) {
       // Another option is to setStockData(null) to show error in StockDetail component, 
       // but this may be against good UX
-      setIsLoading(false);
+      setterProps.setIsLoading(false);
       return;
     }
     // Set stockData(null) on new search
-    setStockData(null);
+    setterProps.setStockData(null);
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, subscriptionFields)));
 
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
-    setDashboardComponent('quote');
-    setIsLoading(false);
-    setHasSearched(true);
+    setterProps.setDashboardComponent('quote');
+    setterProps.setLastSearch(tickerSymbol);
+    setterProps.setIsLoading(false);
+    setterProps.setHasSearched(true);
   }
 
   return (

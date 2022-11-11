@@ -49,30 +49,33 @@ router.get('/quote/:ticker', async (ctx) => {
 });
 
 // Route to fetch from Yahoo's /news endpoint
-router.get('/news/:ticker', async (ctx) => {
-	const encodedParams = new URLSearchParams();
-	const ticker = ctx.params['ticker'];
-	encodedParams.append("symbol", ticker);
-
-	const options = createOptionsJSON(encodedParams);
-
-	let queryData = {};
+router.get('/news/:commaSepTickers', async (ctx) => {
+	const tickers = ctx.params['commaSepTickers'].split(',');
+	const news = [];
 
 	try {
-		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/news', options)
+		for(const ticker of tickers) {
+			const encodedParams = new URLSearchParams();
+			encodedParams.append("symbol", ticker);
 
-		if(!response.ok) {
-			throw new Error("Bad response from server");
+			const options = createOptionsJSON(encodedParams);
+
+			const response = await fetch('https://yahoo-finance97.p.rapidapi.com/news', options)
+
+			if(!response.ok) {
+				throw new Error("Bad response from server");
+			}
+			const queryData = await response.json();
+			news.push(queryData);
 		}
-		queryData = await response.json();
 
 	} catch (e) {
 		ctx.status = 400;
-		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
+		ctx.body = {message: e.message, status: ctx.status};
 		return;
 	}
 
-	ctx.body = queryData;
+	ctx.body = news;
 });
 
 // Route to fetch from Yahoo's /earnings endpoint

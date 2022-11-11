@@ -51,10 +51,12 @@ router.get('/quote/:ticker', async (ctx) => {
 // Route to fetch from Yahoo's /news endpoint
 router.get('/news/:commaSepTickers', async (ctx) => {
 	const tickers = ctx.params['commaSepTickers'].split(',');
-	const news = [];
+	const news = {};
 
 	try {
 		for(const ticker of tickers) {
+			news[ticker] = {};
+
 			const encodedParams = new URLSearchParams();
 			encodedParams.append("symbol", ticker);
 
@@ -66,7 +68,9 @@ router.get('/news/:commaSepTickers', async (ctx) => {
 				throw new Error("Bad response from server");
 			}
 			const queryData = await response.json();
-			news.push(queryData);
+
+			// Parse data to be accessible by ticker symbol
+			news[ticker] = queryData.data;
 		}
 
 	} catch (e) {

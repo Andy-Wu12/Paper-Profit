@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+import Loading from '../generic/loading';
+import ActionButton from '../generic/action-button';
+
 import newsStyles from '../../styles/News.module.css';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -26,27 +29,14 @@ export default function StockNews({symbolList}) {
 
   if(stockNews) {
     for(const [symbol, data] of Object.entries(stockNews)) {
-      const symbolList = (
-      <div className={newsStyles.newsList}>
-        <h3> {symbol} </h3>
-        <ul key={`${symbol}-news`}>
-          {
-            data.map((newsData, i) => {
-              return <li> 
-                  <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
-                </li>
-            })
-          }
-        </ul>
-      </div>
-      )
+      const symbolList = <StockNewsSection symbol={symbol} data={data} />
       news.push(symbolList);
     }
   }
 
   return (
     <div className={newsStyles.news}>
-      {!isLoading && news}
+      {isLoading ? <Loading /> : news}
     </div>
   )
 }
@@ -56,5 +46,24 @@ function NewsLink({title, link}) {
     <>
       <Link href={link}>{title}</Link>
     </>
+  )
+}
+
+function StockNewsSection({symbol, data}) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <div className={newsStyles.newsList}>
+      <h3> {symbol} <ActionButton onClick={() => {}} buttonText='Hide' /> </h3>
+      <ul key={`${symbol}-news`}>
+        {
+          data.map((newsData, i) => {
+            return <li> 
+                <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
+              </li>
+          })
+        }
+      </ul>
+    </div>
   )
 }

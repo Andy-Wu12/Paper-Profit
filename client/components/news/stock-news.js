@@ -29,7 +29,7 @@ export default function StockNews({symbolList}) {
 
   if(stockNews) {
     for(const [symbol, data] of Object.entries(stockNews)) {
-      const symbolList = <StockNewsSection symbol={symbol} data={data} />
+      const symbolList = <StockNewsSection key={`${symbol}-news`} symbol={symbol} data={data} />
       news.push(symbolList);
     }
   }
@@ -63,11 +63,11 @@ function StockNewsSection({symbol, data}) {
     <div className={newsStyles.newsList}>
       <h3> {symbol} <ActionButton onClick={handleClick} buttonText={buttonText} /> </h3>
       {!isCollapsed && 
-        <ul key={`${symbol}-news`}>
+        <ul>
           {
             data.map((newsData, i) => {
-              return <li>
-                  <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
+              return <li key={`${symbol}-newsItem-${i}`}>
+                  <NewsLink title={newsData.title} link={newsData.link} /> 
                 </li>
             })
           }

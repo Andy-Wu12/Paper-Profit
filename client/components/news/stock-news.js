@@ -44,7 +44,7 @@ export default function StockNews({symbolList}) {
 function NewsLink({title, link}) {
   return (
     <>
-      <Link href={link}>{title}</Link>
+      <a href={link} target='_blank' rel='noreferrer'>{title}</a>
     </>
   )
 }

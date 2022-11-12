@@ -151,6 +151,7 @@ export function StockSymbolButton({symbol, websocket, ...setterProps}) {
       setterProps.setStockData(null);
 
       websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbol, subscriptionFields)));
+      setterProps.setLastSearch(symbol);
       setterProps.setHasSearched(true);
       setterProps.setDashboardComponent('quote');
     }

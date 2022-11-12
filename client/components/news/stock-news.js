@@ -32,7 +32,9 @@ export default function StockNews({symbolList}) {
         <ul key={`${symbol}-news`}>
           {
             data.map((newsData, i) => {
-              return <li> <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> </li>
+              return <li> 
+                  <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
+                </li>
             })
           }
         </ul>

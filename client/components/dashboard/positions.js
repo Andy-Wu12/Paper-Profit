@@ -7,6 +7,7 @@ import ActionButton from '../generic/action-button';
 import { subscriptionFields } from './stock-search';
 import StockNews from '../news/stock-news';
 
+import styles from '../../styles/Home.module.css';
 import gridStyles from '../../styles/PositionGrid.module.css';
 
 export default function Positions({websocket, ...setterProps}) {
@@ -84,9 +85,9 @@ export default function Positions({websocket, ...setterProps}) {
           websocket={websocket} 
           positionDataJSON={positionData} 
           realtimeData={realtimeData} 
-        /> : <h3> No positions to show! </h3> 
+        />
+        : <h3> No positions to show! </h3> 
       }
-
       {positionData && <> <h2> Related News </h2> <StockNews symbolList={Object.keys(positionData)} /> </>}
     </>
   );
@@ -117,7 +118,7 @@ function PositionGrid({positionDataJSON, realtimeData, websocket, ...setterProps
 
   return (
     <>
-      <table>
+      <table className={styles.grid}>
         <tbody className={gridStyles.positionsTable}>
           <tr className={gridStyles.gridRow}>
             <th> Position </th>

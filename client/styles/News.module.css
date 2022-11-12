@@ -1,7 +1,14 @@
 .news {
-
+  text-align: left;
 }
 
-.newsList {
+.newsList a:link,
+.newsList a:visited {
+  color: #67b2e8;
+  text-decoration: none;
+}
 
+.newsList a:hover {
+  color: #bfccff;
+  text-decoration: underline;
 }

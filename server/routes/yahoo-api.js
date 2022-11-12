@@ -1,6 +1,10 @@
 import Router from '@koa/router';
 import fetch from 'isomorphic-fetch';
 
+// const API_DOMAIN = 'yahoo-finance97.p.rapidapi.com';
+const API_DOMAIN = 'yfinance-stock-market-data.p.rapidapi.com';
+
+const API_BASE_URL=`https://${API_DOMAIN}`;
 
 export const router = new Router({prefix: '/stock-info'});
 
@@ -15,7 +19,7 @@ router.get('/quote/:ticker', async (ctx) => {
 	let queryData = {};
 
 	try {
-		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/stock-info', options)
+		const response = await fetch(`${API_BASE_URL}/stock-info`, options)
 
 		if(!response.ok) {
 			throw new Error("Bad response from server");
@@ -62,7 +66,7 @@ router.get('/news/:commaSepTickers', async (ctx) => {
 
 			const options = createOptionsJSON(encodedParams);
 
-			const response = await fetch('https://yahoo-finance97.p.rapidapi.com/news', options)
+			const response = await fetch(`${API_BASE_URL}/news`, options)
 
 			if(!response.ok) {
 				throw new Error("Bad response from server");
@@ -93,7 +97,7 @@ router.get('/earnings/:ticker', async (ctx) => {
 	let queryData = {};
 
 	try {
-		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/earnings', options)
+		const response = await fetch(`${API_BASE_URL}/earnings`, options)
 
 		if(!response.ok) {
 			throw new Error("Bad response from server");
@@ -120,7 +124,7 @@ router.get('/quarterly-earnings/:ticker', async (ctx) => {
 	let queryData = {};
 
 	try {
-		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/quarterly-earnings', options)
+		const response = await fetch(`${API_BASE_URL}/quarterly-earnings`, options)
 
 		if(!response.ok) {
 			throw new Error("Bad response from server");
@@ -176,7 +180,7 @@ function createOptionsJSON(encodedParams) {
 			headers: {
 				'content-type': 'application/x-www-form-urlencoded',
 				'X-RapidAPI-Key': process.env.RAPID_API_YAHOO_KEY,
-				'X-RapidAPI-Host': 'yahoo-finance97.p.rapidapi.com'
+				'X-RapidAPI-Host': API_DOMAIN
 			},
 			body: encodedParams
 		}

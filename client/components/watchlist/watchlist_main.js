@@ -8,6 +8,7 @@ import AuthContext from '../authentication/authContext.js'
 import Loading from '../generic/loading'
 
 import WatchList from './watchlist'
+import StockNews from '../news/stock-news'
 import TD_WebsocketContext from '../generic/td-websocketContext'
 
 
@@ -52,11 +53,17 @@ export default function Watchlist({...setterProps}) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {!isLoading ? 
-        (watchList ? 
-          <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} />
-          : <h1> Your watchlist is empty </h1> ) 
+      {!isLoading ?
+        (watchList ?
+          <> 
+            <h2> Watchlist </h2>
+            <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} />
+          </>
+          : <h2> Your watchlist is empty </h2> 
+        ) 
         : <Loading />}
+
+      {watchList && <> <h2> Related News </h2> <StockNews symbolList={watchList} /> </>}
     </div>
   );
 }

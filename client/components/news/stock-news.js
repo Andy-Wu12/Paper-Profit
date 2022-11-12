@@ -50,20 +50,29 @@ function NewsLink({title, link}) {
 }
 
 function StockNewsSection({symbol, data}) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [buttonText, setButtonText] = useState('Show');
+
+  function handleClick(e) {
+    setIsCollapsed(!isCollapsed);
+    if(buttonText === 'Hide') setButtonText('Show');
+    else setButtonText('Hide');
+  }
 
   return (
     <div className={newsStyles.newsList}>
-      <h3> {symbol} <ActionButton onClick={() => {}} buttonText='Hide' /> </h3>
-      <ul key={`${symbol}-news`}>
-        {
-          data.map((newsData, i) => {
-            return <li> 
-                <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
-              </li>
-          })
-        }
-      </ul>
+      <h3> {symbol} <ActionButton onClick={handleClick} buttonText={buttonText} /> </h3>
+      {!isCollapsed && 
+        <ul key={`${symbol}-news`}>
+          {
+            data.map((newsData, i) => {
+              return <li>
+                  <NewsLink key={`${symbol}-newsItem-${i}`} title={newsData.title} link={newsData.link} /> 
+                </li>
+            })
+          }
+        </ul>
+      }
     </div>
   )
 }

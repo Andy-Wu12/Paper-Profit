@@ -2,11 +2,12 @@ import { useRouter } from 'next/router';
 import { useContext } from 'react';
 
 import styles from '../../styles/Home.module.css'
+import stockDetailStyles from '../../styles/StockDetail.module.css'
 
 import AuthContext from '../authentication/authContext';
-import stockDetailStyles from '../../styles/StockDetail.module.css'
 import { BuyForm, SellForm } from './transaction-form';
 import ActionButton from '../generic/action-button';
+import CandleStickChart from '../charts/candlestick';
 
 export default function StockDetails({stockDataJSON}) {  
   const isSuccess = stockDataJSON.key;
@@ -23,6 +24,7 @@ export function StockDetail({stockData}) {
     <>
       <StockHeading stockData={stockData} />
       <StockDescriptionList stockData={stockData} />
+      <CandleStickChart />
     </>
   )
 }

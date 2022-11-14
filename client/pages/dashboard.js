@@ -16,7 +16,8 @@ import Loading from '../components/generic/loading'
 import TD_WebsocketContext from '../components/generic/td-websocketContext'
 import Watchlist from '../components/watchlist/watchlist_main'
 import TransactionQuantities from '../components/dashboard/transaction-quantity.js'
-
+import CandleStickChart from '../components/charts/candlestick';
+import SelectDropdown from '../components/generic/dropdown-select';
 
 export default function Dashboard() {
   const user = useContext(AuthContext);
@@ -77,6 +78,7 @@ export default function Dashboard() {
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
           <EnumState state={dashboardComponent} />}
+          {dashboardComponent == 'quote' && <StockChart />}
         </div>
       </div>
     </div>
@@ -86,7 +88,11 @@ export default function Dashboard() {
 function StockSearch({stockData}) {
   return (
     <>
-      {stockData && <StockDetails stockDataJSON={stockData} />}
+      {stockData && 
+        <> 
+          <StockDetails stockDataJSON={stockData} /> 
+        </>
+      }
     </>
   );
 }
@@ -173,6 +179,60 @@ function Balance({username}) {
   return (
     <>
       {balance && <h2> Your Remaining Cash: {parseFloat(balance).toFixed(2)} </h2>}
+    </>
+  )
+}
+
+function StockChart() {
+  // Chart data format = {
+    // ["Label", "", "", "", ""],
+      // Label -> Low / Min -> Open -> Close -> High / Max
+    // ["Mon", 20, 28, 38, 45],
+    // ["Tue", 31, 38, 55, 66],
+  // }
+  const router = useRouter();
+  const {symbol} = router.query;
+
+  // Options reference: https://developers.google.com/chart/interactive/docs/gallery/candlestickchart#data-format
+  const options = {
+    legend: "none",
+    bar: { groupWidth: "75%" }, // Remove space between bars.
+    candlestick: {
+      fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
+      risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green
+    },
+  };
+
+  const periodOptions = ['5d','1d','1mo','3mo','6mo','1y','2y','5y','10y','ytd'] 
+
+  const [period, setPeriod] = useState('5d');
+  const [periodData, setPeriodData] = useState(null);
+
+  const getPeriodData = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/price/${period}/${symbol}`;
+    const response = await fetch(url);
+    const newPeriodData = await response.json();
+    setPeriodData(newPeriodData);
+  }
+
+  useEffect(() => {
+    getPeriodData();
+  }, [period, symbol])
+
+  let stockChartData = [["Day", "", "", "", ""]];
+
+  if(periodData) {
+    for(const data of periodData.data) {
+      const date = new Date(data.Date);
+      const dateLabel = `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+      stockChartData.push([dateLabel, data.Low, data.Open, data.Close, data.High]);
+    }
+  }
+
+  return (
+    <>  
+      <CandleStickChart symbolData={stockChartData} options={options} />
+      <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
     </>
   )
 }

@@ -146,6 +146,7 @@ router.get('/price/:period/:ticker', async (ctx) => {
 	const ticker = ctx.params['ticker'];
 	const period = ctx.params['period'];
 
+	console.log(`${ticker} for period ${period}`);
 	// TODO: Add validation for period or just use default returned response on error
 	encodedParams.append("period", period)
 	encodedParams.append("symbol", ticker);
@@ -155,7 +156,7 @@ router.get('/price/:period/:ticker', async (ctx) => {
 	let queryData = {};
 
 	try {
-		const response = await fetch('https://yahoo-finance97.p.rapidapi.com/price', options)
+		const response = await fetch(`${API_BASE_URL}/price`, options)
 
 		if(!response.ok) {
 			throw new Error("Bad response from server");

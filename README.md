@@ -20,6 +20,13 @@ Run all these commands at once with `npm install next react react-dom`
         - Click on the **OAuth 2.0** Button and authenticate with your TD Ameritrade account.
         - Click *Send*, and copy the JSON from the *Response* section, making sure that `streamerSubscriptionKeys` is part of the response.
         - Paste this json in a file named `userprincipal.json` in the **pages/api** folder inside the *client* folder.
+3. A RapidAPI account
+    1. Create an app by clicking *My Apps* then *Add New App*
+    2. Enter a name of your choosing then click **Save**.
+    3. Under the **My Apps** section, click on the name of your app.
+    4. Click *Security* then the eye icon to reveal your Application key
+    5. Copy that key into a **.env** file in the **server** folder
+    6. Subscripte to the [YFINANCE](https://rapidapi.com/asepscareer/api/yfinance-stock-market-data/) API
 
 Once everything is set up open two terminals, one for each the client and server programs.
 

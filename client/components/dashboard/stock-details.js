@@ -1,12 +1,14 @@
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import styles from '../../styles/Home.module.css'
+import stockDetailStyles from '../../styles/StockDetail.module.css'
 
 import AuthContext from '../authentication/authContext';
-import stockDetailStyles from '../../styles/StockDetail.module.css'
 import { BuyForm, SellForm } from './transaction-form';
 import ActionButton from '../generic/action-button';
+import CandleStickChart from '../charts/candlestick';
+import SelectDropdown from '../generic/dropdown-select';
 
 export default function StockDetails({stockDataJSON}) {  
   const isSuccess = stockDataJSON.key;
@@ -19,10 +21,57 @@ export default function StockDetails({stockDataJSON}) {
 }
 
 export function StockDetail({stockData}) {
+  // Chart data format = {
+    // ["Label", "", "", "", ""],
+      // Label -> Low / Min -> Open -> Close -> High / Max
+    // ["Mon", 20, 28, 38, 45],
+    // ["Tue", 31, 38, 55, 66],
+  // }
+
+  // Options reference: https://developers.google.com/chart/interactive/docs/gallery/candlestickchart#data-format
+  const options = {
+    legend: "none",
+    bar: { groupWidth: "75%" }, // Remove space between bars.
+    candlestick: {
+      fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
+      risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green
+    },
+  };
+
+  const periodOptions = ['5d','1d','1mo','3mo','6mo','1y','2y','5y','10y','ytd'] 
+
+  const [period, setPeriod] = useState('5d');
+  const [periodData, setPeriodData] = useState(null);
+
+  const symbol = stockData.key
+
+  const getPeriodData = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/price/${period}/${symbol}`;
+    const response = await fetch(url);
+    const newPeriodData = await response.json();
+    setPeriodData(newPeriodData);
+  }
+
+  useEffect(() => {
+    getPeriodData();
+  }, [period])
+
+  let stockChartData = [["Day", "", "", "", ""]];
+
+  if(periodData) {
+    for(const data of periodData.data) {
+      const date = new Date(data.Date);
+      const dateLabel = `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+      stockChartData.push([dateLabel, data.Low, data.Open, data.Close, data.High]);
+    }
+  }
+
   return (
     <>
       <StockHeading stockData={stockData} />
       <StockDescriptionList stockData={stockData} />
+      <CandleStickChart symbolData={stockChartData} options={options} />
+      <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
     </>
   )
 }

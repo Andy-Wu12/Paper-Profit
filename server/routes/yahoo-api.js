@@ -140,7 +140,7 @@ router.get('/quarterly-earnings/:ticker', async (ctx) => {
 	ctx.body = queryData;
 });
 
-// Fetch from /price endpoint allowing for Price by period (h,d,wk,y) functionality
+// Fetch from /price endpoint allowing for Price by period (1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max) functionality
 router.get('/price/:period/:ticker', async (ctx) => {
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];

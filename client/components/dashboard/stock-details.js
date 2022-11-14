@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import styles from '../../styles/Home.module.css'
 import stockDetailStyles from '../../styles/StockDetail.module.css'
@@ -20,11 +20,53 @@ export default function StockDetails({stockDataJSON}) {
 }
 
 export function StockDetail({stockData}) {
+  // Chart data format = {
+    // ["Label", "", "", "", ""],
+      // Label -> Low / Min -> Open -> Close -> High / Max
+    // ["Mon", 20, 28, 38, 45],
+    // ["Tue", 31, 38, 55, 66],
+  // }
+  const [periodData, setPeriodData] = useState(null);
+
+  const period = '1wk';
+  const symbol = stockData.key
+
+  const getPeriodData = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/price/${period}/${symbol}`;
+    const response = await fetch(url);
+    const newPeriodData = await response.json();
+    setPeriodData(newPeriodData);
+  }
+
+  useEffect(() => {
+    getPeriodData();
+  }, [])
+
+  let stockChartData = [["Day", "", "", "", ""]];
+
+  if(periodData) {
+    for(const data of periodData.data) {
+      const date = new Date(data.Date);
+      const dateLabel = `${date.getMonth()}/${date.getDay()}`;
+      stockChartData.push([dateLabel, data.Low, data.Open, data.Close, data.High]);
+    }
+  }
+
+  // Options reference: https://developers.google.com/chart/interactive/docs/gallery/candlestickchart#data-format
+  const options = {
+    legend: "none",
+    bar: { groupWidth: "100%" }, // Remove space between bars.
+    candlestick: {
+      fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
+      risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green
+    },
+  };
+
   return (
     <>
       <StockHeading stockData={stockData} />
       <StockDescriptionList stockData={stockData} />
-      <CandleStickChart />
+      <CandleStickChart symbolData={stockChartData} options={options} />
     </>
   )
 }

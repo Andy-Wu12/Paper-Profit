@@ -55,7 +55,7 @@ export function StockDetail({stockData}) {
   // Options reference: https://developers.google.com/chart/interactive/docs/gallery/candlestickchart#data-format
   const options = {
     legend: "none",
-    bar: { groupWidth: "100%" }, // Remove space between bars.
+    bar: { groupWidth: "75%" }, // Remove space between bars.
     candlestick: {
       fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
       risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green

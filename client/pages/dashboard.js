@@ -52,7 +52,7 @@ export default function Dashboard() {
   ///// /////
 
   useEffect(() => {
-    if(!localStorage.getItem('user')) { 
+    if(!localStorage.getItem('user') || !user.name) { 
       router.push('/');
     }
 

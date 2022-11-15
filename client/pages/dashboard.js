@@ -193,9 +193,31 @@ function StockChart() {
   const router = useRouter();
   const {symbol} = router.query;
 
+  const [period, setPeriod] = useState('5d');
+  const [periodData, setPeriodData] = useState(null);
+
   // Options reference: https://developers.google.com/chart/interactive/docs/gallery/candlestickchart#data-format
   const options = {
+    title: `${symbol} Price History - ${period}`,
+    titleTextStyle: {
+      color: 'white',
+      bold: true,
+      fontSize: 20
+    },
     legend: "none",
+    backgroundColor: '#181818',
+    width: 500,
+    height: 500,
+    hAxis: {
+      textStyle: {
+        color: 'white'
+      }
+    },
+    vAxis: {
+      textStyle: {
+        color: 'white'
+      }
+    },
     bar: { groupWidth: "75%" }, // Remove space between bars.
     candlestick: {
       fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
@@ -203,10 +225,7 @@ function StockChart() {
     },
   };
 
-  const periodOptions = ['5d','1d','1mo','3mo','6mo','1y','2y','5y','10y','ytd'] 
-
-  const [period, setPeriod] = useState('5d');
-  const [periodData, setPeriodData] = useState(null);
+  const periodOptions = ['5d','1d','10d','1mo','3mo','6mo','1y','2y','5y','10y','ytd','max'] 
 
   const getPeriodData = async () => {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/price/${period}/${symbol}`;
@@ -219,7 +238,9 @@ function StockChart() {
     getPeriodData();
   }, [period, symbol])
 
-  let stockChartData = [["Day", "", "", "", ""]];
+  let stockChartData = [
+    ["Day", "", "", "", ""],
+  ];
 
   if(periodData) {
     for(const data of periodData.data) {

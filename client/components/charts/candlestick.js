@@ -25,8 +25,6 @@ export default function CandleStick({symbolData, options}) {
   return (
     <Chart
       chartType="CandlestickChart"
-      width="50vw"
-      height="400px"
       data={symbolData}
       options={options}
     />

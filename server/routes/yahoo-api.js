@@ -146,7 +146,6 @@ router.get('/price/:period/:ticker', async (ctx) => {
 	const ticker = ctx.params['ticker'];
 	const period = ctx.params['period'];
 
-	console.log(`${ticker} for period ${period}`);
 	// TODO: Add validation for period or just use default returned response on error
 	encodedParams.append("period", period)
 	encodedParams.append("symbol", ticker);

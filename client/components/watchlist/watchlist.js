@@ -4,12 +4,13 @@ import gridStyles from '../../styles/PositionGrid.module.css';
 import quoteStyles from '../../styles/StockDetail.module.css';
 
 import { StockSymbolButton } from '../dashboard/positions';
+import ActionButton from '../generic/action-button';
 import Ameritrade from '../generic/ameritrade-websocket';
 
 export default function WatchList({websocket, watchListData, ...setterProps}) {  
   const [realtimeData, setRealtimeData] = useState(null);
 
-  const subscriptionFields = "0,1,2,3,8,30,31";
+  const subscriptionFields = "0,1,2,3,8,28,29,30,31";
 
   useEffect(() => {
     websocket.onmessage = (message) => {
@@ -59,6 +60,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     2: 'Ask',
     3: 'Last',
     8: 'Volume',
+    28: 'Open',
     30: '52 High',
     31: '52 Low',
   }
@@ -72,6 +74,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
 
   // Map all fields for each symbol
   for(const [symbol, data] of Object.entries(realtimeData)) {
+    const netChange = data['29'];
     const bid = data['1'];
     const ask = data['2'];
     const mark = (bid + ask) / 2;
@@ -79,8 +82,10 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     const symbolHTML = (
       <tr key={`${symbol}-watchlist-row`} className={gridStyles.gridRow}>
         <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} />  </td>
-        {/* TODO: Color should change depending on previous price (red down, green up)  */}
-        <td> {mark.toFixed(2)} </td>
+        {/* Color should change depending on previous close price (red down, green up, white same)  */}
+        {netChange === 0 && <td> {mark.toFixed(2)} </td>}
+        {netChange < 0 && <td className={gridStyles.rtPriceLower}> {mark.toFixed(2)} </td> }
+        {netChange > 0 && <td className={gridStyles.rtPriceHigher}> {mark.toFixed(2)} </td> }
         {Object.keys(fieldToLabelMap).map((key) => {
           const fieldName = fieldToLabelMap[key];
           return (

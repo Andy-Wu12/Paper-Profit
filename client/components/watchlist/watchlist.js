@@ -79,6 +79,10 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     const ask = data['2'];
     const mark = (bid + ask) / 2;
 
+    const handleRemoveClick = (e) => {
+      console.log(`removing ${symbol} from watchlist!`);
+    }
+
     const symbolHTML = (
       <tr key={`${symbol}-watchlist-row`} className={gridStyles.gridRow}>
         <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} />  </td>
@@ -95,6 +99,8 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
             </td>
           )
         })}
+        {/* Button to remove from watchlist */}
+        <td> <ActionButton onClick={handleRemoveClick} buttonText='Remove' /> </td> 
       </tr>
     );
     watchListHTML.push(symbolHTML);

@@ -33,11 +33,13 @@ export default function Watchlist({...setterProps}) {
         const response = await fetch(watchlistAPI_URL);
         if(response.ok) {
           const data = await response.json();
-          setWatchlist(data);
+          if(data.length > 0) {
+            setIsLoading(false);
+            setWatchlist(data);
+            return;
+          }
         }
-        else {
-          setWatchlist(null);
-        }
+        setWatchlist(null);
         setIsLoading(false);
       }
     }

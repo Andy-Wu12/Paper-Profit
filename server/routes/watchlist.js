@@ -29,7 +29,6 @@ router.post('/watch', async (ctx) => {
       throw new Error('Invalid request');
     }
 
-    // TODO: Handle watching an already watched stock
     await Watchlist.updateOne(
       {username: username},
       {$addToSet: {symbols: symbol }},
@@ -45,5 +44,31 @@ router.post('/watch', async (ctx) => {
   }
 
 });
+
+router.post('/unwatch', async (ctx) => {
+  const queryDict = ctx.request.query;
+  const postBody = ctx.request.body;
+
+  const username = postBody.username;
+  const symbol = queryDict.symbol;
+
+  try {
+    if(!username || queryDict === '{}') {
+      throw new Error('Invalid request')
+    }
+
+    await Watchlist.updateOne(
+      {username: username},
+      { $pull: { 'symbols': symbol }}
+    )
+
+    ctx.status = 200;
+    ctx.body = {message: 'Removed successfully', status: ctx.status};
+
+  } catch (e) {
+    ctx.status = 400;
+    ctx.body = {message: e.message, status: ctx.status};
+  }
+})
 
 export default router;

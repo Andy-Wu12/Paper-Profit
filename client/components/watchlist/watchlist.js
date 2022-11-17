@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
 
 import gridStyles from '../../styles/PositionGrid.module.css';
 import quoteStyles from '../../styles/StockDetail.module.css';
+import AuthContext from '../authentication/authContext';
 
 import { StockSymbolButton } from '../dashboard/positions';
 import ActionButton from '../generic/action-button';
@@ -53,6 +55,9 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
 }
 
 export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
+  const user = useContext(AuthContext);
+  const router = useRouter();
+
   const watchListHTML = [];
   
   const fieldToLabelMap = {
@@ -79,8 +84,20 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     const ask = data['2'];
     const mark = (bid + ask) / 2;
 
-    const handleRemoveClick = (e) => {
-      console.log(`removing ${symbol} from watchlist!`);
+    const unwatch = async () => {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/watchlist/unwatch?symbol=${symbol}`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "username": user.name,
+        })
+      });
+
+      router.reload();
     }
 
     const symbolHTML = (
@@ -100,7 +117,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
           )
         })}
         {/* Button to remove from watchlist */}
-        <td> <ActionButton onClick={handleRemoveClick} buttonText='Remove' /> </td> 
+        <td> <ActionButton onClick={unwatch} buttonText='Remove' /> </td> 
       </tr>
     );
     watchListHTML.push(symbolHTML);

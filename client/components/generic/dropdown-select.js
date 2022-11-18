@@ -4,7 +4,7 @@ export default function SelectDropdown({options, onChange, className, id, formNa
     <select name={formName} id={id} className={className} onChange={onChange}>
       {
         options.map((value) => {
-          return <option value={value}> {value} </option>
+          return <option key={`${value}-option`} value={value}> {value} </option>
         })
       }
     </select>

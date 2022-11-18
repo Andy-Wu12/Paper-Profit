@@ -4,6 +4,7 @@ import User from '../mongodb/models/user.js';
 import Session from '../mongodb/models/session.js';
 import { sessionCookieName } from './auth.js';
 import Portfolio from '../mongodb/models/portfolio.js';
+import Transaction from '../mongodb/models/transaction.js';
 
 const router = new Router({ prefix: '/users' })
 
@@ -79,6 +80,32 @@ router.get('/:username/holdings', async (ctx) => {
 		}
 		
 		ctx.body = symbolData;
+		
+	} catch (e) {
+		ctx.status = 400;
+		ctx.message = e.message;
+	}
+});
+
+router.post('/:username/reset', async (ctx) => {
+	const username = ctx.params['username'];
+	try {
+		const portfolio = await Portfolio.findOne({username: username});
+		const user = await User.findOne({username: username})
+		// Reset portfolio
+		portfolio.holdings = [];
+		portfolio.value = 0;
+		portfolio.save();
+
+		// Reset balance
+		user.balance = 100000;
+		user.save();
+		
+		// Delete all transactions made by user
+		await Transaction.deleteMany({ username: username});
+
+		ctx.status = 200;
+		ctx.body = {message: "Success", status: ctx.status};
 		
 	} catch (e) {
 		ctx.status = 400;

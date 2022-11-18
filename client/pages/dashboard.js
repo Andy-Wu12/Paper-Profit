@@ -103,6 +103,7 @@ function NavMenu({setDashboardComponent, lastSearch, websocket, ...setterProps})
       <ShowLastSearchButton {...setterProps} setDashboardComponent={setDashboardComponent} websocket={websocket} lastSearch={lastSearch}/>
       <ShowHoldingsButton setDashboardComponent={setDashboardComponent} />
       <WatchListButton setDashboardComponent={setDashboardComponent} />
+      <ResetAccountButton />
     </nav>
   );
 }
@@ -255,5 +256,28 @@ function StockChart() {
       <CandleStickChart symbolData={stockChartData} options={options} />
       <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
     </>
+  )
+}
+
+function ResetAccountButton() {
+  const user = useContext(AuthContext);
+  const router = useRouter();
+
+  async function handleClick(e) {
+    if(user.name) {
+      await fetch(`http://localhost:3011/users/${user.name}/reset`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    }
+    router.reload();
+  }
+
+  return (
+    <ActionButton onClick={handleClick} buttonText='Reset Portfolio' />
   )
 }

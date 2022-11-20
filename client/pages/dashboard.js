@@ -78,7 +78,7 @@ export default function Dashboard() {
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
           <EnumState state={dashboardComponent} />}
-          {dashboardComponent == 'quote' && <StockChart />}
+          {dashboardComponent == 'quote' && <StockCharts />}
         </div>
       </div>
     </div>
@@ -95,6 +95,16 @@ function StockSearch({stockData}) {
       }
     </>
   );
+}
+
+function StockCharts() {
+  return (
+    <div className='stockChartsContainer'>
+      <PeriodPriceChart /> <br/><br/>
+      <YearlyEarningsGraph /> <br/>
+      {/* <QuarterlyEarningsChart /> <br/> */}
+    </div>
+  )
 }
 
 function NavMenu({setDashboardComponent, lastSearch, websocket, ...setterProps}) {
@@ -184,7 +194,7 @@ function Balance({username}) {
   )
 }
 
-function StockChart() {
+function PeriodPriceChart() {
   // Chart data format = {
     // ["Label", "", "", "", ""],
       // Label -> Low / Min -> Open -> Close -> High / Max
@@ -253,8 +263,69 @@ function StockChart() {
 
   return (
     <>  
-      <Charts.CandleStick symbolData={stockChartData} options={options} />
       <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
+      <Charts.CandleStick symbolData={stockChartData} options={options} />
+    </>
+  )
+}
+
+function YearlyEarningsGraph() {
+  const router = useRouter();
+  const {symbol} = router.query;
+
+  const [earningsData, setEarningsData] = useState(null);
+
+  const options = {
+    title: `${symbol} Yearly Earnings`,
+    titleTextStyle: {
+      color: 'white',
+      bold: true,
+      fontSize: 20
+    },
+    legend: {
+      textStyle: {
+        color: "white"
+      }
+    },
+    backgroundColor: '#181818',
+    width: 500,
+    height: 500,
+    hAxis: {
+      textStyle: {
+        color: 'white'
+      }
+    },
+    vAxis: {
+      textStyle: {
+        color: 'white'
+      }
+    },
+  }
+
+  const getYearlyEarnings = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/earnings/${symbol}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    setEarningsData(data);
+  }
+
+  useEffect(() => {
+    getYearlyEarnings();
+  }, [symbol]);
+
+  let graphData = [
+    ["Year", "Earnings", "Revenue"],
+  ]
+
+  if(earningsData) {
+    for(const data of earningsData.data) {
+      graphData.push([data.Year.toString(), data.Earnings, data.Revenue]);
+    }
+  }
+
+  return (
+    <>
+      <Charts.ColumnGraph data={graphData} options={options} />
     </>
   )
 }

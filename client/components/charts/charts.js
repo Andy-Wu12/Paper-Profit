@@ -31,16 +31,16 @@ export function CandleStick({symbolData, options}) {
   );
 }
 
-export function BarGraph({data, options}) {
+export function ColumnGraph({data, options}) {
   return (
     <Chart
-      chartType="Bar"
+      chartType="ColumnChart"
       data={data}
       options={options}
     />
   )
 }
 
-const Charts = {CandleStick, BarGraph};
+const Charts = {CandleStick, ColumnGraph};
 
 export default Charts;

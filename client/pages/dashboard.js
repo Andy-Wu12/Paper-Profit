@@ -102,7 +102,7 @@ function StockCharts() {
     <div className='stockChartsContainer'>
       <PeriodPriceChart /> <br/><br/>
       <YearlyEarningsGraph /> <br/>
-      {/* <QuarterlyEarningsChart /> <br/> */}
+      <QuarterlyEarningsChart /> <br/>
     </div>
   )
 }
@@ -194,6 +194,30 @@ function Balance({username}) {
   )
 }
 
+function ResetAccountButton() {
+  const user = useContext(AuthContext);
+  const router = useRouter();
+
+  async function handleClick(e) {
+    if(user.name) {
+      await fetch(`http://localhost:3011/users/${user.name}/reset`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+    }
+    router.reload();
+  }
+
+  return (
+    <ActionButton onClick={handleClick} buttonText='Reset Portfolio' />
+  )
+}
+
+// Dashboard Charts
 function PeriodPriceChart() {
   // Chart data format = {
     // ["Label", "", "", "", ""],
@@ -331,25 +355,69 @@ function YearlyEarningsGraph() {
   )
 }
 
-function ResetAccountButton() {
-  const user = useContext(AuthContext);
+function QuarterlyEarningsChart() {
   const router = useRouter();
+  const {symbol} = router.query;
 
-  async function handleClick(e) {
-    if(user.name) {
-      await fetch(`http://localhost:3011/users/${user.name}/reset`, {
-        method: "POST",
-        mode: "cors",
-        credentials: "include",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
+  const [earningsData, setEarningsData] = useState(null);
+
+  const options = {
+    title: `${symbol} Quarterly Earnings (USD)`,
+    titleTextStyle: {
+      color: 'white',
+      bold: true,
+      fontSize: 20
+    },
+    legend: {
+      textStyle: {
+        color: "white"
+      }
+    },
+    backgroundColor: '#181818',
+    width: 500,
+    height: 500,
+    hAxis: {
+      title: 'Quarter',
+      titleTextStyle: {
+        color: 'white',
+      },
+      textStyle: {
+        color: 'white',
+      }
+    },
+    vAxis: {
+      format: 'short',
+      textStyle: {
+        color: 'white'
+      }
+    },
+  }
+
+  const getQuarterlyEarnings = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/quarterly-earnings/${symbol}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    setEarningsData(data);
+  }
+
+  useEffect(() => {
+    getQuarterlyEarnings();
+  }, [symbol]);
+
+  let graphData = [
+    ["Quarter", "Earnings", "Revenue"],
+  ]
+
+  if(earningsData) {
+    for(const data of earningsData.data) {
+      const quarter = data.Quarter;
+      graphData.push([quarter, data.Earnings, data.Revenue]);
     }
-    router.reload();
   }
 
   return (
-    <ActionButton onClick={handleClick} buttonText='Reset Portfolio' />
+    <>
+      <Charts.ColumnGraph data={graphData} options={options} />
+    </>
   )
 }

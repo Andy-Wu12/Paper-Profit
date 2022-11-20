@@ -16,7 +16,7 @@ import Loading from '../components/generic/loading'
 import TD_WebsocketContext from '../components/generic/td-websocketContext'
 import Watchlist from '../components/watchlist/watchlist_main'
 import TransactionQuantities from '../components/dashboard/transaction-quantity.js'
-import CandleStickChart from '../components/charts/candlestick';
+import Charts from '../components/charts/charts.js';
 import SelectDropdown from '../components/generic/dropdown-select';
 
 export default function Dashboard() {
@@ -253,7 +253,7 @@ function StockChart() {
 
   return (
     <>  
-      <CandleStickChart symbolData={stockChartData} options={options} />
+      <Charts.CandleStick symbolData={stockChartData} options={options} />
       <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
     </>
   )

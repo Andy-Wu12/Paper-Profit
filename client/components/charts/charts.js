@@ -21,7 +21,7 @@ import { Chart } from "react-google-charts";
 //   },
 // };
 
-export default function CandleStick({symbolData, options}) {
+export function CandleStick({symbolData, options}) {
   return (
     <Chart
       chartType="CandlestickChart"
@@ -30,3 +30,17 @@ export default function CandleStick({symbolData, options}) {
     />
   );
 }
+
+export function BarGraph({data, options}) {
+  return (
+    <Chart
+      chartType="Bar"
+      data={data}
+      options={options}
+    />
+  )
+}
+
+const Charts = {CandleStick, BarGraph};
+
+export default Charts;

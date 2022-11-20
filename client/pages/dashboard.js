@@ -276,7 +276,7 @@ function YearlyEarningsGraph() {
   const [earningsData, setEarningsData] = useState(null);
 
   const options = {
-    title: `${symbol} Yearly Earnings`,
+    title: `${symbol} Yearly Earnings (USD)`,
     titleTextStyle: {
       color: 'white',
       bold: true,
@@ -296,6 +296,7 @@ function YearlyEarningsGraph() {
       }
     },
     vAxis: {
+      format: 'short',
       textStyle: {
         color: 'white'
       }

@@ -16,6 +16,8 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
+    "@types/node": "18.11.9",
+    "@types/react": "18.0.25",
     "eslint": "8.25.0",
     "eslint-config-next": "12.3.1"
   }

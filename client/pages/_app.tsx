@@ -2,6 +2,11 @@ import '../styles/globals.css'
 
 import { useContext, useEffect, useState } from 'react'
 
+// Type interfaces
+import { AuthContextProps } from '../components/authentication/authContext';
+import { WebsocketProps } from '../components/generic/td-websocketContext';
+
+// Components
 import Footer from '../components/footer';
 import Loading from '../components/generic/loading';
 import { AuthContext, getUserDetails } from '../components/authentication/authContext'
@@ -10,13 +15,13 @@ import Ameritrade from '../components/generic/ameritrade-websocket';
 import LogoutForm from '../components/authentication/logout-button';
 
 function MyApp({ Component, pageProps }) {
-  const userContext = useContext(AuthContext);
+  const userContext: AuthContextProps = useContext(AuthContext);
 
-  const [currentUser, setCurrentUser] = useState(userContext);
-  const [websocketCtx, setWebsocketCtx] = useState(null);
+  const [currentUser, setCurrentUser] = useState<AuthContextProps>(userContext);
+  const [websocketCtx, setWebsocketCtx] = useState<WebsocketProps>(null);
 
   useEffect(() => {
-    const getUser = async () => {
+    const getUser: () => void = async () => {
       const data = await getUserDetails();
       if(data.ok) {
         const response = await data.json();
@@ -32,8 +37,8 @@ function MyApp({ Component, pageProps }) {
   }, [])
 
   useEffect(() => {
-    const getTDWebsocket = async () => {
-      const websocketObj = {};
+    const getTDWebsocket: () => void = async () => {
+      const websocketObj = {websocket: null};
       Ameritrade.createWebsocket(websocketObj);
       setWebsocketCtx(websocketObj)
     }

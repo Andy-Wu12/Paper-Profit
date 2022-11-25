@@ -5,18 +5,18 @@ import { useState, useContext, useEffect } from 'react'
 import styles from '../styles/Home.module.css'
 import dashboardStyles from '../styles/dashboard.module.css'
 
-import AuthContext from '../components/authentication/authContext.js'
-import StockSearchForm, {subscriptionFields} from '../components/dashboard/stock-search.js'
-import StockDetails from '../components/dashboard/stock-details.js'
+import AuthContext from '../components/authentication/authContext'
+import StockSearchForm, {subscriptionFields} from '../components/dashboard/stock-search'
+import StockDetails from '../components/dashboard/stock-details'
 import Ameritrade from '../components/generic/ameritrade-websocket'
 
-import Positions from '../components/dashboard/positions.js'
+import Positions from '../components/dashboard/positions'
 import ActionButton from '../components/generic/action-button'
 import Loading from '../components/generic/loading'
 import TD_WebsocketContext from '../components/generic/td-websocketContext'
 import Watchlist from '../components/watchlist/watchlist_main'
-import TransactionQuantities from '../components/dashboard/transaction-quantity.js'
-import Charts from '../components/charts/charts.js';
+import TransactionQuantities from '../components/dashboard/transaction-quantity'
+import Charts from '../components/charts/charts';
 import SelectDropdown from '../components/generic/dropdown-select';
 
 export default function Dashboard() {

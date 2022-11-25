@@ -4,7 +4,7 @@ import { useState, useContext, useEffect } from 'react'
 
 import styles from '../../styles/Home.module.css'
 
-import AuthContext from '../authentication/authContext.js'
+import AuthContext from '../authentication/authContext'
 import Loading from '../generic/loading'
 
 import WatchList from './watchlist'

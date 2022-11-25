@@ -1,9 +1,10 @@
 import userPrincipals from '../../pages/api/userprincipal.json'
 
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { IMessageEvent, w3cwebsocket as W3CWebSocket } from 'websocket';
+import { WebsocketProps } from './td-websocketContext';
 
 // Utility
-function jsonToQueryString(json) {
+function jsonToQueryString(json: any): string {
   return Object.keys(json).map(function(key) {
     return encodeURIComponent(key) + '=' +
         encodeURIComponent(json[key]);
@@ -12,7 +13,7 @@ function jsonToQueryString(json) {
 
 const userPrincipalsResponse = userPrincipals
 
-export function createWebsocket(refObj, { onOpen=()=> {}, onMessage=()=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
+export function createWebsocket(refObj: WebsocketProps, { onOpen=()=> {}, onMessage=(evt: IMessageEvent)=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
   //Converts ISO-8601 response in snapshot to ms since epoch accepted by Streamer
   const tokenTimeStampAsDateObj = new Date(userPrincipalsResponse.streamerInfo.tokenTimestamp);
   const tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
@@ -69,7 +70,7 @@ export function createWebsocket(refObj, { onOpen=()=> {}, onMessage=()=> {}, onC
   refObj.websocket = mySock;
 }
 
-export const stockSubRequest = (symbols, fields) => {
+export const stockSubRequest = (symbols: string, fields: string) => {
   return {"requests": [
     {
       "service": "QUOTE",

@@ -1,14 +1,20 @@
 import styles from '../../styles/Home.module.css'
 import formStyles from '../../styles/forms.module.css'
 
-import { Fragment } from 'react';
+import React, { FormEventHandler, Fragment } from 'react';
 import { useRouter } from 'next/router';
 
-const baseAPI_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const baseAPI_URL: string = process.env.NEXT_PUBLIC_API_BASE_URL;
 const passwordLabel = 'password';
 
-function AuthenticationForm({header, onSubmit, fields}) {
-  const formFields = fields.map((field) => {
+type AuthenticationFormProps = {
+  header: string,
+  onSubmit: FormEventHandler<HTMLFormElement>,
+  fields: string[]
+}
+
+function AuthenticationForm({header, onSubmit, fields}: AuthenticationFormProps): React.ReactElement {
+  const formFields: React.ReactElement[] = fields.map((field: string) => {
     return (
     <Fragment key={`form-${field}`}>
       <label className={formStyles.label} htmlFor={field}> {field} </label>
@@ -29,13 +35,13 @@ function AuthenticationForm({header, onSubmit, fields}) {
   )
 }
 
-export function LoginForm() {
+export function LoginForm(): React.ReactElement {
   const fields = ["username"];
   const router = useRouter();
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: any): Promise<void> {
     e.preventDefault();
-    const username = e.target.elements.username.value;
+    const username: string = e.target.elements.username.value;
     const response = await fetch(`${baseAPI_URL}/auth/login`, {
       method: "POST",
       mode: "cors",
@@ -51,9 +57,7 @@ export function LoginForm() {
     if(response.ok) {
       localStorage.setItem("user", JSON.stringify({user: username}));
     }
-    router.reload();
-
-    
+    router.reload(); 
   }
 
   return (
@@ -65,7 +69,7 @@ export function SignupForm() {
   const fields = ["username", "email"];
   const router = useRouter();
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: any) {
     e.preventDefault();
     const username = e.target.elements.username.value;
     const response = await fetch(`${baseAPI_URL}/auth/signup`, {

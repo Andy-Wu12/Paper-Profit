@@ -1,17 +1,21 @@
 import { useContext } from "react";
-import AuthContext from "../authentication/authContext";
-import { useRouter } from "next/router";
 
+import AuthContext, { AuthContextProps } from "../authentication/authContext";
 import stockDetailStyles from '../../styles/StockDetail.module.css';
 import ActionButton from '../generic/action-button';
 
-// TODO: Allow user to choose amount of shares to purchase / sell
-export function BuyForm({stockSymbol, symbolData}) {
+type TransactionFormProps = {
+  stockSymbol: string,
+  symbolData: any
+}
+
+export function BuyForm({stockSymbol, symbolData}: TransactionFormProps) {
   /* 
   Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
   for meaning of ['#'] indexed fields
   */
-  const user = useContext(AuthContext);
+  const user: AuthContextProps = useContext(AuthContext);
+  
   const inputID = 'buy-quantity-input';
 
   const buy = async () => {
@@ -24,8 +28,8 @@ export function BuyForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData['2'],
-        "quantity": document.getElementById(inputID).value
+        "price": (symbolData['2'] as number),
+        "quantity": (document.getElementById(inputID) as HTMLInputElement).value
       })
     });
   }
@@ -37,8 +41,8 @@ export function BuyForm({stockSymbol, symbolData}) {
   )
 }
 
-export function SellForm({stockSymbol, symbolData}) {
-  const user = useContext(AuthContext);
+export function SellForm({stockSymbol, symbolData}: TransactionFormProps) {
+  const user: AuthContextProps = useContext(AuthContext);
   const inputID = 'sell-quantity-input';
 
   const sell = async () => {
@@ -51,8 +55,8 @@ export function SellForm({stockSymbol, symbolData}) {
       },
       body: JSON.stringify({
         "username": user.name,
-        "price": symbolData['1'],
-        "quantity": document.getElementById(inputID).value
+        "price": (symbolData['1'] as number),
+        "quantity": (document.getElementById(inputID) as HTMLInputElement).value
       })
     });
   }

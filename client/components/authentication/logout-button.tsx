@@ -1,13 +1,12 @@
 import { useContext } from "react";
-import AuthContext from "./authContext";
 import { useRouter } from "next/router";
 
-import ActionButton from "../generic/action-button";
-
+import AuthContext, { AuthContextProps } from "./authContext";
+import ActionButton, { ActionButtonProps } from "../generic/action-button";
 import formStyles from '../../styles/forms.module.css';
 
 export default function LogoutForm() {
-  const user = useContext(AuthContext);
+  const user: AuthContextProps = useContext(AuthContext);
 
   return (
     <>
@@ -16,7 +15,7 @@ export default function LogoutForm() {
   )
 }
 
-function LogoutButton({username}) {
+function LogoutButton({username}: {username: string}) {
   const router = useRouter();
   
   const logout = async () => {

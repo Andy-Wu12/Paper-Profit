@@ -13,7 +13,7 @@ function jsonToQueryString(json: any): string {
 
 const userPrincipalsResponse = userPrincipals
 
-export function createWebsocket(refObj: WebsocketProps, { onOpen=()=> {}, onMessage=(evt: IMessageEvent)=> {}, onClose=()=> {}, onError=()=> {}} = {}) {
+export function createWebsocket(refObj: WebsocketProps, { onOpen=()=> {}, onMessage=(evt: IMessageEvent)=> {}, onClose=()=> {}, onError=()=> {}} = {}): void {
   //Converts ISO-8601 response in snapshot to ms since epoch accepted by Streamer
   const tokenTimeStampAsDateObj = new Date(userPrincipalsResponse.streamerInfo.tokenTimestamp);
   const tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();

@@ -5,7 +5,7 @@ import AuthContext, { AuthContextProps } from "./authContext";
 import ActionButton, { ActionButtonProps } from "../generic/action-button";
 import formStyles from '../../styles/forms.module.css';
 
-export default function LogoutForm() {
+export default function LogoutForm(): React.ReactElement {
   const user: AuthContextProps = useContext(AuthContext);
 
   return (
@@ -15,7 +15,7 @@ export default function LogoutForm() {
   )
 }
 
-function LogoutButton({username}: {username: string}) {
+function LogoutButton({username}: {username: string}): React.ReactElement {
   const router = useRouter();
   
   const logout = async () => {

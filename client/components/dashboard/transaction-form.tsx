@@ -9,7 +9,7 @@ type TransactionFormProps = {
   symbolData: any
 }
 
-export function BuyForm({stockSymbol, symbolData}: TransactionFormProps) {
+export function BuyForm({stockSymbol, symbolData}: TransactionFormProps): React.ReactElement {
   /* 
   Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
   for meaning of ['#'] indexed fields
@@ -41,7 +41,7 @@ export function BuyForm({stockSymbol, symbolData}: TransactionFormProps) {
   )
 }
 
-export function SellForm({stockSymbol, symbolData}: TransactionFormProps) {
+export function SellForm({stockSymbol, symbolData}: TransactionFormProps): React.ReactElement {
   const user: AuthContextProps = useContext(AuthContext);
   const inputID = 'sell-quantity-input';
 

@@ -65,7 +65,7 @@ export function LoginForm(): React.ReactElement {
   )
 }
 
-export function SignupForm() {
+export function SignupForm(): React.ReactElement {
   const fields = ["username", "email"];
   const router = useRouter();
 

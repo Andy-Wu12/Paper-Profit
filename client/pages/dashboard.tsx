@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import {useRouter} from 'next/router'
-import { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, ReactElement, FormEventHandler, MouseEventHandler } from 'react'
 
 import styles from '../styles/Home.module.css'
 import dashboardStyles from '../styles/dashboard.module.css'
@@ -19,9 +19,21 @@ import TransactionQuantities from '../components/dashboard/transaction-quantity'
 import Charts from '../components/charts/charts';
 import SelectDropdown from '../components/generic/dropdown-select';
 
-export default function Dashboard() {
-  const user = useContext(AuthContext);
-  const websocketCtx = useContext(TD_WebsocketContext);
+// Types
+import { AuthContextProps } from '../components/authentication/authContext';
+import { WebsocketProps } from '../components/generic/td-websocketContext'
+
+export type setterPropsProps = {
+  setStockData: React.Dispatch<any>,
+  setDashboardComponent: React.Dispatch<any>,
+  setIsLoading: React.Dispatch<any>,
+  setHasSearched: React.Dispatch<any>,
+  setLastSearch: React.Dispatch<any>
+}
+
+export default function Dashboard(): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
+  const websocketCtx: WebsocketProps = useContext(TD_WebsocketContext);
 
   const router = useRouter();
 
@@ -31,22 +43,22 @@ export default function Dashboard() {
   const [dashboardComponent, setDashboardComponent] = useState('positions');
   const [isLoading, setIsLoading] = useState(false);
 
-  const setterProps = {
-    setStockData,
-    setDashboardComponent,
-    setIsLoading,
-    setHasSearched,
-    setLastSearch
+  const setterProps: setterPropsProps = {
+    setStockData: setStockData,
+    setDashboardComponent: setDashboardComponent,
+    setIsLoading: setIsLoading,
+    setHasSearched: setHasSearched,
+    setLastSearch: setLastSearch
   }
   
   ///// Handle conditional rendering for the three different dashboard components /////
   const ENUM_COMPONENTS = {
     quote: (hasSearched && stockData) ? <> <StockSearch stockData={stockData} /> </> : <> No stock quote to show </>,
-    watch: <Watchlist setDashboardComponent={setDashboardComponent} {...setterProps} />,
-    positions: <Positions websocket={websocketCtx.websocket} {...setterProps} />
+    watch: <Watchlist setDashboardComponent={setDashboardComponent} setterProps={setterProps} />,
+    positions: <Positions websocket={websocketCtx.websocket} setterProps={setterProps} />
   }
 
-  function EnumState({state}) {
+  function EnumState({state}: {state: string}) {
     return <> {ENUM_COMPONENTS[state]} </>
   }
   ///// /////
@@ -70,8 +82,8 @@ export default function Dashboard() {
       {/* Components that should always render */}
       <div className={styles.main}> 
         <Balance username={user.name} />
-        <NavMenu {...setterProps} setDashboardComponent={setDashboardComponent} lastSearch={lastSearch} websocket={websocketCtx.websocket} />
-        <StockSearchForm websocket={websocketCtx.websocket} {...setterProps} />
+        <NavMenu setterProps={setterProps} setDashboardComponent={setDashboardComponent} lastSearch={lastSearch} websocket={websocketCtx.websocket} />
+        <StockSearchForm setterProps={setterProps} websocket={websocketCtx.websocket} />
 
         {dashboardComponent == 'quote' && <TransactionQuantities />}
         <div className={[dashboardStyles.conditionalRenderSection, styles.centered].join(' ')}>
@@ -85,7 +97,7 @@ export default function Dashboard() {
   );
 }
 
-function StockSearch({stockData}) {
+function StockSearch({stockData}: {stockData: any}): React.ReactElement {
   return (
     <>
       {stockData && 
@@ -97,7 +109,7 @@ function StockSearch({stockData}) {
   );
 }
 
-function StockCharts() {
+function StockCharts(): React.ReactElement {
   return (
     <div className='stockChartsContainer'>
       <PeriodPriceChart /> <br/><br/>
@@ -107,10 +119,17 @@ function StockCharts() {
   )
 }
 
-function NavMenu({setDashboardComponent, lastSearch, websocket, ...setterProps}) {
+type NavMenuProps = {
+  setDashboardComponent: React.Dispatch<any>,
+  lastSearch: string | null,
+  websocket: WebSocket,
+  setterProps: setterPropsProps
+}
+
+function NavMenu({setDashboardComponent, lastSearch, websocket, setterProps}: NavMenuProps): React.ReactElement {
   return (
     <nav>
-      <ShowLastSearchButton {...setterProps} setDashboardComponent={setDashboardComponent} websocket={websocket} lastSearch={lastSearch}/>
+      <ShowLastSearchButton setterProps={setterProps} setDashboardComponent={setDashboardComponent} websocket={websocket} lastSearch={lastSearch}/>
       <ShowHoldingsButton setDashboardComponent={setDashboardComponent} />
       <WatchListButton setDashboardComponent={setDashboardComponent} />
       <ResetAccountButton />
@@ -118,11 +137,17 @@ function NavMenu({setDashboardComponent, lastSearch, websocket, ...setterProps})
   );
 }
 
-function ShowLastSearchButton({websocket, lastSearch, ...setterProps}) {
+type ShowLastSearchProps = {
+  lastSearch: string | null,
+  setDashboardComponent: React.Dispatch<any>
+  websocket: WebSocket,
+  setterProps: setterPropsProps
+}
+
+function ShowLastSearchButton({websocket, setDashboardComponent, lastSearch, setterProps}: ShowLastSearchProps): React.ReactElement {
   const router = useRouter();
 
-  async function handleClick(e) {
-    e.preventDefault();
+  async function handleClick() {
     setterProps.setIsLoading(true);
     const tickerSymbol = lastSearch
     if(!tickerSymbol) {
@@ -136,7 +161,7 @@ function ShowLastSearchButton({websocket, lastSearch, ...setterProps}) {
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(tickerSymbol, subscriptionFields)));
 
     router.push(`/dashboard/?symbol=${tickerSymbol.toUpperCase()}`);
-    setterProps.setDashboardComponent('quote');
+    setDashboardComponent('quote');
     setterProps.setIsLoading(false);
     setterProps.setHasSearched(true);
   }
@@ -146,8 +171,7 @@ function ShowLastSearchButton({websocket, lastSearch, ...setterProps}) {
   );
 }
 
-function ShowHoldingsButton({setDashboardComponent, lastSearch={lastSearch}}) {
-
+function ShowHoldingsButton({setDashboardComponent}: {setDashboardComponent: React.Dispatch<any>}): React.ReactElement {
   function onClick() {
     setDashboardComponent('positions');
   }
@@ -157,7 +181,7 @@ function ShowHoldingsButton({setDashboardComponent, lastSearch={lastSearch}}) {
   );
 }
 
-function WatchListButton({setDashboardComponent}) {
+function WatchListButton({setDashboardComponent}: {setDashboardComponent: React.Dispatch<any>}): React.ReactElement {
   function onClick() {
     setDashboardComponent('watch');
   }
@@ -167,7 +191,7 @@ function WatchListButton({setDashboardComponent}) {
   );
 }
 
-function Balance({username}) {
+function Balance({username}: {username: string}): React.ReactElement {
   const [balance, setBalance] = useState(null);
   const [websocket, setWebsocket] = useState(null);
 
@@ -194,11 +218,11 @@ function Balance({username}) {
   )
 }
 
-function ResetAccountButton() {
+function ResetAccountButton(): React.ReactElement {
   const user = useContext(AuthContext);
   const router = useRouter();
 
-  async function handleClick(e) {
+  async function handleClick() {
     if(user.name) {
       await fetch(`http://localhost:3011/users/${user.name}/reset`, {
         method: "POST",
@@ -218,7 +242,7 @@ function ResetAccountButton() {
 }
 
 // Dashboard Charts
-function PeriodPriceChart() {
+function PeriodPriceChart(): JSX.Element {
   // Chart data format = {
     // ["Label", "", "", "", ""],
       // Label -> Low / Min -> Open -> Close -> High / Max
@@ -288,12 +312,12 @@ function PeriodPriceChart() {
   return (
     <>  
       <SelectDropdown options={periodOptions} onChange={(e) => {setPeriod(e.target.value)}}/>
-      <Charts.CandleStick symbolData={stockChartData} options={options} />
+      <Charts.CandleStick data={stockChartData} options={options} />
     </>
   )
 }
 
-function YearlyEarningsGraph() {
+function YearlyEarningsGraph(): JSX.Element {
   const router = useRouter();
   const {symbol} = router.query;
 
@@ -355,7 +379,7 @@ function YearlyEarningsGraph() {
   )
 }
 
-function QuarterlyEarningsChart() {
+function QuarterlyEarningsChart(): JSX.Element {
   const router = useRouter();
   const {symbol} = router.query;
 

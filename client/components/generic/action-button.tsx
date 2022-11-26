@@ -4,7 +4,7 @@ export type ActionButtonProps = {
   className?: string
 }
 
-export default function ActionButton({onClick, buttonText, className}: ActionButtonProps) {
+export default function ActionButton({onClick, buttonText, className}: ActionButtonProps): React.ReactElement {
   return (
     <>
       <button className={className} type="button" onClick={onClick}>

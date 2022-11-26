@@ -1,6 +1,11 @@
 import forms from './authenticate-form'
 
-export default function ToggleableForm({isLogin, handleClick}) {
+export interface ToggleableFormProps {
+  isLogin: boolean,
+  handleClick: React.ChangeEventHandler<HTMLButtonElement>
+}
+
+export default function ToggleableForm({isLogin, handleClick}: ToggleableFormProps): React.ReactElement {
   return (
     <>
       <div className='toggleSwitch'>

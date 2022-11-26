@@ -14,7 +14,7 @@ import TD_WebsocketContext from '../components/generic/td-websocketContext';
 import Ameritrade from '../components/generic/ameritrade-websocket';
 import LogoutForm from '../components/authentication/logout-button';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }): React.ReactElement {
   const userContext: AuthContextProps = useContext(AuthContext);
 
   const [currentUser, setCurrentUser] = useState<AuthContextProps>(userContext);

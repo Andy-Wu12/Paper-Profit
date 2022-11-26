@@ -7,7 +7,7 @@ import Ameritrade from '../generic/ameritrade-websocket'
 
 export const subscriptionFields = "0,1,2,3,8,12,13,15,30,31,32,33";
 
-export default function StockSearchForm({websocket, ...setterProps}) {  
+export default function StockSearchForm({websocket, setterProps}) {  
   const router = useRouter();
 
   useEffect(() => {

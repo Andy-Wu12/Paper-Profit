@@ -21,17 +21,22 @@ import { Chart } from "react-google-charts";
 //   },
 // };
 
-export function CandleStick({symbolData, options}) {
+export interface GoogleChartProps {
+  data: any
+  options: any
+}
+
+export function CandleStick({data, options}: GoogleChartProps): React.ReactElement {
   return (
     <Chart
       chartType="CandlestickChart"
-      data={symbolData}
+      data={data}
       options={options}
     />
   );
 }
 
-export function ColumnGraph({data, options}) {
+export function ColumnGraph({data, options}: GoogleChartProps): React.ReactElement {
   return (
     <Chart
       chartType="ColumnChart"

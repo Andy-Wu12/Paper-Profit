@@ -117,6 +117,7 @@ export function WatchlistGrid({websocket, realtimeData, setterProps}: WatchlistG
       <tr key={`${symbol}-watchlist-row`} className={gridStyles.gridRow}>
         <td> <StockSymbolButton setterProps={setterProps} websocket={websocket} symbol={symbol} />  </td>
         {/* Color should change depending on previous close price (red down, green up, white same)  */}
+        {!netChange && <td> - </td>}
         {netChange === 0 && <td> {mark.toFixed(2)} </td>}
         {netChange < 0 && <td className={gridStyles.rtPriceLower}> {mark.toFixed(2)} </td> }
         {netChange > 0 && <td className={gridStyles.rtPriceHigher}> {mark.toFixed(2)} </td> }

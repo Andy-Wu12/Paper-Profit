@@ -1,35 +1,42 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { FormEventHandler, useEffect, useState } from 'react';
 import styles from '../../styles/Home.module.css'
 
 // Ameritrade websocket stuff
 import Ameritrade from '../generic/ameritrade-websocket'
+// Types
+import { setterPropsProps } from '../../pages/dashboard';
 
 export const subscriptionFields = "0,1,2,3,8,12,13,15,30,31,32,33";
 
-export default function StockSearchForm({websocket, setterProps}) {  
+export interface StockSearchFormProps {
+  websocket: WebSocket
+  setterProps: setterPropsProps
+}
+
+export default function StockSearchForm({websocket, setterProps}: StockSearchFormProps): React.ReactElement{  
   const router = useRouter();
 
   useEffect(() => {
     try {
       if(websocket) {
-        websocket.onmessage = (message) => {
+        websocket.onmessage = (message: any) => {
           const data = JSON.parse(message.data);
           if(data.data) {
             const newData = data.data[0].content[0];
-            setterProps.setStockData(oldData => {return {...oldData, ...newData} });
+            setterProps.setStockData((oldData: any) => {return {...oldData, ...newData} });
           }
         }
       };
     } catch (e) {
-      console.log(e.message);
+      console.log("Error occurred");
     }
   });
 
-  async function handleSubmit(e) {
+  function handleSubmit(e: any) {
     e.preventDefault();
     setterProps.setIsLoading(true);
-    const tickerSymbol = e.target.ticker.value;
+    const tickerSymbol = (e.target as HTMLFormElement).ticker.value;
     if(!tickerSymbol) {
       // Another option is to setStockData(null) to show error in StockDetail component, 
       // but this may be against good UX

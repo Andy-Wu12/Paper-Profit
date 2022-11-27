@@ -1,28 +1,35 @@
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
+import { setterPropsProps } from '../../pages/dashboard';
 
 import gridStyles from '../../styles/PositionGrid.module.css';
 import quoteStyles from '../../styles/StockDetail.module.css';
-import AuthContext from '../authentication/authContext';
+import AuthContext, { AuthContextProps } from '../authentication/authContext';
 
 import { StockSymbolButton } from '../dashboard/positions';
 import ActionButton from '../generic/action-button';
 import Ameritrade from '../generic/ameritrade-websocket';
 
-export default function WatchList({websocket, watchListData, ...setterProps}) {  
+export type WatchlistProps = {
+  websocket: WebSocket,
+  watchListData: unknown,
+  setterProps: setterPropsProps
+}
+
+export default function WatchList({websocket, watchListData, setterProps}: WatchlistProps): React.ReactElement {  
   const [realtimeData, setRealtimeData] = useState(null);
 
   const subscriptionFields = "0,1,2,3,8,28,29,30,31";
 
   useEffect(() => {
-    websocket.onmessage = (message) => {
+    websocket.onmessage = (message: any) => {
       const data = JSON.parse(message.data);
       if(data.data) {
         const newData = data.data[0].content;
-        setRealtimeData(oldData => {
+        setRealtimeData((oldData: any) => {
           const rtData = {};
           // Re-map realtimeJSON data to more easily accessible format when templating
-          for(const [, data] of Object.entries(newData)) {
+          for(const [, data] of Object.entries(newData) as [never, any]) {
             const symbol = data.key;
             if(oldData) { rtData[symbol] = {...oldData[symbol], ...data}; }
             else { rtData[symbol] = data; }
@@ -34,7 +41,7 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
   }, [])
 
   useEffect(() => {
-    const symbols = watchListData.join(',');
+    const symbols: string = watchListData.join(',');
     websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, subscriptionFields)));
   }, [watchListData])
 
@@ -42,7 +49,7 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
   if(realtimeData) {
     return (
       <>
-        <WatchlistGrid {...setterProps} websocket={websocket} realtimeData={realtimeData} />
+        <WatchlistGrid setterProps={setterProps} websocket={websocket} realtimeData={realtimeData} />
       </>
     )
   }
@@ -54,11 +61,17 @@ export default function WatchList({websocket, watchListData, ...setterProps}) {
   )
 }
 
-export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
-  const user = useContext(AuthContext);
+type WatchlistGridProps = {
+  websocket: WebSocket,
+  realtimeData: unknown,
+  setterProps: setterPropsProps
+}
+
+export function WatchlistGrid({websocket, realtimeData, setterProps}: WatchlistGridProps): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
   const router = useRouter();
 
-  const watchListHTML = [];
+  const watchListHTML: JSX.Element[] = [];
   
   const fieldToLabelMap = {
     1: 'Bid',
@@ -70,7 +83,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
     31: '52 Low',
   }
 
-  const tableHeaders = [];
+  const tableHeaders:JSX.Element[] = [];
 
   // Map headers
   for(const [,label] of Object.entries(fieldToLabelMap)) {
@@ -80,8 +93,8 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
   // Map all fields for each symbol
   for(const [symbol, data] of Object.entries(realtimeData)) {
     const netChange = data['29'];
-    const bid = data['1'];
-    const ask = data['2'];
+    const bid: number = data['1'];
+    const ask: number = data['2'];
     const mark = (bid + ask) / 2;
 
     const unwatch = async () => {
@@ -102,7 +115,7 @@ export function WatchlistGrid({websocket, realtimeData, ...setterProps}) {
 
     const symbolHTML = (
       <tr key={`${symbol}-watchlist-row`} className={gridStyles.gridRow}>
-        <td> <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} />  </td>
+        <td> <StockSymbolButton setterProps={setterProps} websocket={websocket} symbol={symbol} />  </td>
         {/* Color should change depending on previous close price (red down, green up, white same)  */}
         {netChange === 0 && <td> {mark.toFixed(2)} </td>}
         {netChange < 0 && <td className={gridStyles.rtPriceLower}> {mark.toFixed(2)} </td> }

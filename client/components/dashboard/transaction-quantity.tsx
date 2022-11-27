@@ -1,7 +1,7 @@
 import QuantityInput from "../generic/quantity-input";
 import stockDetailStyles from '../../styles/StockDetail.module.css'
 
-export default function TransactionQuantities() {
+export default function TransactionQuantities(): JSX.Element {
   const buyInputID = 'buy-quantity-input';
   const sellInputID = 'sell-quantity-input';
 

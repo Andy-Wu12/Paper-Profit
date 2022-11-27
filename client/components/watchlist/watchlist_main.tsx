@@ -4,17 +4,18 @@ import { useState, useContext, useEffect } from 'react'
 
 import styles from '../../styles/Home.module.css'
 
-import AuthContext from '../authentication/authContext'
-import Loading from '../generic/loading'
+import AuthContext, { AuthContextProps } from '../authentication/authContext'
+import { setterPropsProps } from '../../pages/dashboard'
+import TD_WebsocketContext, { WebsocketProps } from '../generic/td-websocketContext'
 
+import Loading from '../generic/loading'
 import WatchList from './watchlist'
 import StockNews from '../news/stock-news'
-import TD_WebsocketContext from '../generic/td-websocketContext'
 
 
-export default function Watchlist({...setterProps}) {
-  const user = useContext(AuthContext);
-  const wsCTX = useContext(TD_WebsocketContext);
+export default function Watchlist({setterProps}: {setterProps: setterPropsProps}): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
+  const wsCTX: WebsocketProps = useContext(TD_WebsocketContext);
 
   const router = useRouter();
   const [watchList, setWatchlist] = useState(null);
@@ -59,7 +60,7 @@ export default function Watchlist({...setterProps}) {
         (watchList ?
           <> 
             <h2> Watchlist </h2>
-            <WatchList {...setterProps} websocket={wsCTX.websocket} watchListData={watchList} />
+            <WatchList setterProps={setterProps} websocket={wsCTX.websocket} watchListData={watchList} />
           </>
           : <h2> Your watchlist is empty </h2> 
         ) 

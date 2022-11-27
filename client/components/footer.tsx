@@ -1,6 +1,6 @@
 import styles from '../styles/Home.module.css'
 
-export default function footer() {
+export default function footer(): JSX.Element {
   return (
     <footer className={styles.footer}>
       Created by {' '} <a href='https://iamandywu.com'> Andy Wu </a> <br/>

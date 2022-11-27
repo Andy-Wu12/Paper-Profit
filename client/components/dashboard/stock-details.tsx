@@ -8,7 +8,7 @@ import AuthContext from '../authentication/authContext';
 import { BuyForm, SellForm } from './transaction-form';
 import ActionButton from '../generic/action-button';
 
-export default function StockDetails({stockDataJSON}) {  
+export default function StockDetails({stockDataJSON}: {stockDataJSON: any}): React.ReactElement {  
   const isSuccess = stockDataJSON.key;
 
   return (
@@ -18,7 +18,7 @@ export default function StockDetails({stockDataJSON}) {
   )
 }
 
-export function StockDetail({stockData}) {
+export function StockDetail({stockData}: {stockData: any}): React.ReactElement {
   return (
     <>
       <StockHeading stockData={stockData} />
@@ -27,7 +27,7 @@ export function StockDetail({stockData}) {
   )
 }
 
-export function StockHeading({stockData}) {
+export function StockHeading({stockData}: {stockData: any}): React.ReactElement {
   /* 
   Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
   for meaning of ['#'] indexed fields
@@ -36,6 +36,7 @@ export function StockHeading({stockData}) {
   const router = useRouter();
 
   const params = router.query;
+  const symbol: string = params.symbol[0];
 
   const labelToField = {
     'bid': '1',
@@ -51,16 +52,16 @@ export function StockHeading({stockData}) {
       </h2>
       <span className={stockDetailStyles.prices}>
         <span className={stockDetailStyles.askPrice}> {stockData[labelToField.ask].toFixed(2)} </span>
-        <BuyForm stockSymbol={params.symbol} symbolData={stockData} /> <br/><br/>
+        <BuyForm stockSymbol={symbol} symbolData={stockData} /> <br/><br/>
         <span className={stockDetailStyles.bidPrice}> {stockData[labelToField.bid].toFixed(2)} </span>
-        <SellForm stockSymbol={params.symbol} symbolData={stockData} /> 
+        <SellForm stockSymbol={symbol} symbolData={stockData} /> 
       </span> <br/><br/>
       <WatchForm stockSymbol={stockData.key}/>
     </>
   )
 }
 
-export function StockDescriptionList({stockData}) {
+export function StockDescriptionList({stockData}: {stockData: any}): React.ReactElement {
   /* 
   Refer to https://developer.tdameritrade.com/content/streaming-data#_Toc504640598
   for meaning of ['#'] indexed fields
@@ -92,7 +93,7 @@ export function StockDescriptionList({stockData}) {
   )
 }
 
-export function WatchForm({stockSymbol}) {
+export function WatchForm({stockSymbol}: {stockSymbol: string}): React.ReactElement {
   const user = useContext(AuthContext);
 
   const watch = async () => {

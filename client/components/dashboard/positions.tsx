@@ -1,17 +1,24 @@
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import AuthContext from '../authentication/authContext';
+import AuthContext, { AuthContextProps } from '../authentication/authContext';
 import Ameritrade from '../generic/ameritrade-websocket';
 import ActionButton from '../generic/action-button';
 import { subscriptionFields } from './stock-search';
 import StockNews from '../news/stock-news';
 
+import { setterPropsProps } from '../../pages/dashboard';
+
 import styles from '../../styles/Home.module.css';
 import gridStyles from '../../styles/PositionGrid.module.css';
 
-export default function Positions({websocket, ...setterProps}) {
-  const user = useContext(AuthContext);
+interface PositionsProps {
+  websocket: WebSocket,
+  setterProps: setterPropsProps
+}
+
+export default function Positions({websocket, setterProps}: PositionsProps): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
 
   const [positionData, setPositionsData] = useState(null);
   const [realtimeData, setRealtimeData] = useState(null);
@@ -52,10 +59,10 @@ export default function Positions({websocket, ...setterProps}) {
           const data = JSON.parse(message.data);
           if(data.data) {
             const newData = data.data[0].content;
-            setRealtimeData(oldData => {
+            setRealtimeData((oldData: any) => {
               const rtData = {};
               // Re-map realtimeJSON data to more easily accessible format when templating
-              for(const [, data] of Object.entries(newData)) {
+              for(const [, data] of Object.entries(newData) as [never, any]) {
                 rtData[data.key] = data;
               }
               return {...oldData, ...rtData} 
@@ -65,7 +72,7 @@ export default function Positions({websocket, ...setterProps}) {
       };
 
       if(!isSubbed && positionData) {
-        const symbols = Object.keys(positionData).join(',');
+        const symbols: string = Object.keys(positionData).join(',');
         websocket.send(JSON.stringify(Ameritrade.stockSubRequest(symbols, "0, 1")));
         setIsSubbed(true);
       }
@@ -81,7 +88,7 @@ export default function Positions({websocket, ...setterProps}) {
       before reaching this function (on initial render) so extra conditional is not needed */}
       {(positionData && realtimeData) ? 
         <PositionGrid 
-          {...setterProps} 
+          setterProps={setterProps} 
           websocket={websocket} 
           positionDataJSON={positionData} 
           realtimeData={realtimeData} 
@@ -93,19 +100,24 @@ export default function Positions({websocket, ...setterProps}) {
   );
 }
 
-function PositionGrid({positionDataJSON, realtimeData, websocket, ...setterProps}) {
-  const positions = [];
+interface PositionGridProps extends PositionsProps {
+  positionDataJSON: any,
+  realtimeData: any
+}
 
-  for (const [symbol, data] of Object.entries(positionDataJSON)) {
+function PositionGrid({positionDataJSON, realtimeData, websocket, setterProps}: PositionGridProps): React.ReactElement {
+  const positions: JSX.Element[] = [];
+
+  for (const [symbol, data] of Object.entries(positionDataJSON) as [string, any]) {
     const avgPrice = data.avgPrice.toFixed(2);
 
-    const realtimeBidPrice = realtimeData[symbol][1].toFixed(2);
-    const realtimeClassName = realtimeBidPrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
+    const realtimeBidPrice: number = realtimeData[symbol][1].toFixed(2);
+    const realtimeClassName: string = realtimeBidPrice < avgPrice ? gridStyles.rtPriceLower : gridStyles.rtPriceHigher;
 
     const gridRow = (
       <tr key={`${symbol}-grid-data`} className={gridStyles.gridRow}>
         <td> 
-          <StockSymbolButton {...setterProps} websocket={websocket} symbol={symbol} /> 
+          <StockSymbolButton setterProps={setterProps} websocket={websocket} symbol={symbol} /> 
           <span className={realtimeClassName}> {realtimeBidPrice} </span> 
         </td>
         <td> {avgPrice} </td>
@@ -134,7 +146,11 @@ function PositionGrid({positionDataJSON, realtimeData, websocket, ...setterProps
   )
 }
 
-export function StockSymbolButton({symbol, websocket, ...setterProps}) {
+interface StockSymbolButtonProps extends PositionsProps {
+  symbol: string
+}
+
+export function StockSymbolButton({symbol, websocket, setterProps}: StockSymbolButtonProps): React.ReactElement {
   const router = useRouter();
   // Clicking on the stock name should redirect to stock search details
     // and modify the global TD websocket to stream corresponding data
@@ -144,7 +160,7 @@ export function StockSymbolButton({symbol, websocket, ...setterProps}) {
         const data = JSON.parse(message.data);
         if(data.data) {
           const newData = data.data[0].content[0];
-          setterProps.setStockData(oldData => {return {...oldData, ...newData} });
+          setterProps.setStockData((oldData: any) => {return {...oldData, ...newData} });
         }
       }
       // Set stockData(null) on new search

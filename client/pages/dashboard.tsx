@@ -54,7 +54,7 @@ export default function Dashboard(): React.ReactElement {
   ///// Handle conditional rendering for the three different dashboard components /////
   const ENUM_COMPONENTS = {
     quote: (hasSearched && stockData) ? <> <StockSearch stockData={stockData} /> </> : <> No stock quote to show </>,
-    watch: <Watchlist setDashboardComponent={setDashboardComponent} setterProps={setterProps} />,
+    watch: <Watchlist setterProps={setterProps} />,
     positions: <Positions websocket={websocketCtx.websocket} setterProps={setterProps} />
   }
 
@@ -90,7 +90,7 @@ export default function Dashboard(): React.ReactElement {
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
           <EnumState state={dashboardComponent} />}
-          {dashboardComponent == 'quote' && <StockCharts />}
+          {/* {dashboardComponent == 'quote' && <StockCharts />} */}
         </div>
       </div>
     </div>

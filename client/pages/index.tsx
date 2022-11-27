@@ -7,10 +7,10 @@ import styles from '../styles/Home.module.css'
 import formStyles from '../styles/forms.module.css'
 
 import ToggleableForm from '../components/authentication/toggle-form'
-import AuthContext from '../components/authentication/authContext'
+import AuthContext, { AuthContextProps } from '../components/authentication/authContext'
 
-export default function Home() {
-  const user = useContext(AuthContext);
+export default function Home(): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
 
   return (
     <>
@@ -19,11 +19,11 @@ export default function Home() {
   );
 }
 
-function LandingPageForm() {
+function LandingPageForm(): React.ReactElement {
   const [isLogin, setIsLogin] = useState(false);
   
-  function handleClick(e) {
-    setIsLogin(e.target.checked);
+  function handleClick(e: any) {
+    setIsLogin((e.target as HTMLInputElement).checked);
   }
 
   return (
@@ -50,8 +50,8 @@ function LandingPageForm() {
   )
 }
 
-function HomePage() {
-  const user = useContext(AuthContext);
+function HomePage(): React.ReactElement {
+  const user: AuthContextProps = useContext(AuthContext);
 
   return (
     <div className={styles.container}>
@@ -66,7 +66,7 @@ function HomePage() {
           Welcome {user.name}
         </h1>
 
-        <button type='click' className={formStyles.button}>
+        <button className={formStyles.button}>
           <Link href='/dashboard'><a> Go to Dashboard </a></Link>
         </button>
       </main>

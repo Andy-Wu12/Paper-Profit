@@ -36,7 +36,7 @@ export function StockHeading({stockData}: {stockData: any}): React.ReactElement 
   const router = useRouter();
 
   const params = router.query;
-  const symbol: string = params.symbol[0];
+  const symbol: string = params.symbol as string;
 
   const labelToField = {
     'bid': '1',

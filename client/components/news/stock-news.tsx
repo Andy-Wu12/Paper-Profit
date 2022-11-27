@@ -9,23 +9,23 @@ import newsStyles from '../../styles/News.module.css';
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 export const NEWS_API_URL = `${API_BASE_URL}/stock-info/news`;
 
-export default function StockNews({symbolList}) {
-  const [stockNews, setStockNews] = useState(null); 
+export default function StockNews({symbolList}: {symbolList: string[]}): React.ReactElement {
+  const [stockNews, setStockNews] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    // Self-invoking function expression
-    (async function() {
-      setIsLoading(true);
-      const querySymbols = symbolList.join(',');
-      const response = await fetch(`${NEWS_API_URL}/${querySymbols}`);
-      const data = await response.json();
-      setStockNews(data);
-      setIsLoading(false);
-    }) ();
-  }, []);
+  // useEffect(() => {
+  //   // Self-invoking function expression
+  //   (async function() {
+  //     setIsLoading(true);
+  //     const querySymbols = symbolList.join(',');
+  //     const response = await fetch(`${NEWS_API_URL}/${querySymbols}`);
+  //     const data = await response.json();
+  //     setStockNews(data);
+  //     setIsLoading(false);
+  //   }) ();
+  // }, []);
 
-  const news = [];
+  const news: JSX.Element[] = [];
 
   if(stockNews) {
     for(const [symbol, data] of Object.entries(stockNews)) {
@@ -41,7 +41,7 @@ export default function StockNews({symbolList}) {
   )
 }
 
-function NewsLink({title, link}) {
+function NewsLink({title, link}: {title: string, link: string}): React.ReactElement {
   return (
     <>
       <a href={link} target='_blank' rel='noreferrer'>{title}</a>
@@ -49,11 +49,11 @@ function NewsLink({title, link}) {
   )
 }
 
-function StockNewsSection({symbol, data}) {
+function StockNewsSection({symbol, data}: {symbol: string, data: any}): React.ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [buttonText, setButtonText] = useState('Show');
 
-  function handleClick(e) {
+  function handleClick() {
     setIsCollapsed(!isCollapsed);
     if(buttonText === 'Hide') setButtonText('Show');
     else setButtonText('Hide');
@@ -65,7 +65,7 @@ function StockNewsSection({symbol, data}) {
       {!isCollapsed && 
         <ul>
           {
-            data.map((newsData, i) => {
+            data.map((newsData: any, i: number) => {
               return <li key={`${symbol}-newsItem-${i}`}>
                   <NewsLink title={newsData.title} link={newsData.link} /> 
                 </li>

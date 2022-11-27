@@ -12,7 +12,7 @@ import Ameritrade from '../generic/ameritrade-websocket';
 
 export type WatchlistProps = {
   websocket: WebSocket,
-  watchListData: unknown,
+  watchListData: any,
   setterProps: setterPropsProps
 }
 
@@ -63,7 +63,7 @@ export default function WatchList({websocket, watchListData, setterProps}: Watch
 
 type WatchlistGridProps = {
   websocket: WebSocket,
-  realtimeData: unknown,
+  realtimeData: any,
   setterProps: setterPropsProps
 }
 

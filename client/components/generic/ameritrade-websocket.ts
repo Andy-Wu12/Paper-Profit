@@ -49,7 +49,7 @@ export function createWebsocket(refObj: WebsocketProps, { onOpen=()=> {}, onMess
     ]
   }
 
-  let mySock = new W3CWebSocket("wss://" + userPrincipalsResponse.streamerInfo.streamerSocketUrl + "/ws");
+  let mySock = new WebSocket("wss://" + userPrincipalsResponse.streamerInfo.streamerSocketUrl + "/ws");
   mySock.onopen = function() { 
     mySock.send(JSON.stringify(authRequest));
     onOpen();

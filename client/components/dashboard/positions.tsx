@@ -31,8 +31,8 @@ export default function Positions({websocket, setterProps}: PositionsProps): Rea
         if(user.name) {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${user.name}/holdings`);
           const data = await response.json();
-          if(Object.keys(data).length === 0) { setPositionsData(null); }
-          else { setPositionsData(data); }
+          if(Object.keys(data.message).length === 0) { setPositionsData(null); }
+          else { setPositionsData(data.message); }
         }
         else {
           throw new Error();

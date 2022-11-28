@@ -20,7 +20,7 @@ export default function StockNews({symbolList}: {symbolList: string[]}): React.R
   //     const querySymbols = symbolList.join(',');
   //     const response = await fetch(`${NEWS_API_URL}/${querySymbols}`);
   //     const data = await response.json();
-  //     setStockNews(data);
+  //     setStockNews(data.message);
   //     setIsLoading(false);
   //   }) ();
   // }, []);

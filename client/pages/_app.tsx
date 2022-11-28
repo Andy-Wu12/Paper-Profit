@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }): React.ReactElement {
       const data = await getUserDetails();
       if(data.ok) {
         const response = await data.json();
-        setCurrentUser({ name: response.username });
+        setCurrentUser({ name: response.message.username });
       }
       else {
         setCurrentUser({ name: '' });

@@ -290,7 +290,7 @@ function PeriodPriceChart(): JSX.Element {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/price/${period}/${symbol}`;
     const response = await fetch(url);
     const newPeriodData = await response.json();
-    setPeriodData(newPeriodData);
+    setPeriodData(newPeriodData.message);
   }
 
   useEffect(() => {
@@ -355,7 +355,7 @@ function YearlyEarningsGraph(): JSX.Element {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/earnings/${symbol}`;
     const response = await fetch(url);
     const data = await response.json();
-    setEarningsData(data);
+    setEarningsData(data.message);
   }
 
   useEffect(() => {
@@ -421,7 +421,7 @@ function QuarterlyEarningsChart(): JSX.Element {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/stock-info/quarterly-earnings/${symbol}`;
     const response = await fetch(url);
     const data = await response.json();
-    setEarningsData(data);
+    setEarningsData(data.message);
   }
 
   useEffect(() => {

@@ -34,9 +34,9 @@ export default function Watchlist({setterProps}: {setterProps: setterPropsProps}
         const response = await fetch(watchlistAPI_URL);
         if(response.ok) {
           const data = await response.json();
-          if(data.length > 0) {
+          if(data.message.length > 0) {
             setIsLoading(false);
-            setWatchlist(data);
+            setWatchlist(data.message);
             return;
           }
         }

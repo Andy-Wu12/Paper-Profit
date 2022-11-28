@@ -1,19 +1,19 @@
 import Router from '@koa/router';
+import { CustomContext } from '../typings/types';
 
-const wsRouter = new Router();
+export const wsRouter = new Router();
 const baseURL = 'http://localhost:3011';
 
-wsRouter.get('/', async (ctx, next) => {
+wsRouter.get('/', async (ctx: CustomContext) => {
 	// `ctx` is the regular koa context created from the `ws` onConnection `socket.upgradeReq` object.
   // the websocket is added to the context on `ctx.websocket`.
 	ctx.websocket.send('Hello');
 	ctx.websocket.on('message', (message: any) => {
     console.log(message);
 	});
-	return next;
 });
 
-wsRouter.get('/balance', async (ctx) => {
+wsRouter.get('/balance', async (ctx: CustomContext) => {
   let balance = 0;
   let connected = true;
 
@@ -50,9 +50,9 @@ wsRouter.get('/balance', async (ctx) => {
         const data = await response.json();
       
         // Only send response message if balance is changed
-        if(data.balance !== balance) {
-          balance = data.balance;
-          ctx.websocket.send(data.balance);
+        if(data.message.balance !== balance) {
+          balance = data.message.balance;
+          ctx.websocket.send(data.message.balance);
         }
       }
     } catch (e) {

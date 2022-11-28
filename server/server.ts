@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa, { DefaultContext, DefaultState, Middleware } from 'koa';
 import Router from '@koa/router';
 import koaBody from 'koa-body';
 import websockify from 'koa-websocket';
@@ -153,7 +153,7 @@ app.use(async (ctx: CustomContext, next) => {
 });
 
 // Websocket routes
-app.ws.use(wsRouter.routes() as any);
+app.ws.use(wsRouter.routes() as Middleware<DefaultState, DefaultContext>);
 
 app.use(router.routes());
 app.use(userRouter.routes());

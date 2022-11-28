@@ -7,7 +7,7 @@ wsRouter.get('/', async (ctx, next) => {
 	// `ctx` is the regular koa context created from the `ws` onConnection `socket.upgradeReq` object.
   // the websocket is added to the context on `ctx.websocket`.
 	ctx.websocket.send('Hello');
-	ctx.websocket.on('message', (message) => {
+	ctx.websocket.on('message', (message: any) => {
     console.log(message);
 	});
 	return next;
@@ -40,7 +40,7 @@ wsRouter.get('/balance', async (ctx) => {
     lastPongDate = Date.now();
   });
 
-  ctx.websocket.on('message', async (message) => {
+  ctx.websocket.on('message', async (message: any) => {
     try {
       const messageJSON = await JSON.parse(message);
       const username = messageJSON['username'];

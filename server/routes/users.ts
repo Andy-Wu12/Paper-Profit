@@ -15,7 +15,7 @@ router.get('/', async (ctx: CustomContext) => {
 
 	await User.find({}).
 		then(user => {
-			ctx.body['message'].append(user);
+			ctx.body['message'] = user;
 		}).
 		catch(err => {
 			ctx.status = 500
@@ -31,7 +31,7 @@ router.get('/session', async (ctx: CustomContext) => {
 		}
 
 		const cookies = requestCookies.split('; ');
-		const sessionCookie = cookies.find(element => element.startsWith(`${sessionCookieName}=`));
+		const sessionCookie = cookies.find((element: string) => element.startsWith(`${sessionCookieName}=`));
 		
 		if(!sessionCookie) {
 			throw new Error('Session cookie not found!');
@@ -140,7 +140,7 @@ router.get('/:username', async (ctx: CustomContext) => {
 
 	await User.findOne({username: ctx.params['username']}).
 		then(user => {
-			ctx.body['message'].append(user);
+			ctx.body['message'] = user;
 		}).
 		catch(err => {
 			ctx.status = 400

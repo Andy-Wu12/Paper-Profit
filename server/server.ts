@@ -31,8 +31,8 @@ app.use(koaBody());
 
 const baseURL = `http://localhost:${port}`
 // Use index route to list all server endpoints
-router.get('/', (ctx: CustomContext) => {
-	ctx.body['message'] = {'Server\'s API Endpoints': {
+router.get('/', (ctx: any) => {
+	ctx.body = {'Server\'s API Endpoints': {
 		GET: {
 			'Stock Info' : {
 				'Base route' : '/stock-info',
@@ -153,7 +153,7 @@ app.use(async (ctx: CustomContext, next) => {
 });
 
 // Websocket routes
-app.ws.use(wsRouter.routes());
+app.ws.use(wsRouter.routes() as any);
 
 app.use(router.routes());
 app.use(userRouter.routes());

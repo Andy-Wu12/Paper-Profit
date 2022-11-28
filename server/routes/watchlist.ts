@@ -1,8 +1,8 @@
 import Router from '@koa/router';
 
-import User from '../mongodb/models/user.js';
-import Watchlist from '../mongodb/models/watchlist.js';
-import { CustomContext } from '../typings/types.js';
+import User from '../mongodb/models/user';
+import Watchlist from '../mongodb/models/watchlist';
+import { CustomContext } from '../typings/types';
 
 export const router = new Router({prefix: '/watchlist'});
 

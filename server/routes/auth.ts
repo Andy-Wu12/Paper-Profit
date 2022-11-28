@@ -98,17 +98,18 @@ router.post('/login', async (ctx: CustomContext) => {
         // Set a new session cookie
         const cookie = await makeAndSaveSessionCookie(username);
         ctx.cookies.set(sessionCookieName, cookie, sessionConfig);
-        ctx.body['message'] = 'Login success!';
+        ctx.status = 200
+        ctx.body['message'] = {message: 'Login success!', status: ctx.status};
       }
       else {
         ctx.status = 400;
-        ctx.body['message'] = 'Incorrect credentials provided!';
+        ctx.body['message'] = {message: 'Incorrect credentials provided!', status: ctx.status};
       }
     }
 
   } catch(error: any) {
     ctx.status = 400;
-    ctx.body['message'] = error.message;
+    ctx.body['message'] = {message: 'Error occurred', status: ctx.status};
   }
 });
 

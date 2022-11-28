@@ -39,7 +39,7 @@ Once everything is set up open two terminals, one for each the client and server
 Assuming you start at the root of the project:
 1. `cd server`
 2. `npm install`
-3. `node server.js`
+3. `npx ts-node server.ts`
 4. The server will be used to respond to various requests in the client-side
 5. You can see the various endpoints set up by accessing the index at *http://localhost:3011*
 

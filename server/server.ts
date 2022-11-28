@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
 import userRouter from './routes/users.js';
-import authRouter from './routes/auth.js';
+import authRouter from './routes/auth';
 import stockRouter from './routes/yahoo-api.js';
 import transactionRouter from './routes/transaction.js';
 import wsRouter from './routes/websockets.js';
@@ -19,7 +19,7 @@ const router = new Router();
 const port = 3011;
 dotenv.config();
 
-const uri = process.env.MONGO_URI;
+const uri = process.env.MONGO_URI as string;
 mongoose.connect(uri);
 
 app

@@ -1,6 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
-const portfolioSchema = new mongoose.Schema({
+export interface IHolding {
+  _id: Types.ObjectId
+  symbol: string,
+  quantity: number,
+  pricePerShare: number,
+  datePurchased: Date
+}
+
+export interface IPortfolio {
+  _id: Types.ObjectId,
+  username: string,
+  holdings: IHolding[],
+  value: number
+}
+
+const portfolioSchema = new mongoose.Schema<IPortfolio>({
   username: { type: String, required: true, unique: true, dropDups: true },
   holdings: { type: [{
     symbol: { type: String, required: true },

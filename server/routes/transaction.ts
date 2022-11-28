@@ -2,11 +2,12 @@ import Router from '@koa/router';
 
 import Transaction from '../mongodb/models/transaction.js';
 import User from '../mongodb/models/user.js';
-import Portfolio from '../mongodb/models/portfolio.js';
+import Portfolio, { IHolding, IPortfolio } from '../mongodb/models/portfolio.js';
+import { CustomContext } from '../types';
 
 export const router = new Router({prefix: '/transaction'});
 
-router.post('/buy', async (ctx) => {
+router.post('/buy', async (ctx: CustomContext) => {
   const queryDict = ctx.request.query;
   const postBody = ctx.request.body;
 
@@ -16,19 +17,25 @@ router.post('/buy', async (ctx) => {
   const quantity = postBody.quantity;
 
   try {
-    if(queryDict === '{}') {
+    if(!queryDict) {
       throw new Error('Invalid request');
     }
 
     const user = await User.findOne({username: username});
+    // Update User's portfolio holdings
+    const portfolio = await Portfolio.findOne({username: username});
+
     const transactionCost = quantity * price;
+
+    if(!user || !portfolio) {
+      throw new Error('Invalid request!');
+    }
 
     if(user.balance < transactionCost) {
       throw new Error('User balance too low for transaction');
     }
 
     const purchaseTime = Date.now();
-
     const transaction = new Transaction({
       username: username,
       symbol: symbol,
@@ -38,10 +45,7 @@ router.post('/buy', async (ctx) => {
       date: purchaseTime
     });
     await transaction.save();
-
-    // Update User's portfolio holdings
-    const portfolio = await Portfolio.findOne({username: username});
-
+    
     await Portfolio.updateOne(
       {username: username},
       {
@@ -63,7 +67,7 @@ router.post('/buy', async (ctx) => {
     ctx.status = 200;
     ctx.body = {message: 'Transaction successful', status: ctx.status};
     
-  } catch(e) {
+  } catch(e: any) {
     ctx.status = 400;
     ctx.body = {message: e.message, status: ctx.status}
   }
@@ -80,11 +84,14 @@ router.post('/sell', async (ctx) => {
   const quantity = postBody.quantity;
 
   try {
-    if(queryDict === '{}') {
+    if(!queryDict) {
       throw new Error('Invalid request');
     }
     
     const user = await User.findOne({username: username});
+    if(!user) {
+      throw new Error('User does not exist!');
+    }
     // Check if user's portfolio contains the specified symbols
     const portfolio = await Portfolio.findOne({username: username, 'holdings.symbol': {$in: symbol}});
     if(!portfolio) {
@@ -97,7 +104,7 @@ router.post('/sell', async (ctx) => {
 
     // Validate enough shares of symbol
     let numShares = 0;
-    let fifoHoldings = [];
+    let fifoHoldings: IHolding[] = [];
 
     for(const holding of holdings) {
       if(holding.symbol == symbol) {
@@ -112,11 +119,11 @@ router.post('/sell', async (ctx) => {
     if(numShares >= quantity) {
       let valueLoss = 0;
       let netProfit = 0;
-      let sharesToSell = quantity;
+      let sharesToSell: number = quantity;
       let index = 0;
       while(sharesToSell > 0) {
         // Iterate through holdings until desired amount of shares sold.
-        let holding = fifoHoldings[index++];
+        let holding: IHolding = fifoHoldings[index++];
         const sharesToSellFromDoc = Math.min(holding.quantity, sharesToSell);
         sharesToSell -= sharesToSellFromDoc;
         // Track remaining holding quantity and value loss of portfolio (not net profit / loss)
@@ -167,14 +174,14 @@ router.post('/sell', async (ctx) => {
     ctx.status = 200;
     ctx.body = {message: 'Transaction successful', status: ctx.status};
     
-  } catch(e) {
+  } catch(e: any) {
     ctx.status = 400;
     ctx.body = {message: e.message, status: ctx.status}
   }
 
 });
 
-function sortByDate(list, dateKeyName) {
+function sortByDate(list: any[], dateKeyName: string): void {
   list.sort(function(a, b) {
     if(a[dateKeyName] < b[dateKeyName]) return -1;
     if(a[dateKeyName] > b[dateKeyName]) return 1;

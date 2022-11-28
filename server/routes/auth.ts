@@ -7,6 +7,8 @@ import Session from '../mongodb/models/session.js';
 import Auth from '../mongodb/models/auth.js';
 import Portfolio from '../mongodb/models/portfolio.js';
 
+import { CustomContext } from '../types';
+
 export const router = new Router({prefix: '/auth'});
 
 export const sessionCookieName = 'stocksim-sess';
@@ -14,14 +16,20 @@ export const sessionCookieName = 'stocksim-sess';
 // Default is 10, but setting this variable allows for potential config.
 const saltRounds = 10;
 
-const sessionConfig = {
-  sameSite: 'lax',
+type sessionConfigProps = {
+  sameSite: boolean | "lax" | "strict" | "none" | undefined,
+  httpOnly: boolean,
+  expires: Date
+}
+
+const sessionConfig: sessionConfigProps = {
+  sameSite: "lax",
   httpOnly: false,
   expires: new Date(Date.now() + 8640000)
 };
 
 // Create user
-router.post('/signup', async (ctx) => {
+router.post('/signup', async (ctx: CustomContext) => {
   /*
     ctx.request.body will only work with koaBody
     curl -H 'Content-Type: application/json' -d '{"username": "text", "email":"testemail", "password": "insecure"}' \
@@ -63,12 +71,12 @@ router.post('/signup', async (ctx) => {
 });
 
 // Login user and generate session cookie
-router.post('/login', async (ctx) => {
+router.post('/login', async (ctx: CustomContext) => {
   const postBody = ctx.request.body;
   const username = postBody.username;
   const password = postBody.password;
 
-  ctx.body = {};
+  ctx.body = {message: '', status: 200};
 
   if(!(username && password)) {
     ctx.status = 400;
@@ -98,18 +106,18 @@ router.post('/login', async (ctx) => {
       }
     }
 
-  } catch(error) {
+  } catch(error: any) {
     ctx.status = 400;
     ctx.body['message'] = error.message;
   }
 });
 
 // Logout user and remove session cookie
-router.post('/logout', async (ctx) => {
+router.post('/logout', async (ctx: CustomContext) => {
   const postBody = ctx.request.body;
   const username = postBody.username;
   
-  ctx.body = {};
+  ctx.body = {message: '', status: 200};
 
   if(!(username)) {
     ctx.status = 400;
@@ -129,7 +137,7 @@ router.post('/logout', async (ctx) => {
     }
     ctx.cookies.set(sessionCookieName, null, sessionConfig);
 
-  } catch(error) {
+  } catch(error: any) {
     ctx.status = 400;
     ctx.body['message'] = error.message;
   }
@@ -141,7 +149,7 @@ function generateSessionCookie() {
   return randomBytes(256).toString('hex');
 }
 
-async function makeAndSaveSessionCookie(username) {
+async function makeAndSaveSessionCookie(username: string) {
   const sessionCookie = generateSessionCookie();
   // const session = new Session({username: username, cookie: sessionCookie});
   await Session.updateOne(

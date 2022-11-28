@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 
-const wsRouter = Router();
+const wsRouter = new Router();
 const baseURL = 'http://localhost:3011';
 
 wsRouter.get('/', async (ctx, next) => {
@@ -56,7 +56,6 @@ wsRouter.get('/balance', async (ctx) => {
         }
       }
     } catch (e) {
-      console.log(e.message);
       connected = false;
       ctx.websocket.close();
     }

@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import fetch from 'isomorphic-fetch';
+import { CustomContext } from '../typings/types';
 
 // const API_DOMAIN = 'yahoo-finance97.p.rapidapi.com';
 const API_DOMAIN = 'yfinance-stock-market-data.p.rapidapi.com';
@@ -9,14 +10,14 @@ const API_BASE_URL=`https://${API_DOMAIN}`;
 export const router = new Router({prefix: '/stock-info'});
 
 // Route to fetch from Yahoo's /stock-info endpoint
-router.get('/quote/:ticker', async (ctx) => {
+router.get('/quote/:ticker', async (ctx: CustomContext) => {
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];
 	encodedParams.append("symbol", ticker);
 
-	const options = createOptionsJSON(encodedParams);
+	const options: any = createOptionsJSON(encodedParams);
 
-	let queryData = {};
+	let queryData: any = {};
 
 	try {
 		const response = await fetch(`${API_BASE_URL}/stock-info`, options)
@@ -49,13 +50,14 @@ router.get('/quote/:ticker', async (ctx) => {
 		return;
 	}
 
-	ctx.body = queryData;
+	ctx.status = 200;
+	ctx.body = {message: queryData, status: ctx.status};
 });
 
 // Route to fetch from Yahoo's /news endpoint
-router.get('/news/:commaSepTickers', async (ctx) => {
+router.get('/news/:commaSepTickers', async (ctx: CustomContext) => {
 	const tickers = ctx.params['commaSepTickers'].split(',');
-	const news = {};
+	const news: any = {};
 
 	try {
 		for(const ticker of tickers) {
@@ -64,7 +66,7 @@ router.get('/news/:commaSepTickers', async (ctx) => {
 			const encodedParams = new URLSearchParams();
 			encodedParams.append("symbol", ticker);
 
-			const options = createOptionsJSON(encodedParams);
+			const options: any = createOptionsJSON(encodedParams);
 
 			const response = await fetch(`${API_BASE_URL}/news`, options)
 
@@ -76,25 +78,24 @@ router.get('/news/:commaSepTickers', async (ctx) => {
 			// Parse data to be accessible by ticker symbol
 			news[ticker] = queryData.data;
 		}
-
+		ctx.status = 200;
+		ctx.body = {message: news, status: ctx.status};
+		
 	} catch (e) {
 		ctx.status = 400;
-		ctx.body = {message: e.message, status: ctx.status};
-		return;
+		ctx.body = {message: "Error fetching news", status: ctx.status};
 	}
-
-	ctx.body = news;
 });
 
 // Route to fetch from Yahoo's /earnings endpoint
-router.get('/earnings/:ticker', async (ctx) => {
+router.get('/earnings/:ticker', async (ctx: CustomContext) => {
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];
 	encodedParams.append("symbol", ticker);
 
-	const options = createOptionsJSON(encodedParams);
+	const options: any = createOptionsJSON(encodedParams);
 
-	let queryData = {};
+	let queryData: any = {};
 
 	try {
 		const response = await fetch(`${API_BASE_URL}/earnings`, options)
@@ -103,25 +104,24 @@ router.get('/earnings/:ticker', async (ctx) => {
 			throw new Error("Bad response from server");
 		}
 		queryData = await response.json();
+		ctx.status = 200;
+		ctx.body = {message: queryData, status: ctx.status};
 
 	} catch (e) {
 		ctx.status = 400;
 		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
-		return;
 	}
-
-	ctx.body = queryData;
 });
 
 // Route to fetch from Yahoo's /quarterly-earnings endpoint
-router.get('/quarterly-earnings/:ticker', async (ctx) => {
+router.get('/quarterly-earnings/:ticker', async (ctx: CustomContext) => {
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];
 	encodedParams.append("symbol", ticker);
 
-	const options = createOptionsJSON(encodedParams);
+	const options: any = createOptionsJSON(encodedParams);
 
-	let queryData = {};
+	let queryData: any = {};
 
 	try {
 		const response = await fetch(`${API_BASE_URL}/quarterly-earnings`, options)
@@ -131,17 +131,18 @@ router.get('/quarterly-earnings/:ticker', async (ctx) => {
 		}
 		queryData = await response.json();
 
+		ctx.status = 200;
+		ctx.body = {message: queryData, status: ctx.status};
+
 	} catch (e) {
 		ctx.status = 400;
 		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
-		return;
 	}
 
-	ctx.body = queryData;
 });
 
 // Fetch from /price endpoint allowing for Price by period (1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max) functionality
-router.get('/price/:period/:ticker', async (ctx) => {
+router.get('/price/:period/:ticker', async (ctx: CustomContext) => {
 	const encodedParams = new URLSearchParams();
 	const ticker = ctx.params['ticker'];
 	const period = ctx.params['period'];
@@ -150,9 +151,9 @@ router.get('/price/:period/:ticker', async (ctx) => {
 	encodedParams.append("period", period)
 	encodedParams.append("symbol", ticker);
 
-	const options = createOptionsJSON(encodedParams);
+	const options: any = createOptionsJSON(encodedParams);
 
-	let queryData = {};
+	let queryData: any = {};
 
 	try {
 		const response = await fetch(`${API_BASE_URL}/price`, options)
@@ -161,19 +162,18 @@ router.get('/price/:period/:ticker', async (ctx) => {
 			throw new Error("Bad response from server");
 		}
 		queryData = await response.json();
+		ctx.status = 200;
+		ctx.body = {message: queryData, status: ctx.status};
 
 	} catch (e) {
 		ctx.status = 400;
 		ctx.body = {message: "Error fetching response from server!", status: ctx.status};
-		return;
 	}
 
-	ctx.body = queryData;
 });
 
 
-
-function createOptionsJSON(encodedParams) {
+function createOptionsJSON(encodedParams: URLSearchParams) {
 	return (
 		{
 			method: 'POST',

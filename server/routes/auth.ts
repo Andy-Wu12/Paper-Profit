@@ -2,12 +2,12 @@ import bcrypt from 'bcrypt';
 import Router from '@koa/router';
 import { randomBytes } from 'crypto';
 
-import User from '../mongodb/models/user.js';
-import Session from '../mongodb/models/session.js';
-import Auth from '../mongodb/models/auth.js';
-import Portfolio from '../mongodb/models/portfolio.js';
+import User from '../mongodb/models/user';
+import Session from '../mongodb/models/session';
+import Auth from '../mongodb/models/auth';
+import Portfolio from '../mongodb/models/portfolio';
 
-import { CustomContext } from '../types';
+import { CustomContext } from '../typings/types';
 
 export const router = new Router({prefix: '/auth'});
 

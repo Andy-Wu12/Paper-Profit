@@ -1,9 +1,9 @@
 import Router from '@koa/router';
 
-import Transaction from '../mongodb/models/transaction.js';
-import User from '../mongodb/models/user.js';
-import Portfolio, { IHolding, IPortfolio } from '../mongodb/models/portfolio.js';
-import { CustomContext } from '../types';
+import Transaction from '../mongodb/models/transaction';
+import User from '../mongodb/models/user';
+import Portfolio, { IHolding, IPortfolio } from '../mongodb/models/portfolio';
+import { CustomContext } from '../typings/types';
 
 export const router = new Router({prefix: '/transaction'});
 
@@ -74,7 +74,7 @@ router.post('/buy', async (ctx: CustomContext) => {
 
 });
 
-router.post('/sell', async (ctx) => {
+router.post('/sell', async (ctx: CustomContext) => {
   const queryDict = ctx.request.query;
   const postBody = ctx.request.body;
 

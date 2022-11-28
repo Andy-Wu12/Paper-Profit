@@ -7,12 +7,13 @@ import cors from '@koa/cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import userRouter from './routes/users.js';
+import userRouter from './routes/users';
 import authRouter from './routes/auth';
-import stockRouter from './routes/yahoo-api.js';
-import transactionRouter from './routes/transaction.js';
-import wsRouter from './routes/websockets.js';
-import watchlistRouter from './routes/watchlist.js';
+import stockRouter from './routes/yahoo-api';
+import transactionRouter from './routes/transaction';
+import wsRouter from './routes/websockets';
+import watchlistRouter from './routes/watchlist';
+import { CustomContext } from './typings/types';
 
 const app = websockify(new Koa());
 const router = new Router();
@@ -30,8 +31,8 @@ app.use(koaBody());
 
 const baseURL = `http://localhost:${port}`
 // Use index route to list all server endpoints
-router.get('/', (ctx) => {
-	ctx.body = {'Server\'s API Endpoints': {
+router.get('/', (ctx: CustomContext) => {
+	ctx.body['message'] = {'Server\'s API Endpoints': {
 		GET: {
 			'Stock Info' : {
 				'Base route' : '/stock-info',
@@ -128,10 +129,11 @@ router.get('/', (ctx) => {
 			
 		}
 	},
-};
+	};
+	ctx.status = 200;
 });
 
-app.use(async (ctx, next) => {
+app.use(async (ctx: CustomContext, next) => {
 	ctx.set('Access-Control-Allow-Methods', 'POST, GET, DELETE, OPTIONS');
 	ctx.set('Access-Control-Allow-Credentials', 'true');
 	await next();
@@ -143,7 +145,7 @@ app.use(async (ctx, next) => {
 // 	console.log(`${ctx.method} ${ctx.url} - ${rt}`);
 // });
 
-app.use(async (ctx, next) => {
+app.use(async (ctx: CustomContext, next) => {
 	const start = Date.now();
 	await next();
 	const ms = Date.now() - start;

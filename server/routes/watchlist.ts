@@ -2,22 +2,27 @@ import Router from '@koa/router';
 
 import User from '../mongodb/models/user.js';
 import Watchlist from '../mongodb/models/watchlist.js';
+import { CustomContext } from '../typings/types.js';
 
 export const router = new Router({prefix: '/watchlist'});
 
-router.get('/user/:username', async(ctx) => {
+router.get('/user/:username', async(ctx: CustomContext) => {
   const username = ctx.params['username'];
 
   try {
     const list = await Watchlist.findOne({username: username});
-    ctx.body = list.symbols;
+    if(list) {
+      ctx.status = 200;
+      ctx.body = {message: list.symbols, status: ctx.status};
+    }
+    else { throw new Error(); }
   } catch (e) {
     ctx.status = 400;
-    ctx.body = {message: e.message, status: ctx.status};
+    ctx.body = {message: "Error occurred", status: ctx.status};
   }
 });
 
-router.post('/watch', async (ctx) => {
+router.post('/watch', async (ctx: CustomContext) => {
   const queryDict = ctx.request.query;
   const postBody = ctx.request.body;
 
@@ -25,7 +30,7 @@ router.post('/watch', async (ctx) => {
   const symbol = queryDict.symbol;
 
   try {
-    if(!username || queryDict === '{}') {
+    if(!username || !queryDict) {
       throw new Error('Invalid request');
     }
 
@@ -40,12 +45,12 @@ router.post('/watch', async (ctx) => {
     
   } catch(e) {
     ctx.status = 400;
-    ctx.body = {message: e.message, status: ctx.status}
+    ctx.body = {message: "Error occurred trying to watch stock", status: ctx.status}
   }
 
 });
 
-router.post('/unwatch', async (ctx) => {
+router.post('/unwatch', async (ctx: CustomContext) => {
   const queryDict = ctx.request.query;
   const postBody = ctx.request.body;
 
@@ -53,7 +58,7 @@ router.post('/unwatch', async (ctx) => {
   const symbol = queryDict.symbol;
 
   try {
-    if(!username || queryDict === '{}') {
+    if(!username || !queryDict) {
       throw new Error('Invalid request')
     }
 
@@ -67,7 +72,7 @@ router.post('/unwatch', async (ctx) => {
 
   } catch (e) {
     ctx.status = 400;
-    ctx.body = {message: e.message, status: ctx.status};
+    ctx.body = {message: "Error occurred trying to unwatch stock", status: ctx.status};
   }
 })
 

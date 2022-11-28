@@ -90,7 +90,7 @@ export default function Dashboard(): React.ReactElement {
           {/* Components that conditionally render */}
           {isLoading ? <Loading /> : 
           <EnumState state={dashboardComponent} />}
-          {/* {dashboardComponent == 'quote' && <StockCharts />} */}
+          {dashboardComponent == 'quote' && <StockCharts />}
         </div>
       </div>
     </div>

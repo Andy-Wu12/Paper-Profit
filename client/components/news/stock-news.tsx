@@ -13,17 +13,17 @@ export default function StockNews({symbolList}: {symbolList: string[]}): React.R
   const [stockNews, setStockNews] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   // Self-invoking function expression
-  //   (async function() {
-  //     setIsLoading(true);
-  //     const querySymbols = symbolList.join(',');
-  //     const response = await fetch(`${NEWS_API_URL}/${querySymbols}`);
-  //     const data = await response.json();
-  //     setStockNews(data.message);
-  //     setIsLoading(false);
-  //   }) ();
-  // }, []);
+  useEffect(() => {
+    // Self-invoking function expression
+    (async function() {
+      setIsLoading(true);
+      const querySymbols = symbolList.join(',');
+      const response = await fetch(`${NEWS_API_URL}/${querySymbols}`);
+      const data = await response.json();
+      setStockNews(data.message);
+      setIsLoading(false);
+    }) ();
+  }, []);
 
   const news: JSX.Element[] = [];
 

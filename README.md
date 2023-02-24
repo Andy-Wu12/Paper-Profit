@@ -26,14 +26,14 @@ Run all these commands at once with `npm install next react react-dom`
     3. Under the **My Apps** section, click on the name of your app.
     4. Click *Security* then the eye icon to reveal your Application key
     5. Copy that key into a **.env** file in the **server** folder, with the key name *RAPID_API_YAHOO_KEY*
-    6. Subscripte to the [YFINANCE](https://rapidapi.com/asepscareer/api/yfinance-stock-market-data/) API
+    6. Subscribe to the [YFINANCE](https://rapidapi.com/asepscareer/api/yfinance-stock-market-data/) API
 4. `.env` file for **server**
     1. `FRONTEND_BASE_URL="http://localhost:3000"` or whatever port your frontend is running on.
     2. `RAPID_API_YAHOO_KEY=[insert your api key here]`
 5. `.env.local` for **client**
     1. `NEXT_PUBLIC_API_BASE_URL="http://localhost:3011"` or whatever port your backend is running on.
 
-Once everything is set up open two terminals, one for each the client and server programs.
+Once everything is set up open two terminals, one each for both the client and server programs.
 
 ### Run the server
 Assuming you start at the root of the project:

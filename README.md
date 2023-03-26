@@ -39,7 +39,7 @@ Once everything is set up open two terminals, one each for both the client and s
 Assuming you start at the root of the project:
 1. `cd server`
 2. `npm install`
-3. `npx ts-node server.ts`
+3. `npm run start`
 4. The server will be used to respond to various requests in the client-side
 5. You can see the various endpoints set up by accessing the index at *http://localhost:3011*
 
@@ -47,5 +47,5 @@ Assuming you start at the root of the project:
 In the other terminal instance,
 1. `cd client`
 2. `npm install`
-3. `npm run dev` OR `npm run build; npm run start` for a production build.
+3. `npm run dev` OR `npm run deploy` for a production build.
 4. Open a browser and head to *http://localhost:3000*

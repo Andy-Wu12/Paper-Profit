@@ -19,5 +19,9 @@
 		"koa-websocket": "^7.0.0",
 		"mongodb": "^4.10.0",
 		"mongoose": "^6.6.5"
+	},
+	"scripts": {
+		"build": "tsc",
+		"start": "npm run build; node build/server.js"
 	}
 }

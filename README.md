@@ -3,6 +3,29 @@
 Web application that allows you to simulate trades in the stock market without
 using any real money.
 
+## Demo
+
+Sign Up:
+
+https://user-images.githubusercontent.com/33229522/233168224-17dfdce6-baf6-4a90-9ccf-78c8f12068df.mov
+
+Stock Search:
+
+https://user-images.githubusercontent.com/33229522/233168488-70504926-f63f-4047-bd11-6642b5e189fc.mov
+
+Held Positions:
+
+https://user-images.githubusercontent.com/33229522/233168592-d2cd35ff-9680-4abe-a85a-d2ca04311add.mov
+
+Watchlist:
+
+https://user-images.githubusercontent.com/33229522/233168615-d3c56cc1-60f4-4ec4-8233-0303637dcf28.mov
+
+Portfolio Reset:
+
+https://user-images.githubusercontent.com/33229522/233168627-33cf1154-0924-4b9e-a611-064372b355ae.mov
+
+
 ## Dependencies:
 1. Next.js - `npm install next`
 2. React.js - `npm install react`
@@ -49,3 +72,5 @@ In the other terminal instance,
 2. `npm install`
 3. `npm run dev` OR `npm run deploy` for a production build.
 4. Open a browser and head to *http://localhost:3000*
+
+
